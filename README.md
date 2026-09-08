@@ -1,91 +1,115 @@
-# Spell Stars
+# SPELL// STARS
 
-A fully static site now — no backend required. The FastAPI backend that used to
-serve `/api/programme` has been removed; its data now lives at
-`src/data/programme.json` and is bundled directly into the React app at build
-time.
+A Year 2 (UK, ages 6–7) weekly spelling programme site, styled with a dark,
+futuristic look. It presents a full school year of spelling lists as an
+interactive carousel: pick a week to see that week's words, the phonics or
+spelling rule it covers, a practice quiz, and a printable A4 spelling sheet.
 
-**Editing the spelling programme data:** edit `scripts/programme_data.py`
-(the original source, e.g. word lists, sentences, term dates), then regenerate
-the JSON with:
+**Live example of what it covers:** 36 weeks of curriculum aligned to the UK
+National Curriculum's Year 2 spelling appendix, ordered so each week's rule
+builds on the last (consonant blends → suffixes → apostrophes/homophones →
+common exception words), with 1–2 "challenge" words per week for early
+finishers. Week 1 is treated as starting 7 September 2026.
+
+## Features
+
+- **Week carousel** — browse all 36 weeks, jump to any week, see its focus
+  and word list at a glance.
+- **Practice quiz** — children type each week's spellings, get instant
+  feedback, and hear words read aloud via the browser's speech synthesis.
+  A bonus "Challenge Round" quizzes the starred/extension words once the
+  main list is complete.
+- **Print sheet** — a clean, print-only A4 layout of the current week's list
+  for handing out or sending home.
+- **Parent/teacher notes** — a panel explaining how the sequence was built,
+  the suggested weekly test format, pacing, and differentiation ideas.
+
+## How it works / tech stack
+
+This is a **fully static site** — there is no backend or database.
+
+- **Frontend:** React 19 (Create React App via [craco](https://craco.js.org/)),
+  Tailwind CSS, Radix UI / shadcn-style primitives, Framer Motion,
+  [Lenis](https://lenis.darkroom.engineering/) for smooth scrolling, and
+  Embla Carousel.
+- **Content:** all 36 weeks of words, sentences, focus areas, and notes live
+  in `src/data/programme.json`, which is imported directly by
+  `src/App.js` and bundled into the app at build time. There's no API call
+  and nothing to fetch at runtime.
+- **Editable source:** the JSON is generated from a more readable Python
+  file, `scripts/programme_data.py` (word lists, focus notes, term start
+  date). If you want to change the curriculum content, edit that file and
+  regenerate the JSON — see below.
+
+## Running it locally
+
+Requires [Node.js](https://nodejs.org/) (18+) and [Yarn](https://yarnpkg.com/)
+(the project uses `yarn.lock`; `npm install` can also work but yarn is
+recommended since that's what the lockfile matches).
+
+```bash
+git clone <this-repo-url>
+cd spell-stars
+yarn install
+yarn start
+```
+
+This starts the CRA dev server at [http://localhost:3000](http://localhost:3000)
+with hot reload. No environment variables or backend setup are needed.
+
+### Building for production
+
+```bash
+yarn build
+```
+
+This produces a static, ready-to-deploy site in the `build/` folder — plain
+HTML/CSS/JS, no server required. You can preview it locally with:
+
+```bash
+npx serve -s build
+```
+
+### Deploying
+
+Since it's fully static, it can be hosted anywhere that serves static files
+— Cloudflare Pages, Netlify, Vercel, GitHub Pages, S3, etc. On Cloudflare
+Pages specifically: connect the repo, set the build command to `yarn build`
+and the output directory to `build`.
+
+## Editing the spelling programme content
+
+1. Edit `scripts/programme_data.py` — this holds the week-by-week word
+   lists (`WEEK_ROWS`), per-word sentences/meanings (`WORD_DATA`), and the
+   notes shown in the "how this was built" panel.
+2. Regenerate the JSON the app actually reads:
+   ```bash
+   python3 scripts/regen_programme_json.py
+   ```
+   This overwrites `src/data/programme.json` from the Python source.
+3. Rebuild (`yarn build`) or just restart the dev server to see the changes.
+
+## Project structure
 
 ```
-python3 scripts/regen_programme_json.py
+src/
+  App.js                 Main app shell, routing, loads programme.json
+  data/programme.json    All curriculum content (generated, see below)
+  components/            Hero, Navbar, WeekCarousel, PracticeQuiz,
+                          NotesSection, PrintSheet, Footer, ui/ primitives
+scripts/
+  programme_data.py          Editable source data (words, notes, dates)
+  regen_programme_json.py    Regenerates src/data/programme.json
+public/                  Static assets, index.html
 ```
-
-**Deploying:** `yarn build` produces a static `build/` folder — deploy it to
-Cloudflare Pages (or any static host) with no server component needed.
-Build command: `yarn build`. Output directory: `build`.
 
 ---
 
-# Getting Started with Create React App
+### About the build tooling
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project was originally bootstrapped with
+[Create React App](https://github.com/facebook/create-react-app) (via craco
+for config overrides). Standard CRA scripts apply: `yarn start` (dev server),
+`yarn build` (production build), `yarn test` (test runner). See the
+[CRA documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+for more on the underlying tooling.
