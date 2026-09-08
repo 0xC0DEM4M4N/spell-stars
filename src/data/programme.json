@@ -14,43 +14,63 @@
       "words": [
         {
           "text": "frost",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Frost covered the leaves with a sparkly white coat.",
+          "meaning": "A thin layer of ice that forms when it is very cold."
         },
         {
           "text": "stamp",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She put a stamp on the letter before posting it.",
+          "meaning": "To press your foot down hard, or a sticky label for post."
         },
         {
           "text": "splash",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He jumped in the puddle and made a big splash.",
+          "meaning": "To hit water so that it sprays out noisily."
         },
         {
           "text": "string",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We tied the parcel up with a piece of string.",
+          "meaning": "A thin piece of twisted threads used for tying things."
         },
         {
           "text": "scrunch",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She liked to scrunch the dry autumn leaves underfoot.",
+          "meaning": "To crush or squeeze something so it makes a crunching sound."
         },
         {
           "text": "drift",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Snowflakes began to drift slowly down from the grey sky.",
+          "meaning": "To float or move gently without being steered."
         },
         {
           "text": "thrust",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He thrust the door open and ran outside to play.",
+          "meaning": "To push something suddenly and with force."
         },
         {
           "text": "sprint",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She did a sprint to the finish line and won!",
+          "meaning": "To run as fast as you possibly can."
         },
         {
           "text": "crisp",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The air felt crisp and cold on a winter morning.",
+          "meaning": "Pleasantly firm and fresh, or a thin fried potato snack."
         },
         {
           "text": "blast",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A blast of cold wind blew his hat right off.",
+          "meaning": "A strong rush of air or a sudden loud noise."
         }
       ]
     },
@@ -63,43 +83,63 @@
       "words": [
         {
           "text": "badge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She wore a shiny gold badge on her school jumper.",
+          "meaning": "A small label or pin that shows who you are."
         },
         {
           "text": "bridge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We walked across the bridge over the fast-flowing river.",
+          "meaning": "A structure built so people can cross over water or a road."
         },
         {
           "text": "fudge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Granny made a delicious batch of chocolate fudge as a treat.",
+          "meaning": "A soft, sweet made from sugar, butter, and milk."
         },
         {
           "text": "hedge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Birds were nesting in the tall green hedge by the garden.",
+          "meaning": "A row of bushes planted close together to form a boundary."
         },
         {
           "text": "lodge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They stayed in a cosy wooden lodge in the snowy mountains.",
+          "meaning": "A small house, often in the countryside or mountains."
         },
         {
           "text": "cage",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The hamster slept in a cosy corner of its cage.",
+          "meaning": "A container with bars used to keep animals safely inside."
         },
         {
           "text": "huge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "That elephant was huge \u2014 bigger than a double-decker bus!",
+          "meaning": "Extremely large in size."
         },
         {
           "text": "stage",
-          "challenge": false
+          "challenge": false,
+          "sentence": "All the children walked onto the stage for the school play.",
+          "meaning": "A raised platform where people perform in front of an audience."
         },
         {
           "text": "page",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Turn the page carefully so you do not tear it.",
+          "meaning": "One side of a sheet of paper in a book."
         },
         {
           "text": "edge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She balanced carefully on the edge of the swimming pool.",
+          "meaning": "The thin line where something ends or begins."
         }
       ]
     },
@@ -112,43 +152,63 @@
       "words": [
         {
           "text": "gem",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She found a beautiful red gem glittering in the sand.",
+          "meaning": "A precious stone, such as a ruby or emerald."
         },
         {
           "text": "giant",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A giant oak tree stood in the middle of the field.",
+          "meaning": "Something or someone much bigger than normal."
         },
         {
           "text": "magic",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He waved his wand and said the magic words.",
+          "meaning": "A mysterious power that makes impossible things seem to happen."
         },
         {
           "text": "energy",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Running around the playground uses lots of energy.",
+          "meaning": "The power you need to do things or keep moving."
         },
         {
           "text": "ginger",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Mum added fresh ginger to the soup to make it spicy.",
+          "meaning": "A root with a warm, spicy flavour used in cooking."
         },
         {
           "text": "gym",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We played indoor games in the gym on a rainy day.",
+          "meaning": "A large room with equipment for exercise and sport."
         },
         {
           "text": "danger",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The sign warned drivers that there was danger on the road.",
+          "meaning": "Something that could hurt you or cause harm."
         },
         {
           "text": "engine",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The engine roared loudly as the train left the station.",
+          "meaning": "A machine that uses power to make something move."
         },
         {
           "text": "gentle",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Be gentle when you stroke the baby rabbit.",
+          "meaning": "Soft and careful, not rough or harsh."
         },
         {
           "text": "giraffe",
-          "challenge": true
+          "challenge": true,
+          "sentence": "A giraffe stretched its long neck to reach the highest leaves.",
+          "meaning": "A very tall African animal with a long neck and spotted coat."
         }
       ]
     },
@@ -161,43 +221,63 @@
       "words": [
         {
           "text": "ice",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Be careful \u2014 there is ice on the path this morning.",
+          "meaning": "Frozen water that is hard and slippery."
         },
         {
           "text": "dance",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She loves to dance to her favourite songs in the kitchen.",
+          "meaning": "To move your body in time to music."
         },
         {
           "text": "fence",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The dog jumped over the wooden fence into next door's garden.",
+          "meaning": "A barrier made of wood or wire around a space."
         },
         {
           "text": "city",
-          "challenge": false
+          "challenge": false,
+          "sentence": "London is a very busy and exciting city to visit.",
+          "meaning": "A large, important town where many people live and work."
         },
         {
           "text": "circle",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Draw a circle around the correct answer on your worksheet.",
+          "meaning": "A perfectly round flat shape with no corners."
         },
         {
           "text": "pencil",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She sharpened her pencil before starting the maths test.",
+          "meaning": "A thin stick of graphite inside wood, used for writing."
         },
         {
           "text": "cycle",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Dad goes for a cycle along the canal path every weekend.",
+          "meaning": "To ride a bicycle, or a series of events that repeat."
         },
         {
           "text": "cell",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Every living thing is made up of tiny cells.",
+          "meaning": "The smallest basic unit of a living thing."
         },
         {
           "text": "race",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Who won the egg-and-spoon race on sports day?",
+          "meaning": "A competition to see who is the fastest."
         },
         {
           "text": "mice",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The mice ate all the crumbs that fell under the table.",
+          "meaning": "More than one mouse \u2014 small furry animals with long tails."
         }
       ]
     },
@@ -210,43 +290,63 @@
       "words": [
         {
           "text": "knee",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She scraped her knee when she fell off her scooter.",
+          "meaning": "The joint in the middle of your leg that lets it bend."
         },
         {
           "text": "knock",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please knock on the door before you come into the room.",
+          "meaning": "To hit a surface sharply to make a noise."
         },
         {
           "text": "knife",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Use a knife and fork to eat your dinner properly.",
+          "meaning": "A tool with a sharp blade used for cutting food."
         },
         {
           "text": "know",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Do you know the answer to question number five?",
+          "meaning": "To have information about something in your mind."
         },
         {
           "text": "knot",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Tie a knot in the end of the thread before sewing.",
+          "meaning": "A fastening made by looping and tightening string or rope."
         },
         {
           "text": "gnaw",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The puppy began to gnaw on its favourite chew toy.",
+          "meaning": "To bite and chew something hard over and over again."
         },
         {
           "text": "gnome",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Gran has a little red gnome sitting in her garden.",
+          "meaning": "A small imaginary creature in fairy tales, often living underground."
         },
         {
           "text": "sign",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The sign on the door said the library was closed.",
+          "meaning": "A board or notice that gives information or a warning."
         },
         {
           "text": "gnat",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A tiny gnat flew straight into his ear at the picnic.",
+          "meaning": "A very small flying insect that bites."
         },
         {
           "text": "kneel",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Kneel down on the mat to stretch your legs properly.",
+          "meaning": "To go down onto one or both knees."
         }
       ]
     },
@@ -259,43 +359,63 @@
       "words": [
         {
           "text": "write",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Write your name neatly at the top of the page.",
+          "meaning": "To make letters or words with a pen or pencil."
         },
         {
           "text": "wrist",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She wore a sparkly bracelet around her wrist.",
+          "meaning": "The thin part of your arm just above your hand."
         },
         {
           "text": "wrap",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Help me wrap the birthday present in pretty paper.",
+          "meaning": "To cover something completely by folding paper or cloth around it."
         },
         {
           "text": "wrong",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He gave the wrong answer, so he tried again.",
+          "meaning": "Not correct; not the right one."
         },
         {
           "text": "wreck",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Divers discovered an old ship wreck on the ocean floor.",
+          "meaning": "Something that has been badly damaged or destroyed."
         },
         {
           "text": "wrinkle",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She spotted a wrinkle in her freshly ironed school skirt.",
+          "meaning": "A small crease or line in fabric or skin."
         },
         {
           "text": "wren",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A tiny wren hopped along the wall in our garden.",
+          "meaning": "A very small brown bird with a short upright tail."
         },
         {
           "text": "wrestle",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The two brothers would often wrestle playfully on the lawn.",
+          "meaning": "To grapple and struggle with someone using your body."
         },
         {
           "text": "wreath",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Mum hung a holly wreath on the front door at Christmas.",
+          "meaning": "A circular decoration made from leaves, flowers, or branches."
         },
         {
           "text": "wriggle",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Stop trying to wriggle out of tidying your bedroom!",
+          "meaning": "To twist and turn your body in small movements."
         }
       ]
     },
@@ -308,43 +428,63 @@
       "words": [
         {
           "text": "table",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Put your books on the table before we start the lesson.",
+          "meaning": "A piece of furniture with a flat top and legs."
         },
         {
           "text": "apple",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She crunched into a juicy red apple at break time.",
+          "meaning": "A round fruit that can be red, green, or yellow."
         },
         {
           "text": "little",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Only a little bit of milk is left in the jug.",
+          "meaning": "Small in size or amount."
         },
         {
           "text": "camel",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A camel can travel for days across the desert without water.",
+          "meaning": "A large animal with one or two humps on its back."
         },
         {
           "text": "tunnel",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The train disappeared into the dark tunnel under the hill.",
+          "meaning": "A long passage dug through the ground or a hill."
         },
         {
           "text": "travel",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We travel to France every summer on the ferry.",
+          "meaning": "To go from one place to another, often far away."
         },
         {
           "text": "metal",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The railings outside the school were made of shiny metal.",
+          "meaning": "A hard material like iron, steel, or gold."
         },
         {
           "text": "pedal",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Push down on the pedal to make the bicycle move faster.",
+          "meaning": "A lever you press with your foot to power a machine."
         },
         {
           "text": "hospital",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The doctor at the hospital helped me when I broke my arm.",
+          "meaning": "A place where ill or injured people go to get better."
         },
         {
           "text": "animal",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A dog is a popular animal to keep as a pet.",
+          "meaning": "A living creature that is not a plant or a person."
         }
       ]
     },
@@ -357,43 +497,63 @@
       "words": [
         {
           "text": "happy",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She felt happy when she saw her best friend at school.",
+          "meaning": "Feeling pleased and full of joy."
         },
         {
           "text": "funny",
-          "challenge": false
+          "challenge": false,
+          "sentence": "His funny joke made the whole class burst out laughing.",
+          "meaning": "Something that makes you laugh or smile."
         },
         {
           "text": "family",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Our family always eats dinner together at the kitchen table.",
+          "meaning": "A group of people related to each other, like parents and children."
         },
         {
           "text": "party",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She blew out all her candles at her birthday party.",
+          "meaning": "A celebration where people come together to have fun."
         },
         {
           "text": "twenty",
-          "challenge": false
+          "challenge": false,
+          "sentence": "There are twenty children sitting on the carpet in the hall.",
+          "meaning": "The number that is two tens, written as 20."
         },
         {
           "text": "story",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please read us one more story before we go to sleep.",
+          "meaning": "A description of events, real or made up, told or written down."
         },
         {
           "text": "sunny",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It was a sunny day, so we ate lunch outside.",
+          "meaning": "Bright with sunshine; lots of light from the sun."
         },
         {
           "text": "lucky",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He felt lucky to find a pound coin on the pavement.",
+          "meaning": "Having good things happen to you by chance."
         },
         {
           "text": "hungry",
-          "challenge": false
+          "challenge": false,
+          "sentence": "After swimming for an hour, she was very hungry.",
+          "meaning": "Feeling like you need food because your tummy is empty."
         },
         {
           "text": "memory",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Gran has a wonderful memory for names and faces.",
+          "meaning": "The ability to remember things from the past."
         }
       ]
     },
@@ -406,43 +566,63 @@
       "words": [
         {
           "text": "babies",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Three babies were asleep in their prams in the park.",
+          "meaning": "More than one baby \u2014 very young children."
         },
         {
           "text": "ladies",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Two ladies sat knitting on a bench in the sunshine.",
+          "meaning": "More than one woman or girl, used as a polite term."
         },
         {
           "text": "cities",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Many cities in the UK have big museums and art galleries.",
+          "meaning": "More than one city \u2014 large, important towns."
         },
         {
           "text": "families",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Both families met at the park for a big picnic.",
+          "meaning": "More than one family \u2014 groups of people related to each other."
         },
         {
           "text": "ponies",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Six ponies trotted around the paddock in a line.",
+          "meaning": "More than one pony \u2014 small horses."
         },
         {
           "text": "stories",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The children read lots of different stories during Book Week.",
+          "meaning": "More than one story \u2014 accounts of events, real or imagined."
         },
         {
           "text": "parties",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She went to three birthday parties in one weekend.",
+          "meaning": "More than one party \u2014 celebrations with friends."
         },
         {
           "text": "countries",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Some children in our class have lived in different countries.",
+          "meaning": "More than one country \u2014 large areas of land with their own governments."
         },
         {
           "text": "hobbies",
-          "challenge": false
+          "challenge": false,
+          "sentence": "His hobbies include football, reading, and drawing dinosaurs.",
+          "meaning": "More than one hobby \u2014 activities you enjoy in your free time."
         },
         {
           "text": "bunnies",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Two fluffy white bunnies hopped around the hutch.",
+          "meaning": "More than one bunny \u2014 a friendly word for rabbits."
         }
       ]
     },
@@ -455,43 +635,63 @@
       "words": [
         {
           "text": "tried",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She tried her hardest at the spelling test today.",
+          "meaning": "Made an effort to do something in the past."
         },
         {
           "text": "tries",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He tries his best at every piece of work he does.",
+          "meaning": "Makes an effort to do something (happening now or usually)."
         },
         {
           "text": "trying",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She is trying to learn her times tables this week.",
+          "meaning": "Making an effort to do something right now."
         },
         {
           "text": "happier",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She felt happier once she had spoken to her teacher.",
+          "meaning": "More happy than before."
         },
         {
           "text": "happiest",
-          "challenge": false
+          "challenge": false,
+          "sentence": "That was the happiest day of the whole summer holiday.",
+          "meaning": "The most happy \u2014 more happy than anyone or anything else."
         },
         {
           "text": "carried",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He carried the heavy shopping bags from the car.",
+          "meaning": "Held and moved something from one place to another (past)."
         },
         {
           "text": "carrying",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She is carrying all her PE kit in a big bag.",
+          "meaning": "Holding and moving something right now."
         },
         {
           "text": "dried",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She dried her hair with a towel after swimming.",
+          "meaning": "Removed water from something (past tense)."
         },
         {
           "text": "hurried",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They hurried down the road so they would not be late.",
+          "meaning": "Moved or did something faster than normal (past tense)."
         },
         {
           "text": "replying",
-          "challenge": true
+          "challenge": true,
+          "sentence": "She is replying to her pen pal's letter right now.",
+          "meaning": "Writing or saying something in response to a message."
         }
       ]
     },
@@ -504,43 +704,63 @@
       "words": [
         {
           "text": "hoping",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She is hoping it will be sunny for the school fete.",
+          "meaning": "Wanting something good to happen."
         },
         {
           "text": "hoped",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He hoped the dentist would not take too long.",
+          "meaning": "Wanted something good to happen (past tense)."
         },
         {
           "text": "shining",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The sun was shining brightly through the classroom windows.",
+          "meaning": "Giving out or reflecting a bright light."
         },
         {
           "text": "riding",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He loves riding his bike along the towpath by the canal.",
+          "meaning": "Sitting on and travelling with something like a horse or bike."
         },
         {
           "text": "rider",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The rider wore a hard hat to keep her head safe.",
+          "meaning": "A person who rides a horse, bike, or other vehicle."
         },
         {
           "text": "baking",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Mum is baking a chocolate cake for the school fair.",
+          "meaning": "Cooking food in the oven using dry heat."
         },
         {
           "text": "baker",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The baker got up at four in the morning to make fresh bread.",
+          "meaning": "Someone who bakes and sells bread and cakes."
         },
         {
           "text": "smiling",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was smiling when she got full marks on her test.",
+          "meaning": "Making a happy expression by curving your mouth upwards."
         },
         {
           "text": "smiled",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He smiled when his teacher said his writing was brilliant.",
+          "meaning": "Made a happy expression (past tense)."
         },
         {
           "text": "deciding",
-          "challenge": true
+          "challenge": true,
+          "sentence": "She is deciding which book to read next from the shelf.",
+          "meaning": "Thinking carefully and then choosing between options."
         }
       ]
     },
@@ -553,43 +773,63 @@
       "words": [
         {
           "text": "hopping",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A frog was hopping across the lily pads on the pond.",
+          "meaning": "Jumping on one or both legs in small, quick jumps."
         },
         {
           "text": "hopped",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The little rabbit hopped away into the long grass.",
+          "meaning": "Jumped on one or both legs (past tense)."
         },
         {
           "text": "running",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was running so fast that she won the race easily.",
+          "meaning": "Moving quickly by taking rapid steps."
         },
         {
           "text": "runner",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Every runner was given a medal at the end of the race.",
+          "meaning": "A person who runs in a race or for exercise."
         },
         {
           "text": "biggest",
-          "challenge": false
+          "challenge": false,
+          "sentence": "That is the biggest strawberry I have ever seen in my life!",
+          "meaning": "The most large \u2014 larger than everything else."
         },
         {
           "text": "sadder",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He felt sadder when his best friend moved to a new school.",
+          "meaning": "More sad than before."
         },
         {
           "text": "patted",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She gently patted the dog on its soft furry head.",
+          "meaning": "Touched something lightly and repeatedly with a flat hand."
         },
         {
           "text": "humming",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was humming her favourite song while she painted.",
+          "meaning": "Making a continuous musical sound with your mouth closed."
         },
         {
           "text": "swimmer",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She is a fantastic swimmer who wins medals at galas.",
+          "meaning": "A person who swims, especially in races."
         },
         {
           "text": "forgetting",
-          "challenge": true
+          "challenge": true,
+          "sentence": "He keeps forgetting to bring his reading book to school.",
+          "meaning": "Not being able to remember something."
         }
       ]
     },
@@ -602,43 +842,63 @@
       "words": [
         {
           "text": "wander",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We love to wander through the woods on a Sunday afternoon.",
+          "meaning": "To walk slowly without a fixed destination."
         },
         {
           "text": "swan",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A beautiful white swan glided silently across the lake.",
+          "meaning": "A large white bird with a long neck that lives near water."
         },
         {
           "text": "quantity",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can you measure the correct quantity of flour for the recipe?",
+          "meaning": "An amount or number of something."
         },
         {
           "text": "squash",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Would you like a glass of orange squash after football?",
+          "meaning": "A sweet drink made from fruit juice, or to press something flat."
         },
         {
           "text": "wasp",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A wasp landed on her sandwich at the summer picnic.",
+          "meaning": "A yellow-and-black flying insect that can sting."
         },
         {
           "text": "quality",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She always does quality work because she takes her time.",
+          "meaning": "How good something is."
         },
         {
           "text": "quarrel",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They had a quarrel over whose turn it was to choose the game.",
+          "meaning": "An angry argument or disagreement."
         },
         {
           "text": "wallet",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Dad keeps his cards and money safe inside his brown wallet.",
+          "meaning": "A small flat case for carrying money and cards."
         },
         {
           "text": "swap",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can I swap my orange for your apple?",
+          "meaning": "To exchange one thing for another."
         },
         {
           "text": "squabble",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Stop the squabble \u2014 there is plenty of cake for everyone.",
+          "meaning": "A noisy argument about something unimportant."
         }
       ]
     },
@@ -651,43 +911,63 @@
       "words": [
         {
           "text": "word",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She learnt a new word in French today at school.",
+          "meaning": "A unit of language with a meaning."
         },
         {
           "text": "work",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Hard work and practice help you get better at spelling.",
+          "meaning": "An activity that needs effort, often done as a job."
         },
         {
           "text": "world",
-          "challenge": false
+          "challenge": false,
+          "sentence": "One day she would love to travel all around the world.",
+          "meaning": "The planet Earth and all the people and places on it."
         },
         {
           "text": "worm",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A pink worm wriggled out of the soil in the garden.",
+          "meaning": "A small creature with a long soft body and no legs."
         },
         {
           "text": "worth",
-          "challenge": false
+          "challenge": false,
+          "sentence": "All your hard work is really worth it in the end.",
+          "meaning": "Having a value equal to something."
         },
         {
           "text": "worship",
-          "challenge": false
+          "challenge": false,
+          "sentence": "People of many faiths worship in their own special way.",
+          "meaning": "To show great love and respect for a god."
         },
         {
           "text": "worse",
-          "challenge": false
+          "challenge": false,
+          "sentence": "His cold got worse when he went out in the rain.",
+          "meaning": "More bad or unpleasant than before."
         },
         {
           "text": "worst",
-          "challenge": false
+          "challenge": false,
+          "sentence": "That was the worst storm the village had seen in years.",
+          "meaning": "The most bad \u2014 worse than everything else."
         },
         {
           "text": "network",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Our school is part of a network of local primary schools.",
+          "meaning": "A connected group of things or people."
         },
         {
           "text": "wordless",
-          "challenge": true
+          "challenge": true,
+          "sentence": "She was wordless with surprise when she saw the huge gift.",
+          "meaning": "Unable to speak, usually because of surprise or emotion."
         }
       ]
     },
@@ -700,43 +980,63 @@
       "words": [
         {
           "text": "warm",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Curl up with a warm blanket and a good book.",
+          "meaning": "Having a comfortable level of heat; not cold."
         },
         {
           "text": "ward",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The children's ward at the hospital was painted bright yellow.",
+          "meaning": "A room in a hospital where patients are looked after."
         },
         {
           "text": "warn",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please warn me if you see a wasp anywhere near me!",
+          "meaning": "To tell someone about a possible danger before it happens."
         },
         {
           "text": "wart",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The witch in the story had a wart on the end of her nose.",
+          "meaning": "A small, hard lump that can grow on the skin."
         },
         {
           "text": "dwarf",
-          "challenge": false
+          "challenge": false,
+          "sentence": "In the fairy tale, Snow White lived with seven dwarfs.",
+          "meaning": "A mythical creature much smaller than a human, or a very small version of something."
         },
         {
           "text": "award",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She won an award for her brilliant science project.",
+          "meaning": "A prize given to someone for doing something very well."
         },
         {
           "text": "reward",
-          "challenge": false
+          "challenge": false,
+          "sentence": "His reward for tidying his room was extra screen time.",
+          "meaning": "Something nice given to someone for good behaviour or effort."
         },
         {
           "text": "swarm",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A swarm of bees flew out of the hive into the garden.",
+          "meaning": "A large group of insects moving together."
         },
         {
           "text": "towards",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She walked quickly towards the school gate at home time.",
+          "meaning": "In the direction of something."
         },
         {
           "text": "warden",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The park warden made sure everyone followed the rules.",
+          "meaning": "A person in charge of looking after a place or enforcing rules."
         }
       ]
     },
@@ -749,43 +1049,63 @@
       "words": [
         {
           "text": "treasure",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They dug up an old box and found treasure inside.",
+          "meaning": "Very valuable things, like gold, jewels, or something precious to you."
         },
         {
           "text": "measure",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Use a ruler to measure the length of your pencil.",
+          "meaning": "To find out the size or amount of something."
         },
         {
           "text": "pleasure",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It was a pleasure to meet your wonderful family today.",
+          "meaning": "A feeling of enjoyment or happiness."
         },
         {
           "text": "usual",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She sat in her usual seat at the front of the class.",
+          "meaning": "Normal; the same as always."
         },
         {
           "text": "television",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We watched a programme about ocean creatures on television.",
+          "meaning": "An electronic device that shows moving pictures and sound."
         },
         {
           "text": "casual",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Friday is casual clothes day at our school.",
+          "meaning": "Relaxed and informal; not special or formal."
         },
         {
           "text": "visual",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She used a visual display to help explain her ideas.",
+          "meaning": "Something seen with the eyes; relating to sight."
         },
         {
           "text": "leisure",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Reading is her favourite leisure activity at the weekend.",
+          "meaning": "Free time when you can relax and do things you enjoy."
         },
         {
           "text": "azure",
-          "challenge": true
+          "challenge": true,
+          "sentence": "On holiday, the sky above the sea was a perfect azure blue.",
+          "meaning": "A bright, clear blue colour, like a sunny sky."
         },
         {
           "text": "unusual",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It is unusual to see snow in September in England.",
+          "meaning": "Not normal; different from what usually happens."
         }
       ]
     },
@@ -798,43 +1118,63 @@
       "words": [
         {
           "text": "enjoyment",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She got lots of enjoyment from painting pictures in her sketchbook.",
+          "meaning": "The feeling of pleasure from doing something you like."
         },
         {
           "text": "argument",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They settled their argument by talking calmly to each other.",
+          "meaning": "A disagreement between people, often spoken loudly."
         },
         {
           "text": "government",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The government makes the laws that everyone in the country follows.",
+          "meaning": "The group of people who run and make decisions for a country."
         },
         {
           "text": "movement",
-          "challenge": false
+          "challenge": false,
+          "sentence": "There was a sudden movement in the long grass near the pond.",
+          "meaning": "The act of moving or changing position."
         },
         {
           "text": "statement",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The teacher asked him to make a clear statement about what he saw.",
+          "meaning": "A sentence that gives information about something."
         },
         {
           "text": "equipment",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Always put the PE equipment away tidily after the lesson.",
+          "meaning": "The tools or items needed for a particular activity."
         },
         {
           "text": "payment",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Mum made a payment for the school trip online.",
+          "meaning": "Money given in exchange for something."
         },
         {
           "text": "treatment",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The vet gave the injured bird careful treatment.",
+          "meaning": "Care given to someone who is ill or hurt."
         },
         {
           "text": "excitement",
-          "challenge": false
+          "challenge": false,
+          "sentence": "There was great excitement on the morning of the school trip.",
+          "meaning": "A strong feeling of happiness and eagerness."
         },
         {
           "text": "arrangement",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Mum made an arrangement to collect us from school at four.",
+          "meaning": "A plan or preparation made in advance."
         }
       ]
     },
@@ -847,43 +1187,63 @@
       "words": [
         {
           "text": "happiness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Playing with her puppy fills her with pure happiness.",
+          "meaning": "A feeling of great joy and contentment."
         },
         {
           "text": "kindness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Showing kindness to others makes the world a nicer place.",
+          "meaning": "The quality of being friendly, generous, and caring."
         },
         {
           "text": "sadness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She felt a deep sadness when her goldfish died.",
+          "meaning": "A feeling of unhappiness or sorrow."
         },
         {
           "text": "darkness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She switched on her torch when it became total darkness.",
+          "meaning": "The absence of light; when it is very dark."
         },
         {
           "text": "illness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He missed three days of school because of his illness.",
+          "meaning": "A sickness or disease that makes you feel unwell."
         },
         {
           "text": "weakness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "His one weakness in maths was remembering his times tables.",
+          "meaning": "A point where someone or something is not as strong."
         },
         {
           "text": "thickness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Check the thickness of the card before you cut it.",
+          "meaning": "How thick or wide something is from one side to the other."
         },
         {
           "text": "business",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Gran runs a small business selling homemade jams and chutneys.",
+          "meaning": "Work that involves buying and selling things or providing a service."
         },
         {
           "text": "awareness",
-          "challenge": true
+          "challenge": true,
+          "sentence": "Road safety awareness is very important for young children.",
+          "meaning": "Knowing about and understanding something."
         },
         {
           "text": "fairness",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The teacher was known for her fairness towards all the children.",
+          "meaning": "Treating everyone equally and in the right way."
         }
       ]
     },
@@ -896,43 +1256,63 @@
       "words": [
         {
           "text": "careful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Be careful when you carry those mugs \u2014 they are heavy.",
+          "meaning": "Doing things with attention to avoid mistakes or accidents."
         },
         {
           "text": "helpful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It is really helpful when you tidy up without being asked.",
+          "meaning": "Making things easier for someone else; being useful."
         },
         {
           "text": "useful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A dictionary is a very useful book to have on your shelf.",
+          "meaning": "Able to help or be used for something."
         },
         {
           "text": "playful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The playful kitten kept swatting the ball of wool.",
+          "meaning": "Full of fun and wanting to play."
         },
         {
           "text": "wonderful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Thank you for a truly wonderful performance this afternoon.",
+          "meaning": "Extremely good or impressive; causing wonder."
         },
         {
           "text": "colourful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She wore a colourful outfit to the fancy dress party.",
+          "meaning": "Full of bright, varied colours."
         },
         {
           "text": "thankful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He was thankful that his friend had saved him a seat.",
+          "meaning": "Feeling or showing gratitude for something."
         },
         {
           "text": "painful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The injection was a bit painful, but it was over quickly.",
+          "meaning": "Causing physical or emotional pain."
         },
         {
           "text": "powerful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The powerful wind blew the umbrellas inside out.",
+          "meaning": "Having great strength or force."
         },
         {
           "text": "beautiful",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The sunset over the sea was the most beautiful thing she had ever seen.",
+          "meaning": "Very pleasing to look at or hear."
         }
       ]
     },
@@ -945,43 +1325,63 @@
       "words": [
         {
           "text": "careless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A careless mistake cost her a mark on the spelling test.",
+          "meaning": "Not taking enough care; making avoidable mistakes."
         },
         {
           "text": "helpless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The tiny kitten looked helpless until we picked it up.",
+          "meaning": "Unable to look after yourself or do things without help."
         },
         {
           "text": "useless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A broken pencil is useless without a sharpener nearby.",
+          "meaning": "Having no practical use; not working properly."
         },
         {
           "text": "harmless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The spider in the bath is harmless \u2014 it will not bite.",
+          "meaning": "Not able to cause any harm or damage."
         },
         {
           "text": "endless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It seemed like the walk through the forest was endless.",
+          "meaning": "Having no end; continuing for a very long time."
         },
         {
           "text": "homeless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The charity helps homeless people find safe places to stay.",
+          "meaning": "Having no home to live in."
         },
         {
           "text": "painless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The nurse promised the injection would be completely painless.",
+          "meaning": "Causing no pain at all."
         },
         {
           "text": "fearless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The fearless firefighter ran into the burning building to help.",
+          "meaning": "Having no fear; very brave."
         },
         {
           "text": "hopeless",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She felt hopeless about the maths test until her friend helped her.",
+          "meaning": "Feeling as if there is no chance of things getting better."
         },
         {
           "text": "restless",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The children were restless on the long coach journey home.",
+          "meaning": "Unable to keep still or relax."
         }
       ]
     },
@@ -994,43 +1394,63 @@
       "words": [
         {
           "text": "quickly",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She quickly packed her bag so she would not be late.",
+          "meaning": "Done with speed; in a fast way."
         },
         {
           "text": "slowly",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The snail moved slowly across the wet pavement.",
+          "meaning": "Done without much speed; in a slow way."
         },
         {
           "text": "sadly",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He sadly said goodbye to his teacher at the end of the year.",
+          "meaning": "In an unhappy way; with sadness."
         },
         {
           "text": "badly",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He hurt his knee badly when he fell off the climbing frame.",
+          "meaning": "In a poor or harmful way; not well."
         },
         {
           "text": "really",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was really pleased when she got all ten words right.",
+          "meaning": "Used to emphasise how true or strong something is; very."
         },
         {
           "text": "finally",
-          "challenge": false
+          "challenge": false,
+          "sentence": "After months of practice, she finally learned to ride her bike.",
+          "meaning": "After a long time or after several attempts; at last."
         },
         {
           "text": "suddenly",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Suddenly the lights went out and everyone gasped.",
+          "meaning": "Happening quickly and without any warning."
         },
         {
           "text": "gently",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She gently stroked the sleeping cat on the sofa.",
+          "meaning": "In a soft, careful, and kind way."
         },
         {
           "text": "simply",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The teacher explained it simply so everyone understood.",
+          "meaning": "In a clear, easy way; without complication."
         },
         {
           "text": "easily",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He easily remembered all his spellings because he had practised.",
+          "meaning": "Without difficulty; in an effortless way."
         }
       ]
     },
@@ -1043,43 +1463,63 @@
       "words": [
         {
           "text": "can't",
-          "challenge": false
+          "challenge": false,
+          "sentence": "I can't reach the top shelf \u2014 it is too high.",
+          "meaning": "Short for 'cannot' \u2014 not able to do something."
         },
         {
           "text": "don't",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please don't run in the corridor \u2014 it is not safe.",
+          "meaning": "Short for 'do not' \u2014 used to tell someone not to do something."
         },
         {
           "text": "didn't",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She didn't hear the bell because she had her earphones in.",
+          "meaning": "Short for 'did not' \u2014 something that did not happen."
         },
         {
           "text": "isn't",
-          "challenge": false
+          "challenge": false,
+          "sentence": "That isn't the right classroom \u2014 yours is next door.",
+          "meaning": "Short for 'is not'."
         },
         {
           "text": "wasn't",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He wasn't in school on Monday because he had a cold.",
+          "meaning": "Short for 'was not'."
         },
         {
           "text": "haven't",
-          "challenge": false
+          "challenge": false,
+          "sentence": "I haven't finished my homework yet \u2014 I need more time.",
+          "meaning": "Short for 'have not'."
         },
         {
           "text": "I'll",
-          "challenge": false
+          "challenge": false,
+          "sentence": "I'll bring my library book back on Friday, I promise.",
+          "meaning": "Short for 'I will'."
         },
         {
           "text": "we're",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We're going on a school trip to the farm next week.",
+          "meaning": "Short for 'we are'."
         },
         {
           "text": "it's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It's raining outside, so we are having indoor break today.",
+          "meaning": "Short for 'it is'."
         },
         {
           "text": "they're",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They're coming to the Christmas concert to watch us perform.",
+          "meaning": "Short for 'they are'."
         }
       ]
     },
@@ -1092,43 +1532,63 @@
       "words": [
         {
           "text": "dog's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The dog's lead was hanging by the front door.",
+          "meaning": "Something belonging to the dog."
         },
         {
           "text": "cat's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The cat's bowl was filled with fresh food every morning.",
+          "meaning": "Something belonging to the cat."
         },
         {
           "text": "girl's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The girl's coat was left on the cloakroom peg.",
+          "meaning": "Something belonging to one girl."
         },
         {
           "text": "boy's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The boy's trainers were muddy after playing football.",
+          "meaning": "Something belonging to one boy."
         },
         {
           "text": "teacher's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The teacher's desk was covered in books and coloured pens.",
+          "meaning": "Something belonging to the teacher."
         },
         {
           "text": "sister's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She borrowed her sister's red hair clip for the day.",
+          "meaning": "Something belonging to a sister."
         },
         {
           "text": "mother's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We made a special card for Mother's Day as a surprise.",
+          "meaning": "Something belonging to a mother."
         },
         {
           "text": "friend's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She left her coat at her friend's house after the sleepover.",
+          "meaning": "Something belonging to a friend."
         },
         {
           "text": "bird's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We watched from the window as the bird's chicks hatched.",
+          "meaning": "Something belonging to the bird."
         },
         {
           "text": "child's",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A child's imagination is one of the most wonderful things.",
+          "meaning": "Something belonging to one child."
         }
       ]
     },
@@ -1141,43 +1601,63 @@
       "words": [
         {
           "text": "station",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We caught the train from the station early on Saturday morning.",
+          "meaning": "A place where trains or buses stop for passengers."
         },
         {
           "text": "action",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Quick action by the teacher stopped the accident from happening.",
+          "meaning": "Something that you do; the process of doing something."
         },
         {
           "text": "nation",
-          "challenge": false
+          "challenge": false,
+          "sentence": "People from every nation came to watch the Olympic Games.",
+          "meaning": "A large group of people who share a country and identity."
         },
         {
           "text": "motion",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The motion of the waves made some passengers feel sick.",
+          "meaning": "The act of moving; movement."
         },
         {
           "text": "fiction",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Her favourite fiction series is about a girl who can fly.",
+          "meaning": "Stories and books that are made up, not true."
         },
         {
           "text": "mention",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Did I mention that we are getting a class hamster?",
+          "meaning": "To say or write something briefly, without going into detail."
         },
         {
           "text": "section",
-          "challenge": false
+          "challenge": false,
+          "sentence": "You will find atlases in the geography section of the library.",
+          "meaning": "One part of something larger."
         },
         {
           "text": "invention",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The telephone is one of the greatest inventions in history.",
+          "meaning": "Something new that has been created for the first time."
         },
         {
           "text": "direction",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Follow the signs to go in the right direction for the park.",
+          "meaning": "The way you need to travel to get somewhere."
         },
         {
           "text": "celebration",
-          "challenge": true
+          "challenge": true,
+          "sentence": "The street party was a wonderful celebration of the summer.",
+          "meaning": "An event or activity to mark something special and joyful."
         }
       ]
     },
@@ -1190,43 +1670,63 @@
       "words": [
         {
           "text": "there",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Put the books over there on the shelf by the door.",
+          "meaning": "In, at, or to that place."
         },
         {
           "text": "their",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The children hung their coats on the correct pegs.",
+          "meaning": "Belonging to them."
         },
         {
           "text": "they're",
-          "challenge": false
+          "challenge": false,
+          "sentence": "They're coming to the Christmas concert to watch us perform.",
+          "meaning": "Short for 'they are'."
         },
         {
           "text": "here",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Come and sit here next to me on the carpet.",
+          "meaning": "In this place; nearby."
         },
         {
           "text": "hear",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can you hear the rain beating on the classroom windows?",
+          "meaning": "To sense sound with your ears."
         },
         {
           "text": "see",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can you see the rainbow through the window?",
+          "meaning": "To notice or look at something with your eyes."
         },
         {
           "text": "sea",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We collected shells on the beach beside the sea.",
+          "meaning": "A large area of salty water, smaller than an ocean."
         },
         {
           "text": "to",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She walked to school with her dad every morning.",
+          "meaning": "In the direction of; used before a verb to show purpose."
         },
         {
           "text": "too",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He wanted some cake too \u2014 not just his sister.",
+          "meaning": "Also; more than needed."
         },
         {
           "text": "two",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She has two pet rabbits called Biscuit and Pepper.",
+          "meaning": "The number 2."
         }
       ]
     },
@@ -1239,43 +1739,63 @@
       "words": [
         {
           "text": "bear",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A polar bear rolled in the snow at the zoo.",
+          "meaning": "A large, heavy wild animal with thick fur."
         },
         {
           "text": "bare",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She walked across the warm sand with bare feet.",
+          "meaning": "Not covered; having nothing on top."
         },
         {
           "text": "break",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We have a short break in the morning to eat our snacks.",
+          "meaning": "A pause in an activity; also to smash something apart."
         },
         {
           "text": "brake",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She squeezed the brake to slow her bicycle down on the hill.",
+          "meaning": "A device that slows or stops a moving vehicle."
         },
         {
           "text": "night",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She read under the duvet with a torch late at night.",
+          "meaning": "The time when it is dark outside."
         },
         {
           "text": "knight",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The brave knight rode across the drawbridge to save the princess.",
+          "meaning": "A soldier in armour who served a king or queen in medieval times."
         },
         {
           "text": "sun",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The sun came out and the whole playground felt warm.",
+          "meaning": "The star at the centre of our solar system that gives us heat and light."
         },
         {
           "text": "son",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Their son started at our school in September.",
+          "meaning": "A male child in relation to his parents."
         },
         {
           "text": "be",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Try to be as kind as you can to everyone today.",
+          "meaning": "To exist; to happen; used in forming verbs."
         },
         {
           "text": "bee",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A busy bee landed on the lavender in the garden.",
+          "meaning": "A flying insect with yellow and black stripes that makes honey."
         }
       ]
     },
@@ -1288,43 +1808,63 @@
       "words": [
         {
           "text": "blue",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She painted the sky a deep blue in her picture.",
+          "meaning": "The colour of a clear sky."
         },
         {
           "text": "blew",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She blew out all ten candles in one big breath.",
+          "meaning": "Past tense of blow \u2014 pushed air out."
         },
         {
           "text": "whole",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He ate the whole pizza without leaving any slices!",
+          "meaning": "All of something; the complete amount."
         },
         {
           "text": "hole",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The rabbit disappeared down a dark hole in the ground.",
+          "meaning": "An opening or gap in something."
         },
         {
           "text": "where",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can you tell me where you left your reading book?",
+          "meaning": "In or to what place."
         },
         {
           "text": "wear",
-          "challenge": false
+          "challenge": false,
+          "sentence": "You must wear your PE kit on a Wednesday.",
+          "meaning": "To have clothing or accessories on your body."
         },
         {
           "text": "one",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was the one who found the golden ticket in her bag.",
+          "meaning": "The number 1; a single thing or person."
         },
         {
           "text": "won",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Our school won the inter-school spelling competition!",
+          "meaning": "Past tense of win \u2014 came first in a competition."
         },
         {
           "text": "quite",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The film was quite exciting \u2014 I really enjoyed it.",
+          "meaning": "To a certain degree; fairly but not completely."
         },
         {
           "text": "quiet",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please be quiet while I read you the next chapter.",
+          "meaning": "Making little or no noise."
         }
       ]
     },
@@ -1337,43 +1877,63 @@
       "words": [
         {
           "text": "door",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please close the door quietly when you leave the room.",
+          "meaning": "A panel that opens and closes to let you in or out."
         },
         {
           "text": "floor",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She sat cross-legged on the floor to listen to the story.",
+          "meaning": "The flat surface that you walk on inside a building."
         },
         {
           "text": "poor",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Poor Alfie fell over in the playground and hurt his knee.",
+          "meaning": "Having very little money, or used to show sympathy."
         },
         {
           "text": "because",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was smiling because she had got all her spellings right.",
+          "meaning": "For the reason that."
         },
         {
           "text": "find",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can you find the page where we left off yesterday?",
+          "meaning": "To discover or come across something."
         },
         {
           "text": "kind",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It was very kind of you to share your crayons with me.",
+          "meaning": "Friendly, generous, and caring towards others."
         },
         {
           "text": "mind",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Do you mind if I sit next to you at lunch?",
+          "meaning": "Your thoughts and feelings, or to care about something."
         },
         {
           "text": "behind",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She left her lunchbox behind on the shelf by mistake.",
+          "meaning": "At or to the back of something."
         },
         {
           "text": "child",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Every child in the class got a sticker for their hard work.",
+          "meaning": "A young person who is not yet an adult."
         },
         {
           "text": "wild",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Wild animals need a safe habitat to survive and thrive.",
+          "meaning": "Living in nature; not tamed by humans."
         }
       ]
     },
@@ -1386,43 +1946,63 @@
       "words": [
         {
           "text": "climb",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He loves to climb the big oak tree in the park.",
+          "meaning": "To go up something using your hands and feet."
         },
         {
           "text": "most",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Most children in the class chose to read at lunch time.",
+          "meaning": "The greatest in amount or number; nearly all."
         },
         {
           "text": "only",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was the only one who remembered to bring her book.",
+          "meaning": "Just; no more than; with nothing else."
         },
         {
           "text": "both",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Both sisters won a prize at the school talent show.",
+          "meaning": "Two things or people together; not just one."
         },
         {
           "text": "old",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The old library book had yellowed pages and a faded cover.",
+          "meaning": "Having existed for a long time."
         },
         {
           "text": "cold",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Wrap up warm \u2014 it is cold and frosty outside this morning.",
+          "meaning": "Having a low temperature; not warm."
         },
         {
           "text": "gold",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She won a gold medal in the swimming gala.",
+          "meaning": "A shiny yellow precious metal, often used for medals and jewellery."
         },
         {
           "text": "hold",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Hold my hand when we cross the busy road.",
+          "meaning": "To keep something in your hands or arms."
         },
         {
           "text": "told",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He told his teacher about the wasp's nest in the hedge.",
+          "meaning": "Past tense of tell \u2014 shared information with someone."
         },
         {
           "text": "every",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She practises her spellings every evening before bed.",
+          "meaning": "Each one without exception; all of them."
         }
       ]
     },
@@ -1435,43 +2015,63 @@
       "words": [
         {
           "text": "everybody",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Everybody cheered when the team scored the winning goal.",
+          "meaning": "Every single person; all people."
         },
         {
           "text": "even",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Even on a rainy day, they found something fun to do.",
+          "meaning": "Used to emphasise something surprising; flat and equal."
         },
         {
           "text": "great",
-          "challenge": false
+          "challenge": false,
+          "sentence": "You have done a great job on your project \u2014 well done!",
+          "meaning": "Very large, important, or very good."
         },
         {
           "text": "steak",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Dad cooked a steak on the barbecue for a special dinner.",
+          "meaning": "A thick slice of beef or fish, usually cooked quickly."
         },
         {
           "text": "pretty",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She drew a pretty pattern of flowers around her bookmark.",
+          "meaning": "Pleasing to look at; also used to mean fairly or quite."
         },
         {
           "text": "beautiful",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The sunset over the sea was the most beautiful thing she had ever seen.",
+          "meaning": "Very pleasing to look at or hear."
         },
         {
           "text": "after",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We can play outside after we have eaten our lunch.",
+          "meaning": "Later in time; following something."
         },
         {
           "text": "fast",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The cheetah is the fastest animal on land in the world.",
+          "meaning": "Moving or doing things quickly."
         },
         {
           "text": "last",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was the last person to sit down in the assembly hall.",
+          "meaning": "Coming after everyone or everything else; most recent."
         },
         {
           "text": "past",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Walk straight past the post office and turn left at the junction.",
+          "meaning": "Gone by; a time that has already happened; beyond a place."
         }
       ]
     },
@@ -1484,43 +2084,63 @@
       "words": [
         {
           "text": "father",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Her father reads her a bedtime story every single night.",
+          "meaning": "A male parent."
         },
         {
           "text": "class",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Our class is learning about the Victorians this half term.",
+          "meaning": "A group of children taught together, or a category."
         },
         {
           "text": "grass",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The grass was wet with dew early on Tuesday morning.",
+          "meaning": "Green plants with thin leaves that cover lawns and fields."
         },
         {
           "text": "pass",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Pass the pencils around the table so everyone has one.",
+          "meaning": "To hand something to someone; to go by; to succeed in a test."
         },
         {
           "text": "plant",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We planted sunflower seeds and watched them grow all summer.",
+          "meaning": "A living thing that grows in soil and uses sunlight to make food."
         },
         {
           "text": "path",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Follow the path through the woods until you reach the gate.",
+          "meaning": "A track made for people to walk along."
         },
         {
           "text": "bath",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She had a warm bath with bubbles before going to bed.",
+          "meaning": "A large tub that you fill with water to wash in."
         },
         {
           "text": "hour",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We spent an hour doing art in the sunshine outside.",
+          "meaning": "A period of sixty minutes."
         },
         {
           "text": "move",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please move your chair so there is more room for everyone.",
+          "meaning": "To go from one place to another; to shift position."
         },
         {
           "text": "improve",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She worked hard every week to improve her handwriting.",
+          "meaning": "To get better at something."
         }
       ]
     },
@@ -1533,43 +2153,63 @@
       "words": [
         {
           "text": "prove",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Can you prove that your answer is correct by showing your working?",
+          "meaning": "To show that something is definitely true."
         },
         {
           "text": "sure",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Are you sure that you put your homework in the tray?",
+          "meaning": "Completely certain; having no doubt."
         },
         {
           "text": "sugar",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Eating too much sugar is not good for your teeth.",
+          "meaning": "A sweet white substance used in cooking and baking."
         },
         {
           "text": "eye",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She closed one eye and looked through the telescope.",
+          "meaning": "The part of the body you use to see."
         },
         {
           "text": "could",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She could hear music playing in the hall next door.",
+          "meaning": "Was able to; used to show possibility."
         },
         {
           "text": "should",
-          "challenge": false
+          "challenge": false,
+          "sentence": "You should always listen carefully to the instructions.",
+          "meaning": "Used to say something is the right or expected thing to do."
         },
         {
           "text": "would",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Would you like to read the next chapter of our class novel?",
+          "meaning": "Used to talk about what someone wants or what might happen."
         },
         {
           "text": "who",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Who left their umbrella on the cloakroom floor?",
+          "meaning": "Which person."
         },
         {
           "text": "whole",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He ate the whole pizza without leaving any slices!",
+          "meaning": "All of something; the complete amount."
         },
         {
           "text": "any",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Is there any paint left or have we used it all?",
+          "meaning": "One or some; used in questions or negatives."
         }
       ]
     },
@@ -1582,43 +2222,63 @@
       "words": [
         {
           "text": "many",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Many children in our school walk or cycle to get here.",
+          "meaning": "A large number of people or things."
         },
         {
           "text": "clothes",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Hang your clothes on the peg when you get changed for PE.",
+          "meaning": "Things you wear on your body, such as shirts and trousers."
         },
         {
           "text": "busy",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The post office was very busy on Christmas Eve.",
+          "meaning": "Having a lot to do; not free."
         },
         {
           "text": "people",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Lots of people came to watch the school play.",
+          "meaning": "Human beings, especially a large group."
         },
         {
           "text": "water",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Drink plenty of water throughout the day to stay healthy.",
+          "meaning": "The clear liquid that all living things need to survive."
         },
         {
           "text": "again",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She read the poem again and again until she knew it by heart.",
+          "meaning": "One more time; returning to an earlier state."
         },
         {
           "text": "half",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Cut the apple in half so you can share it equally.",
+          "meaning": "One of two equal parts of something."
         },
         {
           "text": "money",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She saved all her birthday money to buy a new book.",
+          "meaning": "Coins and notes used to buy things."
         },
         {
           "text": "Christmas",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Our class made paper chains to decorate the room for Christmas.",
+          "meaning": "A holiday on 25th December celebrating the birth of Jesus."
         },
         {
           "text": "parents",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Her parents came to watch the sports day races.",
+          "meaning": "A person's mother and father."
         }
       ]
     },
@@ -1631,43 +2291,63 @@
       "words": [
         {
           "text": "everyone",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Everyone stood up when the head teacher walked into the hall.",
+          "meaning": "Every person; all people in a group."
         },
         {
           "text": "though",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Even though it was cold, they played outside at lunch.",
+          "meaning": "Despite the fact that; used to introduce a contrast."
         },
         {
           "text": "although",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Although the test was tricky, she felt she had done her best.",
+          "meaning": "Despite something; even if something is true."
         },
         {
           "text": "thought",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He thought carefully before writing his answer in full sentences.",
+          "meaning": "Something you think about in your mind; past tense of think."
         },
         {
           "text": "through",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She walked through the park to get to her grandmother's house.",
+          "meaning": "Moving from one side to the other; by means of."
         },
         {
           "text": "world",
-          "challenge": false
+          "challenge": false,
+          "sentence": "One day she would love to travel all around the world.",
+          "meaning": "The planet Earth and all the people and places on it."
         },
         {
           "text": "or",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Would you prefer orange juice or apple juice with your lunch?",
+          "meaning": "Used to offer a choice between two things."
         },
         {
           "text": "Mr",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Mr Johnson teaches Year 2 at our primary school.",
+          "meaning": "A title used before a man's surname."
         },
         {
           "text": "Mrs",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Mrs Patel is our headteacher and she is always very kind.",
+          "meaning": "A title used before a married woman's surname."
         },
         {
           "text": "mother",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Her mother helped her practise her spellings every evening.",
+          "meaning": "A female parent."
         }
       ]
     },
@@ -1680,43 +2360,63 @@
       "words": [
         {
           "text": "necessary",
-          "challenge": false
+          "challenge": false,
+          "sentence": "It is necessary to bring your reading book every day.",
+          "meaning": "Needed; something that must be done or had."
         },
         {
           "text": "separate",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please separate your recyclables from your general waste.",
+          "meaning": "To divide; to keep apart; not together."
         },
         {
           "text": "different",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Every child in the class has a different favourite book.",
+          "meaning": "Not the same; unlike something else."
         },
         {
           "text": "favourite",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Her favourite subject at school is art and design.",
+          "meaning": "The one you like most of all."
         },
         {
           "text": "interesting",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She found volcanoes really interesting after the science lesson.",
+          "meaning": "Making you want to know more; not boring."
         },
         {
           "text": "especially",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She loves science, especially experiments with water and colours.",
+          "meaning": "More than others; particularly."
         },
         {
           "text": "definitely",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She was definitely the most prepared for the class debate.",
+          "meaning": "Certainly; without any doubt."
         },
         {
           "text": "remember",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please remember to bring back your signed permission slip.",
+          "meaning": "To keep something in your mind; to recall something."
         },
         {
           "text": "February",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Valentine's Day falls on the 14th of February each year.",
+          "meaning": "The second month of the year, with 28 or 29 days."
         },
         {
           "text": "library",
-          "challenge": false
+          "challenge": false,
+          "sentence": "We visit the school library every Tuesday to change our books.",
+          "meaning": "A place where books are kept and can be borrowed."
         }
       ]
     },
@@ -1729,43 +2429,63 @@
       "words": [
         {
           "text": "knowledge",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Reading lots of books will build your knowledge enormously.",
+          "meaning": "Facts, information, and skills learned through experience or education."
         },
         {
           "text": "straight",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Draw a straight line under the title using a ruler.",
+          "meaning": "Going in one direction without bending or curving."
         },
         {
           "text": "thorough",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She did a thorough job of tidying the art cupboard.",
+          "meaning": "Doing something very carefully and completely."
         },
         {
           "text": "guard",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A guard stood at the entrance to the ancient castle.",
+          "meaning": "A person who watches over and protects something."
         },
         {
           "text": "guide",
-          "challenge": false
+          "challenge": false,
+          "sentence": "A kind guide showed us around the museum all afternoon.",
+          "meaning": "A person who shows others the way; to help someone."
         },
         {
           "text": "guitar",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She practises the guitar for twenty minutes every evening.",
+          "meaning": "A musical instrument with strings that you pluck or strum."
         },
         {
           "text": "disappear",
-          "challenge": false
+          "challenge": false,
+          "sentence": "The magician made the coin disappear right before our eyes.",
+          "meaning": "To go out of sight; to stop being visible."
         },
         {
           "text": "immediately",
-          "challenge": false
+          "challenge": false,
+          "sentence": "Please come immediately \u2014 your lunch is getting cold.",
+          "meaning": "Right away; without any delay."
         },
         {
           "text": "actually",
-          "challenge": false
+          "challenge": false,
+          "sentence": "He was actually quite nervous before going on stage.",
+          "meaning": "Used to say what is really true, especially when surprising."
         },
         {
           "text": "therefore",
-          "challenge": false
+          "challenge": false,
+          "sentence": "She revised hard and therefore felt confident on test day.",
+          "meaning": "For that reason; as a result."
         }
       ]
     }

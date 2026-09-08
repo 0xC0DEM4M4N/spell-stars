@@ -22,10 +22,16 @@ def format_week_start(day):
 
 def build_week(row):
     week_start = TERM_START + timedelta(weeks=row["week"] - 1)
-    words = [
-        {"text": word.rstrip("*"), "challenge": word.endswith("*")}
-        for word in row["words"].split(", ")
-    ]
+    words = []
+    for word in row["words"].split(", "):
+        text = word.rstrip("*")
+        entry = WORD_DATA.get(text, {})
+        words.append({
+            "text": text,
+            "challenge": word.endswith("*"),
+            "sentence": entry.get("sentence", ""),
+            "meaning": entry.get("meaning", ""),
+        })
     return {
         "week": row["week"],
         "term": term_for_week(row["week"]),
