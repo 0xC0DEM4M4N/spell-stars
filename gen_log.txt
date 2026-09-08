@@ -1,0 +1,81 @@
+Generating weeks [1, 2, 3, 4]...
+Generating weeks [5, 6, 7, 8]...
+Generating weeks [9, 10, 11, 12]...
+Generating weeks [13, 14, 15, 16]...
+Generating weeks [17, 18, 19, 20]...
+Traceback (most recent call last):
+  File "/root/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 991, in async_streaming
+    headers, response = await self.make_openai_chat_completion_request(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/logging_utils.py", line 190, in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 454, in make_openai_chat_completion_request
+    raise e
+  File "/root/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 436, in make_openai_chat_completion_request
+    await openai_aclient.chat.completions.with_raw_response.create(
+  File "/root/.venv/lib/python3.11/site-packages/openai/_legacy_response.py", line 381, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 2589, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1794, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1594, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Budget has been exceeded! Key=dafsu5u9nqvc73fpoer0 (sk-...82tg) Current cost: 0.0, Max budget: 0.0', 'type': 'budget_exceeded', 'param': None, 'code': '429'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.venv/lib/python3.11/site-packages/litellm/main.py", line 599, in acompletion
+    response = await init_response
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 1041, in async_streaming
+    raise OpenAIError(
+litellm.llms.openai.common_utils.OpenAIError: Error code: 429 - {'error': {'message': 'Budget has been exceeded! Key=dafsu5u9nqvc73fpoer0 (sk-...82tg) Current cost: 0.0, Max budget: 0.0', 'type': 'budget_exceeded', 'param': None, 'code': '429'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.venv/lib/python3.11/site-packages/emergentintegrations/llm/chat.py", line 316, in stream_message
+    stream = await litellm.acompletion(**params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1642, in wrapper_async
+    raise e
+  File "/root/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1488, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/litellm/main.py", line 618, in acompletion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2328, in exception_type
+    raise e
+  File "/root/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 355, in exception_type
+    raise RateLimitError(
+litellm.exceptions.RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Budget has been exceeded! Key=dafsu5u9nqvc73fpoer0 (sk-...82tg) Current cost: 0.0, Max budget: 0.0
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/gen_word_data.py", line 93, in <module>
+    asyncio.run(main())
+  File "/usr/local/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/app/gen_word_data.py", line 80, in main
+    results = await asyncio.gather(*[enrich_week(wn, ws) for wn, ws in batch])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/gen_word_data.py", line 48, in enrich_week
+    async for ev in chat.stream_message(UserMessage(text=prompt)):
+  File "/root/.venv/lib/python3.11/site-packages/emergentintegrations/llm/chat.py", line 318, in stream_message
+    raise ChatError(f"Failed to start streaming completion: {str(e)}") from e
+emergentintegrations.llm.chat.ChatError: Failed to start streaming completion: litellm.RateLimitError: RateLimitError: OpenAIException - Budget has been exceeded! Key=dafsu5u9nqvc73fpoer0 (sk-...82tg) Current cost: 0.0, Max budget: 0.0

@@ -1,0 +1,286 @@
+{
+  "app_identity": {
+    "name": "SPELL // MATRIX 2026 - Year 2 Spelling Programme",
+    "tagline": "The High-Performance Orthography Engine for Next-Gen Learners",
+    "context_type": "marketing_site_with_interactive_app",
+    "target_audience": "Year 2 Students (ages 6-7), Primary Educators, and Parents",
+    "emotional_tone": "Futuristic, precision-engineered, kinetic, inspiring, tactile, and highly engaging",
+    "demo_anchor_date": "2026-09-07",
+    "current_week_status": "Week 1 starts Monday, 7th September 2026"
+  },
+  "archetype_and_theme": {
+    "theme": "Futuristic Cyber-Precision (Dark Void Base with Neon Kinetic Triggers)",
+    "primary_archetype": "ARCHETYPE 7: ELECTRIC & NEON (Futuristic Speed & Cognitive Disruption) mixed with ARCHETYPE 4: SWISS & HIGH-CONTRAST",
+    "vibe": "Holographic command console meets high-end interactive learning journal",
+    "theme_switchability": "Dark mode primary (Cyber Void) with optional Light Mode (High-Contrast Academic Swiss White)",
+    "forbidden_colors": [
+      "#7351B7",
+      "#1B93A4"
+    ],
+    "forbidden_fonts": [
+      "Inter for Headings",
+      "Space Grotesk",
+      "Roboto",
+      "Open Sans",
+      "Arial"
+    ]
+  },
+  "typography": {
+    "heading_font": "Outfit / Space Mono / Syne (Display / Geometric Mono with ultra kinetic tracking)",
+    "body_font": "Plus Jakarta Sans / DM Sans (Clean, highly legible geometric sans)",
+    "mono_font": "JetBrains Mono / Fira Code (For phonics rules, weekly codes, and status telemetry)",
+    "hierarchy": {
+      "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none uppercase",
+      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+      "h3_card": "text-xl sm:text-2xl font-semibold tracking-normal",
+      "eyebrow_overline": "text-xs uppercase tracking-[0.25em] font-mono text-cyan-400 font-semibold",
+      "body_text": "text-base sm:text-lg leading-relaxed text-slate-300",
+      "small_label": "text-xs font-mono text-slate-400"
+    },
+    "typesetting_rules": [
+      "Overlines/Labels must always be uppercase with wide tracking tracking-[0.25em]",
+      "Headlines >32px must use tracking-tight or tracking-tighter",
+      "Never center paragraphs or tabular lists; keep left-aligned for rapid reading",
+      "Highlight active phonics/spelling target patterns in bold vibrant cyan/emerald within words"
+    ]
+  },
+  "colors": {
+    "dark_theme": {
+      "background_base": "#0B0F19",
+      "background_card": "#111827",
+      "background_elevated": "#1F2937",
+      "border_stroke": "rgba(255, 255, 255, 0.12)",
+      "text_primary": "#F9FAFB",
+      "text_secondary": "#9CA3AF",
+      "text_muted": "#6B7280",
+      "accent_cyan": "#06B6D4",
+      "accent_neon_green": "#10B981",
+      "accent_amber": "#F59E0B",
+      "accent_magenta": "#EC4899",
+      "laser_glow": "rgba(6, 182, 212, 0.25)"
+    },
+    "light_theme": {
+      "background_base": "#F8FAFC",
+      "background_card": "#FFFFFF",
+      "background_elevated": "#F1F5F9",
+      "border_stroke": "rgba(15, 23, 42, 0.12)",
+      "text_primary": "#0F172A",
+      "text_secondary": "#475569",
+      "text_muted": "#64748B",
+      "accent_cyan": "#0284C7",
+      "accent_neon_green": "#059669",
+      "accent_amber": "#D97706",
+      "accent_magenta": "#DB2777"
+    },
+    "contrast_guarantee": "All text elements enforce WCAG AA 4.5:1 minimum APCA contrast. Interactive buttons have distinct hover focus states with contrasting text."
+  },
+  "visual_enhancers_and_surfaces": {
+    "tracing_beam_cards": "Cards feature subtle animated glowing border overlays (mask-image gradient shimmer) on hover or active week",
+    "glassmorphism": "Navigation bar and floating drawer widgets use backdrop-blur-xl bg-slate-900/80 border border-white/10 backdrop-saturate-150",
+    "grid_background": "Subtle technical grid background (repeating 40px grid with cyan/indigo dots at intersections)",
+    "marquee": "Slow editorial ribbon marquee scrolling phonics concepts and spelling target rules (e.g., 'THE 'dge' SOUND AFTER A SHORT VOWEL // WEEK 1 INITIATION // AUTUMN TERM 2026')",
+    "hero_scrollytelling": "Kinetic text reveal on load with line-by-line staggered entry and 3D floating interactive cube/gem representing word blocks"
+  },
+  "layout_and_grid_strategy": {
+    "spacing_philosophy": "Generous spacing philosophy (2-3x default padding). Cards use p-6 sm:p-8 internal padding.",
+    "bento_grid_mode": "Tetris Grid layout for week overview cards: Hero week span-8, detail breakdown span-4, notes/stats span-4",
+    "header_nav": "Fixed top nav with glassmorphism (z-50), brand logo, date countdown, week jumper, view mode toggle (Carousel, Full Year Grid, Printable View, Educator Portal), and audio synthesizer toggle",
+    "footer": "Dark contrast footer with massive brand typography, quick week selector, curriculum standards badge, and print action CTA"
+  },
+  "key_features_and_data_architecture": {
+    "term_start_date": "2026-09-07",
+    "total_weeks": 36,
+    "current_week_default": 1,
+    "spelling_programme_year_2": [
+      {
+        "week": 1,
+        "date_label": "W/C 7 Sept 2026",
+        "title": "The '-ge' and '-dge' spelling at the end of words",
+        "phonics_focus": "The /dʒ/ sound spelled -dge and -ge",
+        "learning_point": "The '-dge' spelling is used straight after short vowel sounds (a, e, i, o, u like in badge or bridge). The '-ge' spelling is used after other sounds (like in age, badge vs cage).",
+        "rule_mnemonic": "Short vowel? Add 'dge'! (badge, hedge). Long vowel or consonant? Just '-ge'! (cage, large).",
+        "words": [
+          {"word": "badge", "phonetic": "/bædʒ/", "target_part": "dge", "example": "She wore a shiny gold badge on her coat."},
+          {"word": "edge", "phonetic": "/ɛdʒ/", "target_part": "dge", "example": "Don't stand too close to the edge."},
+          {"word": "bridge", "phonetic": "/brɪdʒ/", "target_part": "dge", "example": "The train crossed the river on a high bridge."},
+          {"word": "dodge", "phonetic": "/dɒdʒ/", "target_part": "dge", "example": "He can dodge the ball quickly in gym class."},
+          {"word": "fudge", "phonetic": "/fʌdʒ/", "target_part": "dge", "example": "Grandma made delicious chocolate fudge."},
+          {"word": "age", "phonetic": "/eɪdʒ/", "target_part": "ge", "example": "What age will you be on your next birthday?"},
+          {"word": "huge", "phonetic": "/hjuːdʒ/", "target_part": "ge", "example": "An elephant is a huge animal."},
+          {"word": "change", "phonetic": "/tʃeɪndʒ/", "target_part": "ge", "example": "We change our shoes before PE."},
+          {"word": "charge", "phonetic": "/tʃɑːdʒ/", "target_part": "ge", "example": "Please charge the tablet battery."},
+          {"word": "village", "phonetic": "/ˈvɪl.ɪdʒ/", "target_part": "ge", "example": "They live in a quiet seaside village."}
+        ],
+        "challenge_words": ["knowledge", "judge", "dungeon"],
+        "dictation_sentences": [
+          "The badge fell off the edge of the high bridge.",
+          "We can change into our boots in the huge village."
+        ]
+      },
+      {
+        "week": 2,
+        "date_label": "W/C 14 Sept 2026",
+        "title": "The '-c' sound spelled '-c' before e, i and y ('Soft C')",
+        "phonics_focus": "The /s/ sound spelled c before e, i, y",
+        "learning_point": "When 'c' comes before 'e', 'i' or 'y', it makes a soft /s/ sound instead of a hard /k/ sound.",
+        "rule_mnemonic": "C before E, I, or Y makes a soft /s/ sound like ice!",
+        "words": [
+          {"word": "race", "phonetic": "/reɪs/", "target_part": "ce", "example": "Run fast to win the playground race."},
+          {"word": "ice", "phonetic": "/aɪs/", "target_part": "ce", "example": "Put ice into the cold water glass."},
+          {"word": "cell", "phonetic": "/sɛl/", "target_part": "ce", "example": "A honeycomb cell holds sweet honey."},
+          {"word": "city", "phonetic": "/ˈsɪt.i/", "target_part": "ci", "example": "London is a busy capital city."},
+          {"word": "fancy", "phonetic": "/ˈfæn.si/", "target_part": "cy", "example": "She wore a fancy party dress."},
+          {"word": "space", "phonetic": "/speɪs/", "target_part": "ce", "example": "Rockets blast off into outer space."},
+          {"word": "circle", "phonetic": "/ˈsɜː.kəl/", "target_part": "ci", "example": "Draw a neat round circle."},
+          {"word": "dance", "phonetic": "/dɑːns/", "target_part": "ce", "example": "We love to dance to joyful music."},
+          {"word": "pencil", "phonetic": "/ˈpɛn.səl/", "target_part": "ci", "example": "Sharpen your wooden pencil for writing."},
+          {"word": "prince", "phonetic": "/prɪns/", "target_part": "ce", "example": "The prince lived in a grand castle."}
+        ],
+        "challenge_words": ["cyclone", "cinnamon", "decide"],
+        "dictation_sentences": [
+          "Draw a circle in pencil on the fancy paper.",
+          "We race in the city near outer space."
+        ]
+      },
+      {
+        "week": 3,
+        "date_label": "W/C 21 Sept 2026",
+        "title": "The '-kn-' and '-gn-' silent letter spellings",
+        "phonics_focus": "The /n/ sound spelled kn and gn at word start",
+        "learning_point": "The letters 'k' and 'g' are silent when paired with 'n' at the beginning of these words.",
+        "rule_mnemonic": "Knock knock! The K is silent when N is near!",
+        "words": [
+          {"word": "knock", "phonetic": "/nɒk/", "target_part": "kn", "example": "Knock on the door before entering."},
+          {"word": "know", "phonetic": "/nəʊ/", "target_part": "kn", "example": "I know all the answers to the spelling quiz."},
+          {"word": "knee", "phonetic": "/niː/", "target_part": "kn", "example": "Bend your knee to sit down comfortably."},
+          {"word": "knife", "phonetic": "/naɪf/", "target_part": "kn", "example": "Cut the bread carefully with a butter knife."},
+          {"word": "gnat", "phonetic": "/næt/", "target_part": "gn", "example": "A tiny gnat buzzed near the garden light."},
+          {"word": "gnaw", "phonetic": "/nɔː/", "target_part": "gn", "example": "Puppies like to gnaw on chew toys."},
+          {"word": "knight", "phonetic": "/naɪt/", "target_part": "kn", "example": "The brave knight rode a white horse."},
+          {"word": "knot", "phonetic": "/nɒt/", "target_part": "kn", "example": "Tie a tight knot in your shoe laces."},
+          {"word": "knit", "phonetic": "/nɪt/", "target_part": "kn", "example": "Grandma can knit a warm cozy scarf."},
+          {"word": "gnome", "phonetic": "/nəʊm/", "target_part": "gn", "example": "A cute garden gnome stands by the flowers."}
+        ],
+        "challenge_words": ["knuckle", "kneel", "gnash"],
+        "dictation_sentences": [
+          "The knight had a knot in his shiny armor.",
+          "I know how to knit a scarf for the gnome."
+        ]
+      },
+      {
+        "week": 4,
+        "date_label": "W/C 28 Sept 2026",
+        "title": "The '-wr-' silent letter spelling at word start",
+        "phonics_focus": "The /r/ sound spelled wr",
+        "learning_point": "When 'w' comes before 'r' at the start of a word, the 'w' is silent.",
+        "rule_mnemonic": "W is quiet when writing with R!",
+        "words": [
+          {"word": "write", "phonetic": "/raɪt/", "target_part": "wr", "example": "Write your full name at the top of the paper."},
+          {"word": "written", "phonetic": "/ˈrɪt.ən/", "target_part": "wr", "example": "The story was written in a famous book."},
+          {"word": "wrong", "phonetic": "/rɒŋ/", "target_part": "wr", "example": "If an answer is wrong, try again!"},
+          {"word": "wrap", "phonetic": "/ræp/", "target_part": "wr", "example": "Wrap the birthday present with colorful paper."},
+          {"word": "wrist", "phonetic": "/rɪst/", "target_part": "wr", "example": "Wear a digital watch on your wrist."},
+          {"word": "wreck", "phonetic": "/rɛk/", "target_part": "wr", "example": "The old shipwreck lay deep under water."},
+          {"word": "wren", "phonetic": "/rɛn/", "target_part": "wr", "example": "A small wren sang a song in the oak tree."},
+          {"word": "wring", "phonetic": "/rɪŋ/", "target_part": "wr", "example": "Wring the wet cloth before cleaning."},
+          {"word": "wriggle", "phonetic": "/ˈrɪɡ.əl/", "target_part": "wr", "example": "Worms wriggle through moist garden soil."},
+          {"word": "wrestle", "phonetic": "/ˈrɛs.əl/", "target_part": "wr", "example": "Playful cubs wrestle on the grass."}
+        ],
+        "challenge_words": ["wretched", "wrinkle", "wreath"],
+        "dictation_sentences": [
+          "Write carefully so you do not get it wrong.",
+          "Wrap the cloth around your injured wrist."
+        ]
+      },
+      {
+        "week": 5,
+        "date_label": "W/C 5 Oct 2026",
+        "title": "The '-le' spelling at the end of words",
+        "phonics_focus": "The /əl/ sound spelled -le",
+        "learning_point": "The '-le' spelling is the most common way to spell the /əl/ sound at the end of Year 2 words.",
+        "rule_mnemonic": "Most end /əl/ words love '-le' like table, apple, smile!",
+        "words": [
+          {"word": "table", "phonetic": "/ˈteɪ.bəl/", "target_part": "le", "example": "Place the books neatly on the study table."},
+          {"word": "apple", "phonetic": "/ˈæp.əl/", "target_part": "le", "example": "Eat a crunchy red apple for morning snack."},
+          {"word": "bottle", "phonetic": "/ˈbɒt.əl/", "target_part": "le", "example": "Fill your water bottle before playing outdoor sports."},
+          {"word": "little", "phonetic": "/ˈlɪt.əl/", "target_part": "le", "example": "A little kitten napped in the sun beam."},
+          {"word": "middle", "phonetic": "/ˈmɪd.əl/", "target_part": "le", "example": "Stand right in the middle of the group circle."},
+          {"word": "bubble", "phonetic": "/ˈbʌb.əl/", "target_part": "le", "example": "Blow a gigantic soapy bubble into the breeze."},
+          {"word": "candle", "phonetic": "/ˈkæn.dəl/", "target_part": "le", "example": "Light a birthday candle on the cake."},
+          {"word": "castle", "phonetic": "/ˈkɑː.səl/", "target_part": "le", "example": "Build a tall sand castle at the beach."},
+          {"word": "simple", "phonetic": "/ˈsɪm.pəl/", "target_part": "le", "example": "This math puzzle has a simple step solution."},
+          {"word": "uncle", "phonetic": "/ˈʌŋ.kəl/", "target_part": "le", "example": "My uncle came to visit our family."}
+        ],
+        "challenge_words": ["struggle", "paddle", "article"],
+        "dictation_sentences": [
+          "Put the little apple on the clean table.",
+          "Blow a bubble near the castle candle."
+        ]
+      },
+      {
+        "week": 6,
+        "date_label": "W/C 12 Oct 2026",
+        "title": "The '-el' spelling at the end of words",
+        "phonics_focus": "The /əl/ sound spelled -el after m, n, r, v, w",
+        "learning_point": "The '-el' spelling is used after specific consonants like m, n, r, v, w or words like camel and tunnel.",
+        "rule_mnemonic": "Camel, travel, towel, angel! '-el' makes these words fly!",
+        "words": [
+          {"word": "camel", "phonetic": "/ˈkæm.əl/", "target_part": "el", "example": "The camel walked across the warm desert dunes."},
+          {"word": "tunnel", "phonetic": "/ˈtʌn.əl/", "target_part": "el", "example": "The train sped through the dark mountain tunnel."},
+          {"word": "squirrel", "phonetic": "/ˈskwɪr.əl/", "target_part": "el", "example": "A nimble squirrel buried an acorn in autumn."},
+          {"word": "travel", "phonetic": "/ˈtræv.əl/", "target_part": "el", "example": "We love to travel to new cities during summer."},
+          {"word": "towel", "phonetic": "/ˈtaʊ.əl/", "target_part": "el", "example": "Dry your hands with a soft clean towel."},
+          {"word": "hazel", "phonetic": "/ˈheɪ.zəl/", "target_part": "el", "example": "The hazel tree produced crunchy hazelnuts."},
+          {"word": "vowel", "phonetic": "/ˈvaʊ.əl/", "target_part": "el", "example": "A, E, I, O, U are the five main vowels."},
+          {"word": "angel", "phonetic": "/ˈeɪn.dʒəl/", "target_part": "el", "example": "The angel topper shone brightly on the tree."},
+          {"word": "jewel", "phonetic": "/ˈdʒuː.əl/", "target_part": "el", "example": "The crown sparkled with a red ruby jewel."},
+          {"word": "tinsel", "phonetic": "/ˈtɪn.səl/", "target_part": "el", "example": "Silver tinsel shimmered on the holiday tree."}
+        ],
+        "challenge_words": ["funnel", "shovel", "parcel"],
+        "dictation_sentences": [
+          "The camel ran into the dark train tunnel.",
+          "Use a dry towel after you travel home."
+        ]
+      }
+    ],
+    "interactive_components": {
+      "week_carousel": "Smooth Embla/Framer-motion powered weekly card carousel with instant week indicator dots, quick jumping keyboard navigation (Arrow keys), and Week 1 auto-selection for 7th Sept 2026.",
+      "practice_mode": "Interactive Spelling Audio & Flashcard Quiz mode with simulated Speech Synthesis (TTS web API / custom audio trigger), typing input validation, and instant particle celebratory confetti feedback.",
+      "printable_view": "Clean high-contrast printable layout generator. Formats spelling list + phonics rule + dictation sentences into an A4 print-ready worksheet with user student name header.",
+      "parent_teacher_notes": "Tabbed interactive panel with downloadable teacher guidelines, home practice tips, phonics breakdown diagram, and weekly progress tracker modal."
+    }
+  },
+  "media_and_images": {
+    "futuristic_student_hero": "https://images.unsplash.com/photo-1758685733633-a12889098460?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwzfHxmdXR1cmlzdGljJTIwZWR1Y2F0aW9uJTIwc3R1ZGVudCUyMGxlYXJuaW5nJTIwZGlnaXRhbCUyMHNjcmVlbnxlbnwwfHx8fDE3ODg4MTI3MjV8MA&ixlib=rb-4.1.0&q=85",
+    "futuristic_classroom": "https://images.unsplash.com/photo-1631489138543-9f7125232853?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxmdXR1cmlzdGljJTIwZWR1Y2F0aW9uJTIwc3R1ZGVudCUyMGxlYXJuaW5nJTIwZGlnaXRhbCUyMHNjcmVlbnxlbnwwfHx8fDE3ODg4MTI3MjV8MA&ixlib=rb-4.1.0&q=85",
+    "children_learning_together": "https://images.unsplash.com/photo-1761208662734-fb46f1398551?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGNsYXNzcm9vbSUyMGxlYXJuaW5nJTIwcmVhZGluZ3xlbnwwfHx8fDE3ODg4MTI3MzJ8MA&ixlib=rb-4.1.0&q=85",
+    "phonics_cards_wood": "https://images.unsplash.com/photo-1785780224428-7b690d3d58bd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHw0fHxjaGlsZHJlbiUyMGNsYXNzcm9vbSUyMGxlYXJuaW5nJTIwcmVhZGluZ3xlbnwwfHx8fDE3ODg4MTI3MzJ8MA&ixlib=rb-4.1.0&q=85",
+    "futuristic_glowing_abstract": "https://images.unsplash.com/photo-1689443111130-6e9c7dfd8f9e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHwxfHxmdXR1cmlzdGljJTIwZ2xvd2luZyUyMHRlY2glMjBhYnN0cmFjdCUyMG1lc2glMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc4ODgxMjczMnww&ixlib=rb-4.1.0&q=85",
+    "purple_glow_waves": "https://images.unsplash.com/photo-1677784975587-8b17d7ba378f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHw0fHxmdXR1cmlzdGljJTIwZ2xvd2luZyUyMHRlY2glMjBhYnN0cmFjdCUyMG1lc2glMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc4ODgxMjczMnww&ixlib=rb-4.1.0&q=85"
+  },
+  "component_strategy": {
+    "marketing_sections": "Use raw React + Tailwind + Framer Motion for custom glass cards, glowing borders, kinetic hero typography, marquee strip, and printable layout overlay.",
+    "interactive_widgets": "Use Shadcn Tabs, Dialog, DropdownMenu, Tooltip, Progress, Accordion, and Toast (Sonner) heavily styled to fit Cyber Void theme.",
+    "testing_requirement": "Every interactive button, tab, card, carousel navigation link, print button, practice input, audio button, and week badge MUST include a explicit `data-testid` attribute in kebab-case."
+  },
+  "instructions_to_main_agent": [
+    "Build a stunning, Awwwards Site-of-the-Day level Year 2 Spelling Programme web application.",
+    "Treat September 7, 2026 as Week 1 start date today in the application UI logic.",
+    "Ensure Week 1 ('-dge' and '-ge') is active on initial page launch, with seamless navigation to Weeks 2-6 and full term selector.",
+    "Implement the kinetic hero banner with line-by-line masked text reveal, floating holographic 3D letter block widget (using CSS 3D or SVG parallax canvas), and live countdown to W/C 7 Sept 2026.",
+    "Provide an interactive weekly carousel card system displaying words with phonics highlighting, phonetic spelling, audio pronunciation button (using SpeechSynthesis API), sample sentences, and challenge words.",
+    "Include a 'Practice & Quiz Mode' modal/tab where students can test their spelling with instant particle confetti feedback and audio prompts.",
+    "Include a 'Printable Weekly List' view triggered by a button that hides non-essential UI and presents an elegant A4 printable worksheet layout.",
+    "Include a robust 'Parent & Teacher Notes' section with phonics explanation, dictation practice sentences, weekly learning point summary, and home practice tips.",
+    "Ensure dark/light theme toggle is active and both themes strictly adhere to WCAG AA contrast rules.",
+    "Ensure all interactive elements have explicit `data-testid` attributes."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": {
+    "avoid_ai_slop": "Never use default Vercel white/black card templates or centered boring layouts. Layer elements with z-index, glowing border strokes, glassmorphism, and micro-interactions.",
+    "no_universal_transition": "Do NOT apply universal transition (transition: all) as it breaks transforms and framer-motion animations.",
+    "no_centered_app": "Do NOT center align the app container. Maintain left-aligned narrative hierarchy for text.",
+    "no_emojis_for_icons": "Use Lucide icons (Volume2, Printer, Sparkles, BookOpen, ChevronRight, Calendar, Award, CheckCircle2) instead of emoji characters.",
+    "spacing": "Use generous Tailwind spacing (p-6, p-8, p-12, gap-8) to prevent cramped designs.",
+    "toasts": "Use Sonner toast notifications for actions like 'Copied word list', 'Print ready', and 'Quiz completed'."
+  }
+}
