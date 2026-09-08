@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import Lenis from "lenis";
 import "@/App.css";
 import { Footer } from "@/components/Footer";
@@ -9,11 +11,31 @@ import { NotesSection } from "@/components/NotesSection";
 import { PrintSheet } from "@/components/PrintSheet";
 import { WeekCarousel } from "@/components/WeekCarousel";
 import { Toaster, toast } from "@/components/ui/sonner";
-import programmeData from "@/data/programme.json";
+
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+const LoadingScreen = () => (
+  <div className="flex min-h-screen items-center justify-center bg-[#05070d] text-cyan-300" data-testid="loading-screen">
+    <div className="font-mono text-sm uppercase tracking-[0.35em]">Loading spell// stars</div>
+  </div>
+);
+
+const ErrorScreen = ({ message }) => (
+  <div className="flex min-h-screen items-center justify-center bg-[#05070d] px-6 text-slate-100" data-testid="error-screen">
+    <div className="max-w-md border border-red-400/40 bg-red-950/30 p-8">
+      <p className="font-mono text-xs uppercase tracking-[0.3em] text-red-300">System error</p>
+      <h1 className="mt-4 font-display text-3xl font-bold">Programme data did not load.</h1>
+      <p className="mt-4 text-sm text-slate-300">{message}</p>
+    </div>
+  </div>
+);
 
 const Home = () => {
   const [selectedWeek, setSelectedWeek] = useState(null);
-  const data = programmeData;
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["spelling-programme"],
+    queryFn: async () => (await axios.get(`${API}/programme`)).data,
+  });
 
   useEffect(() => {
     const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
@@ -28,6 +50,9 @@ const Home = () => {
       lenis.destroy();
     };
   }, []);
+
+  if (isLoading) return <LoadingScreen />;
+  if (error) return <ErrorScreen message={error.message} />;
 
   const activeWeekNumber = selectedWeek ?? data.currentWeek;
   const activeWeek = data.weeks.find((week) => week.week === activeWeekNumber) ?? data.weeks[0];

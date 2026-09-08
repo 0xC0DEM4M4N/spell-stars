@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { ArrowDown, Sparkles, Star } from "lucide-react";
-import { PracticeQuiz } from "@/components/PracticeQuiz";
 
 export const Hero = ({ programme, activeWeek }) => (
   <section id="top" className="hero-grid relative overflow-hidden px-5 pb-8 pt-28 sm:px-8 lg:pt-32" data-testid="hero-section">
@@ -25,7 +24,6 @@ export const Hero = ({ programme, activeWeek }) => (
           <a href="#weekly-carousel" className="group inline-flex items-center gap-3 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition-transform duration-300 hover:-translate-y-1 hover:bg-cyan-300" data-testid="hero-start-button">
             Open the carousel <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
           </a>
-          {activeWeek && <PracticeQuiz week={activeWeek} onComplete={() => {}} />}
         </motion.div>
         <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85, duration: 0.7 }} className="mt-5 border-l border-cyan-300/30 pl-5 font-mono text-sm text-slate-400" data-testid="hero-summary">
           a year's worth of progressive spellings for keen beans

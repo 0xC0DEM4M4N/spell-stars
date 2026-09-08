@@ -44,8 +44,7 @@ const ConfettiBurst = ({ burstKey }) => {
   );
 };
 
-export const PracticeQuiz = ({ week, onComplete }) => {
-  const [open, setOpen] = useState(false);
+export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [status, setStatus] = useState("idle");
@@ -107,12 +106,7 @@ export const PracticeQuiz = ({ week, onComplete }) => {
   const isChallenge = challengeMode;
 
   return (
-    <Dialog open={open} onOpenChange={(value) => { setOpen(value); if (value) resetAll(); }}>
-      <DialogTrigger asChild>
-        <Button className="rounded-full bg-pink-500 px-5 font-semibold text-white hover:bg-pink-400" data-testid="practice-quiz-button">
-          <Sparkles className="h-4 w-4" /> Practice quiz
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (v) resetAll(); }}>
       <DialogContent className="max-w-2xl overflow-hidden border-cyan-300/30 bg-[#08101f] p-0 text-slate-100" data-testid="practice-quiz-dialog">
         <div className="holo-card relative p-6 sm:p-8">
           {burstKey > 0 && <ConfettiBurst burstKey={burstKey} />}
