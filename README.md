@@ -1,3 +1,24 @@
+# Spell Stars
+
+A fully static site now — no backend required. The FastAPI backend that used to
+serve `/api/programme` has been removed; its data now lives at
+`src/data/programme.json` and is bundled directly into the React app at build
+time.
+
+**Editing the spelling programme data:** edit `scripts/programme_data.py`
+(the original source, e.g. word lists, sentences, term dates), then regenerate
+the JSON with:
+
+```
+python3 scripts/regen_programme_json.py
+```
+
+**Deploying:** `yarn build` produces a static `build/` folder — deploy it to
+Cloudflare Pages (or any static host) with no server component needed.
+Build command: `yarn build`. Output directory: `build`.
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

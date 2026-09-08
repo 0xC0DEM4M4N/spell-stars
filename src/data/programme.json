@@ -1,0 +1,1784 @@
+{
+  "title": "Year 2 Weekly Spelling Programme",
+  "termStart": "2026-09-07",
+  "referenceDate": "2026-09-07",
+  "currentWeek": 1,
+  "totalWeeks": 36,
+  "weeks": [
+    {
+      "week": 1,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 7 Sep 2026",
+      "focus": "Baseline review: Y1 consonant blends",
+      "learningPoint": "Baseline review: Y1 consonant blends",
+      "words": [
+        {
+          "text": "frost",
+          "challenge": false
+        },
+        {
+          "text": "stamp",
+          "challenge": false
+        },
+        {
+          "text": "splash",
+          "challenge": false
+        },
+        {
+          "text": "string",
+          "challenge": false
+        },
+        {
+          "text": "scrunch",
+          "challenge": false
+        },
+        {
+          "text": "drift",
+          "challenge": false
+        },
+        {
+          "text": "thrust",
+          "challenge": false
+        },
+        {
+          "text": "sprint",
+          "challenge": false
+        },
+        {
+          "text": "crisp",
+          "challenge": false
+        },
+        {
+          "text": "blast",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 14 Sep 2026",
+      "focus": "/d\u0292/ spelled dge/ge at end of words",
+      "learningPoint": "/d\u0292/ spelled dge/ge at end of words",
+      "words": [
+        {
+          "text": "badge",
+          "challenge": false
+        },
+        {
+          "text": "bridge",
+          "challenge": false
+        },
+        {
+          "text": "fudge",
+          "challenge": false
+        },
+        {
+          "text": "hedge",
+          "challenge": false
+        },
+        {
+          "text": "lodge",
+          "challenge": false
+        },
+        {
+          "text": "cage",
+          "challenge": false
+        },
+        {
+          "text": "huge",
+          "challenge": false
+        },
+        {
+          "text": "stage",
+          "challenge": false
+        },
+        {
+          "text": "page",
+          "challenge": false
+        },
+        {
+          "text": "edge",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 21 Sep 2026",
+      "focus": "/d\u0292/ spelled g before e/i/y",
+      "learningPoint": "/d\u0292/ spelled g before e/i/y",
+      "words": [
+        {
+          "text": "gem",
+          "challenge": false
+        },
+        {
+          "text": "giant",
+          "challenge": false
+        },
+        {
+          "text": "magic",
+          "challenge": false
+        },
+        {
+          "text": "energy",
+          "challenge": false
+        },
+        {
+          "text": "ginger",
+          "challenge": false
+        },
+        {
+          "text": "gym",
+          "challenge": false
+        },
+        {
+          "text": "danger",
+          "challenge": false
+        },
+        {
+          "text": "engine",
+          "challenge": false
+        },
+        {
+          "text": "gentle",
+          "challenge": false
+        },
+        {
+          "text": "giraffe",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 28 Sep 2026",
+      "focus": "/s/ spelled c before e/i/y",
+      "learningPoint": "/s/ spelled c before e/i/y",
+      "words": [
+        {
+          "text": "ice",
+          "challenge": false
+        },
+        {
+          "text": "dance",
+          "challenge": false
+        },
+        {
+          "text": "fence",
+          "challenge": false
+        },
+        {
+          "text": "city",
+          "challenge": false
+        },
+        {
+          "text": "circle",
+          "challenge": false
+        },
+        {
+          "text": "pencil",
+          "challenge": false
+        },
+        {
+          "text": "cycle",
+          "challenge": false
+        },
+        {
+          "text": "cell",
+          "challenge": false
+        },
+        {
+          "text": "race",
+          "challenge": false
+        },
+        {
+          "text": "mice",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 5,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 5 Oct 2026",
+      "focus": "/n/ spelled kn/gn at start of words",
+      "learningPoint": "/n/ spelled kn/gn at start of words",
+      "words": [
+        {
+          "text": "knee",
+          "challenge": false
+        },
+        {
+          "text": "knock",
+          "challenge": false
+        },
+        {
+          "text": "knife",
+          "challenge": false
+        },
+        {
+          "text": "know",
+          "challenge": false
+        },
+        {
+          "text": "knot",
+          "challenge": false
+        },
+        {
+          "text": "gnaw",
+          "challenge": false
+        },
+        {
+          "text": "gnome",
+          "challenge": false
+        },
+        {
+          "text": "sign",
+          "challenge": false
+        },
+        {
+          "text": "gnat",
+          "challenge": false
+        },
+        {
+          "text": "kneel",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 6,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 12 Oct 2026",
+      "focus": "/r/ spelled wr at start of words",
+      "learningPoint": "/r/ spelled wr at start of words",
+      "words": [
+        {
+          "text": "write",
+          "challenge": false
+        },
+        {
+          "text": "wrist",
+          "challenge": false
+        },
+        {
+          "text": "wrap",
+          "challenge": false
+        },
+        {
+          "text": "wrong",
+          "challenge": false
+        },
+        {
+          "text": "wreck",
+          "challenge": false
+        },
+        {
+          "text": "wrinkle",
+          "challenge": false
+        },
+        {
+          "text": "wren",
+          "challenge": false
+        },
+        {
+          "text": "wrestle",
+          "challenge": true
+        },
+        {
+          "text": "wreath",
+          "challenge": true
+        },
+        {
+          "text": "wriggle",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 7,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 19 Oct 2026",
+      "focus": "Unstressed /l/ spelled \u2013le/\u2013el/\u2013al",
+      "learningPoint": "Unstressed /l/ spelled \u2013le/\u2013el/\u2013al",
+      "words": [
+        {
+          "text": "table",
+          "challenge": false
+        },
+        {
+          "text": "apple",
+          "challenge": false
+        },
+        {
+          "text": "little",
+          "challenge": false
+        },
+        {
+          "text": "camel",
+          "challenge": false
+        },
+        {
+          "text": "tunnel",
+          "challenge": false
+        },
+        {
+          "text": "travel",
+          "challenge": false
+        },
+        {
+          "text": "metal",
+          "challenge": false
+        },
+        {
+          "text": "pedal",
+          "challenge": false
+        },
+        {
+          "text": "hospital",
+          "challenge": true
+        },
+        {
+          "text": "animal",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 8,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 26 Oct 2026",
+      "focus": "Words ending \u2013y (says /i/)",
+      "learningPoint": "Words ending \u2013y (says /i/)",
+      "words": [
+        {
+          "text": "happy",
+          "challenge": false
+        },
+        {
+          "text": "funny",
+          "challenge": false
+        },
+        {
+          "text": "family",
+          "challenge": false
+        },
+        {
+          "text": "party",
+          "challenge": false
+        },
+        {
+          "text": "twenty",
+          "challenge": false
+        },
+        {
+          "text": "story",
+          "challenge": false
+        },
+        {
+          "text": "sunny",
+          "challenge": false
+        },
+        {
+          "text": "lucky",
+          "challenge": false
+        },
+        {
+          "text": "hungry",
+          "challenge": false
+        },
+        {
+          "text": "memory",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 9,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 2 Nov 2026",
+      "focus": "Plural \u2013es on nouns ending \u2013y",
+      "learningPoint": "Plural \u2013es on nouns ending \u2013y",
+      "words": [
+        {
+          "text": "babies",
+          "challenge": false
+        },
+        {
+          "text": "ladies",
+          "challenge": false
+        },
+        {
+          "text": "cities",
+          "challenge": false
+        },
+        {
+          "text": "families",
+          "challenge": false
+        },
+        {
+          "text": "ponies",
+          "challenge": false
+        },
+        {
+          "text": "stories",
+          "challenge": false
+        },
+        {
+          "text": "parties",
+          "challenge": false
+        },
+        {
+          "text": "countries",
+          "challenge": false
+        },
+        {
+          "text": "hobbies",
+          "challenge": false
+        },
+        {
+          "text": "bunnies",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 10,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 9 Nov 2026",
+      "focus": "Suffixes on \u2013y words (y\u2192i)",
+      "learningPoint": "Suffixes on \u2013y words (y\u2192i)",
+      "words": [
+        {
+          "text": "tried",
+          "challenge": false
+        },
+        {
+          "text": "tries",
+          "challenge": false
+        },
+        {
+          "text": "trying",
+          "challenge": false
+        },
+        {
+          "text": "happier",
+          "challenge": false
+        },
+        {
+          "text": "happiest",
+          "challenge": false
+        },
+        {
+          "text": "carried",
+          "challenge": false
+        },
+        {
+          "text": "carrying",
+          "challenge": false
+        },
+        {
+          "text": "dried",
+          "challenge": false
+        },
+        {
+          "text": "hurried",
+          "challenge": false
+        },
+        {
+          "text": "replying",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 11,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 16 Nov 2026",
+      "focus": "Suffixes on words ending \u2013e (drop e)",
+      "learningPoint": "Suffixes on words ending \u2013e (drop e)",
+      "words": [
+        {
+          "text": "hoping",
+          "challenge": false
+        },
+        {
+          "text": "hoped",
+          "challenge": false
+        },
+        {
+          "text": "shining",
+          "challenge": false
+        },
+        {
+          "text": "riding",
+          "challenge": false
+        },
+        {
+          "text": "rider",
+          "challenge": false
+        },
+        {
+          "text": "baking",
+          "challenge": false
+        },
+        {
+          "text": "baker",
+          "challenge": false
+        },
+        {
+          "text": "smiling",
+          "challenge": false
+        },
+        {
+          "text": "smiled",
+          "challenge": false
+        },
+        {
+          "text": "deciding",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 12,
+      "term": "Autumn Term",
+      "dateLabel": "W/C 23 Nov 2026",
+      "focus": "Doubling final consonant (CVC + suffix)",
+      "learningPoint": "Doubling final consonant (CVC + suffix)",
+      "words": [
+        {
+          "text": "hopping",
+          "challenge": false
+        },
+        {
+          "text": "hopped",
+          "challenge": false
+        },
+        {
+          "text": "running",
+          "challenge": false
+        },
+        {
+          "text": "runner",
+          "challenge": false
+        },
+        {
+          "text": "biggest",
+          "challenge": false
+        },
+        {
+          "text": "sadder",
+          "challenge": false
+        },
+        {
+          "text": "patted",
+          "challenge": false
+        },
+        {
+          "text": "humming",
+          "challenge": false
+        },
+        {
+          "text": "swimmer",
+          "challenge": false
+        },
+        {
+          "text": "forgetting",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 13,
+      "term": "Spring Term",
+      "dateLabel": "W/C 30 Nov 2026",
+      "focus": "/\u0252/ spelled a after w/qu",
+      "learningPoint": "/\u0252/ spelled a after w/qu",
+      "words": [
+        {
+          "text": "wander",
+          "challenge": false
+        },
+        {
+          "text": "swan",
+          "challenge": false
+        },
+        {
+          "text": "quantity",
+          "challenge": false
+        },
+        {
+          "text": "squash",
+          "challenge": false
+        },
+        {
+          "text": "wasp",
+          "challenge": false
+        },
+        {
+          "text": "quality",
+          "challenge": false
+        },
+        {
+          "text": "quarrel",
+          "challenge": false
+        },
+        {
+          "text": "wallet",
+          "challenge": false
+        },
+        {
+          "text": "swap",
+          "challenge": false
+        },
+        {
+          "text": "squabble",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 14,
+      "term": "Spring Term",
+      "dateLabel": "W/C 7 Dec 2026",
+      "focus": "/\u025c\u02d0/ spelled or after w",
+      "learningPoint": "/\u025c\u02d0/ spelled or after w",
+      "words": [
+        {
+          "text": "word",
+          "challenge": false
+        },
+        {
+          "text": "work",
+          "challenge": false
+        },
+        {
+          "text": "world",
+          "challenge": false
+        },
+        {
+          "text": "worm",
+          "challenge": false
+        },
+        {
+          "text": "worth",
+          "challenge": false
+        },
+        {
+          "text": "worship",
+          "challenge": false
+        },
+        {
+          "text": "worse",
+          "challenge": false
+        },
+        {
+          "text": "worst",
+          "challenge": false
+        },
+        {
+          "text": "network",
+          "challenge": true
+        },
+        {
+          "text": "wordless",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 15,
+      "term": "Spring Term",
+      "dateLabel": "W/C 14 Dec 2026",
+      "focus": "/\u0254\u02d0/ spelled ar after w",
+      "learningPoint": "/\u0254\u02d0/ spelled ar after w",
+      "words": [
+        {
+          "text": "warm",
+          "challenge": false
+        },
+        {
+          "text": "ward",
+          "challenge": false
+        },
+        {
+          "text": "warn",
+          "challenge": false
+        },
+        {
+          "text": "wart",
+          "challenge": false
+        },
+        {
+          "text": "dwarf",
+          "challenge": false
+        },
+        {
+          "text": "award",
+          "challenge": false
+        },
+        {
+          "text": "reward",
+          "challenge": false
+        },
+        {
+          "text": "swarm",
+          "challenge": false
+        },
+        {
+          "text": "towards",
+          "challenge": false
+        },
+        {
+          "text": "warden",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 16,
+      "term": "Spring Term",
+      "dateLabel": "W/C 21 Dec 2026",
+      "focus": "/\u0292/ spelled s",
+      "learningPoint": "/\u0292/ spelled s",
+      "words": [
+        {
+          "text": "treasure",
+          "challenge": false
+        },
+        {
+          "text": "measure",
+          "challenge": false
+        },
+        {
+          "text": "pleasure",
+          "challenge": false
+        },
+        {
+          "text": "usual",
+          "challenge": false
+        },
+        {
+          "text": "television",
+          "challenge": false
+        },
+        {
+          "text": "casual",
+          "challenge": false
+        },
+        {
+          "text": "visual",
+          "challenge": false
+        },
+        {
+          "text": "leisure",
+          "challenge": true
+        },
+        {
+          "text": "azure",
+          "challenge": true
+        },
+        {
+          "text": "unusual",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 17,
+      "term": "Spring Term",
+      "dateLabel": "W/C 28 Dec 2026",
+      "focus": "Suffix \u2013ment",
+      "learningPoint": "Suffix \u2013ment",
+      "words": [
+        {
+          "text": "enjoyment",
+          "challenge": false
+        },
+        {
+          "text": "argument",
+          "challenge": false
+        },
+        {
+          "text": "government",
+          "challenge": false
+        },
+        {
+          "text": "movement",
+          "challenge": false
+        },
+        {
+          "text": "statement",
+          "challenge": false
+        },
+        {
+          "text": "equipment",
+          "challenge": false
+        },
+        {
+          "text": "payment",
+          "challenge": false
+        },
+        {
+          "text": "treatment",
+          "challenge": false
+        },
+        {
+          "text": "excitement",
+          "challenge": false
+        },
+        {
+          "text": "arrangement",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 18,
+      "term": "Spring Term",
+      "dateLabel": "W/C 4 Jan 2027",
+      "focus": "Suffix \u2013ness",
+      "learningPoint": "Suffix \u2013ness",
+      "words": [
+        {
+          "text": "happiness",
+          "challenge": false
+        },
+        {
+          "text": "kindness",
+          "challenge": false
+        },
+        {
+          "text": "sadness",
+          "challenge": false
+        },
+        {
+          "text": "darkness",
+          "challenge": false
+        },
+        {
+          "text": "illness",
+          "challenge": false
+        },
+        {
+          "text": "weakness",
+          "challenge": false
+        },
+        {
+          "text": "thickness",
+          "challenge": false
+        },
+        {
+          "text": "business",
+          "challenge": false
+        },
+        {
+          "text": "awareness",
+          "challenge": true
+        },
+        {
+          "text": "fairness",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 19,
+      "term": "Spring Term",
+      "dateLabel": "W/C 11 Jan 2027",
+      "focus": "Suffix \u2013ful",
+      "learningPoint": "Suffix \u2013ful",
+      "words": [
+        {
+          "text": "careful",
+          "challenge": false
+        },
+        {
+          "text": "helpful",
+          "challenge": false
+        },
+        {
+          "text": "useful",
+          "challenge": false
+        },
+        {
+          "text": "playful",
+          "challenge": false
+        },
+        {
+          "text": "wonderful",
+          "challenge": false
+        },
+        {
+          "text": "colourful",
+          "challenge": false
+        },
+        {
+          "text": "thankful",
+          "challenge": false
+        },
+        {
+          "text": "painful",
+          "challenge": false
+        },
+        {
+          "text": "powerful",
+          "challenge": false
+        },
+        {
+          "text": "beautiful",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 20,
+      "term": "Spring Term",
+      "dateLabel": "W/C 18 Jan 2027",
+      "focus": "Suffix \u2013less",
+      "learningPoint": "Suffix \u2013less",
+      "words": [
+        {
+          "text": "careless",
+          "challenge": false
+        },
+        {
+          "text": "helpless",
+          "challenge": false
+        },
+        {
+          "text": "useless",
+          "challenge": false
+        },
+        {
+          "text": "harmless",
+          "challenge": false
+        },
+        {
+          "text": "endless",
+          "challenge": false
+        },
+        {
+          "text": "homeless",
+          "challenge": false
+        },
+        {
+          "text": "painless",
+          "challenge": false
+        },
+        {
+          "text": "fearless",
+          "challenge": false
+        },
+        {
+          "text": "hopeless",
+          "challenge": false
+        },
+        {
+          "text": "restless",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 21,
+      "term": "Spring Term",
+      "dateLabel": "W/C 25 Jan 2027",
+      "focus": "Suffix \u2013ly",
+      "learningPoint": "Suffix \u2013ly",
+      "words": [
+        {
+          "text": "quickly",
+          "challenge": false
+        },
+        {
+          "text": "slowly",
+          "challenge": false
+        },
+        {
+          "text": "sadly",
+          "challenge": false
+        },
+        {
+          "text": "badly",
+          "challenge": false
+        },
+        {
+          "text": "really",
+          "challenge": false
+        },
+        {
+          "text": "finally",
+          "challenge": false
+        },
+        {
+          "text": "suddenly",
+          "challenge": false
+        },
+        {
+          "text": "gently",
+          "challenge": false
+        },
+        {
+          "text": "simply",
+          "challenge": false
+        },
+        {
+          "text": "easily",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 22,
+      "term": "Spring Term",
+      "dateLabel": "W/C 1 Feb 2027",
+      "focus": "Contractions",
+      "learningPoint": "Contractions",
+      "words": [
+        {
+          "text": "can't",
+          "challenge": false
+        },
+        {
+          "text": "don't",
+          "challenge": false
+        },
+        {
+          "text": "didn't",
+          "challenge": false
+        },
+        {
+          "text": "isn't",
+          "challenge": false
+        },
+        {
+          "text": "wasn't",
+          "challenge": false
+        },
+        {
+          "text": "haven't",
+          "challenge": false
+        },
+        {
+          "text": "I'll",
+          "challenge": false
+        },
+        {
+          "text": "we're",
+          "challenge": false
+        },
+        {
+          "text": "it's",
+          "challenge": false
+        },
+        {
+          "text": "they're",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 23,
+      "term": "Spring Term",
+      "dateLabel": "W/C 8 Feb 2027",
+      "focus": "Possessive apostrophe (singular)",
+      "learningPoint": "Possessive apostrophe (singular)",
+      "words": [
+        {
+          "text": "dog's",
+          "challenge": false
+        },
+        {
+          "text": "cat's",
+          "challenge": false
+        },
+        {
+          "text": "girl's",
+          "challenge": false
+        },
+        {
+          "text": "boy's",
+          "challenge": false
+        },
+        {
+          "text": "teacher's",
+          "challenge": false
+        },
+        {
+          "text": "sister's",
+          "challenge": false
+        },
+        {
+          "text": "mother's",
+          "challenge": false
+        },
+        {
+          "text": "friend's",
+          "challenge": false
+        },
+        {
+          "text": "bird's",
+          "challenge": false
+        },
+        {
+          "text": "child's",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 24,
+      "term": "Spring Term",
+      "dateLabel": "W/C 15 Feb 2027",
+      "focus": "Words ending \u2013tion",
+      "learningPoint": "Words ending \u2013tion",
+      "words": [
+        {
+          "text": "station",
+          "challenge": false
+        },
+        {
+          "text": "action",
+          "challenge": false
+        },
+        {
+          "text": "nation",
+          "challenge": false
+        },
+        {
+          "text": "motion",
+          "challenge": false
+        },
+        {
+          "text": "fiction",
+          "challenge": false
+        },
+        {
+          "text": "mention",
+          "challenge": false
+        },
+        {
+          "text": "section",
+          "challenge": false
+        },
+        {
+          "text": "invention",
+          "challenge": true
+        },
+        {
+          "text": "direction",
+          "challenge": false
+        },
+        {
+          "text": "celebration",
+          "challenge": true
+        }
+      ]
+    },
+    {
+      "week": 25,
+      "term": "Summer Term",
+      "dateLabel": "W/C 22 Feb 2027",
+      "focus": "Homophones 1",
+      "learningPoint": "Homophones 1",
+      "words": [
+        {
+          "text": "there",
+          "challenge": false
+        },
+        {
+          "text": "their",
+          "challenge": false
+        },
+        {
+          "text": "they're",
+          "challenge": false
+        },
+        {
+          "text": "here",
+          "challenge": false
+        },
+        {
+          "text": "hear",
+          "challenge": false
+        },
+        {
+          "text": "see",
+          "challenge": false
+        },
+        {
+          "text": "sea",
+          "challenge": false
+        },
+        {
+          "text": "to",
+          "challenge": false
+        },
+        {
+          "text": "too",
+          "challenge": false
+        },
+        {
+          "text": "two",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 26,
+      "term": "Summer Term",
+      "dateLabel": "W/C 1 Mar 2027",
+      "focus": "Homophones 2",
+      "learningPoint": "Homophones 2",
+      "words": [
+        {
+          "text": "bear",
+          "challenge": false
+        },
+        {
+          "text": "bare",
+          "challenge": false
+        },
+        {
+          "text": "break",
+          "challenge": false
+        },
+        {
+          "text": "brake",
+          "challenge": false
+        },
+        {
+          "text": "night",
+          "challenge": false
+        },
+        {
+          "text": "knight",
+          "challenge": false
+        },
+        {
+          "text": "sun",
+          "challenge": false
+        },
+        {
+          "text": "son",
+          "challenge": false
+        },
+        {
+          "text": "be",
+          "challenge": false
+        },
+        {
+          "text": "bee",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 27,
+      "term": "Summer Term",
+      "dateLabel": "W/C 8 Mar 2027",
+      "focus": "Homophones 3",
+      "learningPoint": "Homophones 3",
+      "words": [
+        {
+          "text": "blue",
+          "challenge": false
+        },
+        {
+          "text": "blew",
+          "challenge": false
+        },
+        {
+          "text": "whole",
+          "challenge": false
+        },
+        {
+          "text": "hole",
+          "challenge": false
+        },
+        {
+          "text": "where",
+          "challenge": false
+        },
+        {
+          "text": "wear",
+          "challenge": false
+        },
+        {
+          "text": "one",
+          "challenge": false
+        },
+        {
+          "text": "won",
+          "challenge": false
+        },
+        {
+          "text": "quite",
+          "challenge": false
+        },
+        {
+          "text": "quiet",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 28,
+      "term": "Summer Term",
+      "dateLabel": "W/C 15 Mar 2027",
+      "focus": "Common exception words 1",
+      "learningPoint": "Common exception words 1",
+      "words": [
+        {
+          "text": "door",
+          "challenge": false
+        },
+        {
+          "text": "floor",
+          "challenge": false
+        },
+        {
+          "text": "poor",
+          "challenge": false
+        },
+        {
+          "text": "because",
+          "challenge": false
+        },
+        {
+          "text": "find",
+          "challenge": false
+        },
+        {
+          "text": "kind",
+          "challenge": false
+        },
+        {
+          "text": "mind",
+          "challenge": false
+        },
+        {
+          "text": "behind",
+          "challenge": false
+        },
+        {
+          "text": "child",
+          "challenge": false
+        },
+        {
+          "text": "wild",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 29,
+      "term": "Summer Term",
+      "dateLabel": "W/C 22 Mar 2027",
+      "focus": "Common exception words 2",
+      "learningPoint": "Common exception words 2",
+      "words": [
+        {
+          "text": "climb",
+          "challenge": false
+        },
+        {
+          "text": "most",
+          "challenge": false
+        },
+        {
+          "text": "only",
+          "challenge": false
+        },
+        {
+          "text": "both",
+          "challenge": false
+        },
+        {
+          "text": "old",
+          "challenge": false
+        },
+        {
+          "text": "cold",
+          "challenge": false
+        },
+        {
+          "text": "gold",
+          "challenge": false
+        },
+        {
+          "text": "hold",
+          "challenge": false
+        },
+        {
+          "text": "told",
+          "challenge": false
+        },
+        {
+          "text": "every",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 30,
+      "term": "Summer Term",
+      "dateLabel": "W/C 29 Mar 2027",
+      "focus": "Common exception words 3",
+      "learningPoint": "Common exception words 3",
+      "words": [
+        {
+          "text": "everybody",
+          "challenge": false
+        },
+        {
+          "text": "even",
+          "challenge": false
+        },
+        {
+          "text": "great",
+          "challenge": false
+        },
+        {
+          "text": "steak",
+          "challenge": false
+        },
+        {
+          "text": "pretty",
+          "challenge": false
+        },
+        {
+          "text": "beautiful",
+          "challenge": false
+        },
+        {
+          "text": "after",
+          "challenge": false
+        },
+        {
+          "text": "fast",
+          "challenge": false
+        },
+        {
+          "text": "last",
+          "challenge": false
+        },
+        {
+          "text": "past",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 31,
+      "term": "Summer Term",
+      "dateLabel": "W/C 5 Apr 2027",
+      "focus": "Common exception words 4",
+      "learningPoint": "Common exception words 4",
+      "words": [
+        {
+          "text": "father",
+          "challenge": false
+        },
+        {
+          "text": "class",
+          "challenge": false
+        },
+        {
+          "text": "grass",
+          "challenge": false
+        },
+        {
+          "text": "pass",
+          "challenge": false
+        },
+        {
+          "text": "plant",
+          "challenge": false
+        },
+        {
+          "text": "path",
+          "challenge": false
+        },
+        {
+          "text": "bath",
+          "challenge": false
+        },
+        {
+          "text": "hour",
+          "challenge": false
+        },
+        {
+          "text": "move",
+          "challenge": false
+        },
+        {
+          "text": "improve",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 32,
+      "term": "Summer Term",
+      "dateLabel": "W/C 12 Apr 2027",
+      "focus": "Common exception words 5",
+      "learningPoint": "Common exception words 5",
+      "words": [
+        {
+          "text": "prove",
+          "challenge": false
+        },
+        {
+          "text": "sure",
+          "challenge": false
+        },
+        {
+          "text": "sugar",
+          "challenge": false
+        },
+        {
+          "text": "eye",
+          "challenge": false
+        },
+        {
+          "text": "could",
+          "challenge": false
+        },
+        {
+          "text": "should",
+          "challenge": false
+        },
+        {
+          "text": "would",
+          "challenge": false
+        },
+        {
+          "text": "who",
+          "challenge": false
+        },
+        {
+          "text": "whole",
+          "challenge": false
+        },
+        {
+          "text": "any",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 33,
+      "term": "Summer Term",
+      "dateLabel": "W/C 19 Apr 2027",
+      "focus": "Common exception words 6",
+      "learningPoint": "Common exception words 6",
+      "words": [
+        {
+          "text": "many",
+          "challenge": false
+        },
+        {
+          "text": "clothes",
+          "challenge": false
+        },
+        {
+          "text": "busy",
+          "challenge": false
+        },
+        {
+          "text": "people",
+          "challenge": false
+        },
+        {
+          "text": "water",
+          "challenge": false
+        },
+        {
+          "text": "again",
+          "challenge": false
+        },
+        {
+          "text": "half",
+          "challenge": false
+        },
+        {
+          "text": "money",
+          "challenge": false
+        },
+        {
+          "text": "Christmas",
+          "challenge": false
+        },
+        {
+          "text": "parents",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 34,
+      "term": "Summer Term",
+      "dateLabel": "W/C 26 Apr 2027",
+      "focus": "Common exception words 7",
+      "learningPoint": "Common exception words 7",
+      "words": [
+        {
+          "text": "everyone",
+          "challenge": false
+        },
+        {
+          "text": "though",
+          "challenge": false
+        },
+        {
+          "text": "although",
+          "challenge": false
+        },
+        {
+          "text": "thought",
+          "challenge": false
+        },
+        {
+          "text": "through",
+          "challenge": false
+        },
+        {
+          "text": "world",
+          "challenge": false
+        },
+        {
+          "text": "or",
+          "challenge": false
+        },
+        {
+          "text": "Mr",
+          "challenge": false
+        },
+        {
+          "text": "Mrs",
+          "challenge": false
+        },
+        {
+          "text": "mother",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 35,
+      "term": "Summer Term",
+      "dateLabel": "W/C 3 May 2027",
+      "focus": "Challenge extension (multisyllabic, less regular)",
+      "learningPoint": "Challenge extension (multisyllabic, less regular)",
+      "words": [
+        {
+          "text": "necessary",
+          "challenge": false
+        },
+        {
+          "text": "separate",
+          "challenge": false
+        },
+        {
+          "text": "different",
+          "challenge": false
+        },
+        {
+          "text": "favourite",
+          "challenge": false
+        },
+        {
+          "text": "interesting",
+          "challenge": false
+        },
+        {
+          "text": "especially",
+          "challenge": false
+        },
+        {
+          "text": "definitely",
+          "challenge": false
+        },
+        {
+          "text": "remember",
+          "challenge": false
+        },
+        {
+          "text": "February",
+          "challenge": false
+        },
+        {
+          "text": "library",
+          "challenge": false
+        }
+      ]
+    },
+    {
+      "week": 36,
+      "term": "Summer Term",
+      "dateLabel": "W/C 10 May 2027",
+      "focus": "Final consolidation / Year 3 bridge",
+      "learningPoint": "Final consolidation / Year 3 bridge",
+      "words": [
+        {
+          "text": "knowledge",
+          "challenge": false
+        },
+        {
+          "text": "straight",
+          "challenge": false
+        },
+        {
+          "text": "thorough",
+          "challenge": false
+        },
+        {
+          "text": "guard",
+          "challenge": false
+        },
+        {
+          "text": "guide",
+          "challenge": false
+        },
+        {
+          "text": "guitar",
+          "challenge": false
+        },
+        {
+          "text": "disappear",
+          "challenge": false
+        },
+        {
+          "text": "immediately",
+          "challenge": false
+        },
+        {
+          "text": "actually",
+          "challenge": false
+        },
+        {
+          "text": "therefore",
+          "challenge": false
+        }
+      ]
+    }
+  ],
+  "notes": {
+    "howBuilt": "The sequence follows the statutory Year 2 spelling rules from the National Curriculum (English Appendix 1), ordered so each week's rule builds logically on the one before \u2014 sounds first, then suffixes, then apostrophes/homophones, then the Year 2 common exception words. Because your class is strong, the pace is faster than a typical Year 2 scheme: new rules are introduced roughly weekly rather than fortnightly, and each list includes 1\u20132 challenge words that stretch beyond the minimum (marked with *) \u2014 words that follow the rule but are longer or less frequent, so quick finishers still have something to work for.",
+    "testFormat": "Weekly test format suggestion: 10 spellings + 2 dictation sentences using two of the words in context (tests application, not just recall \u2014 bright spellers often pattern-match a word list without being able to use the words correctly).",
+    "pacing": "Pacing: 36 weeks fits a school year with room for INSET days, assessment weeks, and a settling-in week at the very start. If your year has more teaching weeks, repeat weeks 35\u201336 as a rolling review, or fold in extra homophones.",
+    "differentiation": [
+      "Challenge words (*) aren't compulsory \u2014 use them as the \"if you finish early\" extension or as the dictation-sentence word, so accuracy under context is tested, not just rote recall.",
+      "Consider a \"spot the rule\" starter each Monday: show the 10 words and ask the children to work out the shared pattern themselves before you name it \u2014 this suits children who are ready to reason about spelling rather than just memorise.",
+      "For weeks with exception words (28\u201334), pair each test with one \"apply the rule\" bonus word that isn't on any list, to check they're generalising rather than memorising a fixed set.",
+      "Revisit trickier rules (doubling, drop-e, y\u2192i) briefly in weeks 35\u201336 dictation sentences, since these are the ones bright children still misapply under time pressure even when they know the rule."
+    ]
+  }
+}
