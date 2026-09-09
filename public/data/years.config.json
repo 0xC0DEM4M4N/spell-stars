@@ -1,0 +1,349 @@
+{
+  "totalWeeks": 38,
+  "termStructure": {
+    "autumn": {
+      "teachingWeeks": [
+        1,
+        14
+      ],
+      "halfTermAfterWeek": 7
+    },
+    "spring": {
+      "teachingWeeks": [
+        15,
+        26
+      ],
+      "halfTermAfterWeek": 20
+    },
+    "summer": {
+      "teachingWeeks": [
+        27,
+        38
+      ],
+      "halfTermAfterWeek": 32
+    }
+  },
+  "years": [
+    {
+      "slug": "reception",
+      "label": "Reception",
+      "totalWeeks": 38,
+      "wordsPerWeek": 5,
+      "wordListPath": "/data/reception/words.json",
+      "capabilities": {
+        "inputMode": "letterTile",
+        "ttsRate": "slow",
+        "sessionCaps": {
+          "newItemsPerDay": 3,
+          "reviewsPerDay": 10
+        },
+        "wordSearchGrid": {
+          "size": 6,
+          "directions": [
+            "horizontal",
+            "vertical"
+          ],
+          "letterCase": "lowercase"
+        },
+        "definitionStyle": "concrete"
+      },
+      "wordCount": 190
+    },
+    {
+      "slug": "year1",
+      "label": "Year 1",
+      "totalWeeks": 39,
+      "wordsPerWeek": 10,
+      "wordListPath": "/data/year1/words.json",
+      "capabilities": {
+        "inputMode": "onScreenKeyboardOptional",
+        "ttsRate": "standard",
+        "sessionCaps": {
+          "newItemsPerDay": 4,
+          "reviewsPerDay": 15
+        },
+        "wordSearchGrid": {
+          "size": 8,
+          "directions": [
+            "horizontal",
+            "vertical"
+          ],
+          "letterCase": "lowercase"
+        },
+        "definitionStyle": "concrete"
+      },
+      "wordCount": 390,
+      "termStructure": {
+        "autumn": {
+          "teachingWeeks": [
+            1,
+            15
+          ],
+          "halfTermAfterWeek": 8
+        },
+        "spring": {
+          "teachingWeeks": [
+            16,
+            27
+          ],
+          "halfTermAfterWeek": 21
+        },
+        "summer": {
+          "teachingWeeks": [
+            28,
+            39
+          ],
+          "halfTermAfterWeek": 33
+        }
+      }
+    },
+    {
+      "slug": "year2",
+      "label": "Year 2",
+      "totalWeeks": 39,
+      "wordsPerWeek": 12,
+      "wordListPath": "/data/year2/words.json",
+      "capabilities": {
+        "inputMode": "typeRequired",
+        "ttsRate": "standard",
+        "sessionCaps": {
+          "newItemsPerDay": 5,
+          "reviewsPerDay": 30
+        },
+        "wordSearchGrid": {
+          "size": 10,
+          "directions": [
+            "horizontal",
+            "vertical"
+          ],
+          "letterCase": "uppercase"
+        },
+        "definitionStyle": "concrete"
+      },
+      "wordCount": 468,
+      "termStructure": {
+        "autumn": {
+          "teachingWeeks": [
+            1,
+            15
+          ],
+          "halfTermAfterWeek": 8
+        },
+        "spring": {
+          "teachingWeeks": [
+            16,
+            27
+          ],
+          "halfTermAfterWeek": 21
+        },
+        "summer": {
+          "teachingWeeks": [
+            28,
+            39
+          ],
+          "halfTermAfterWeek": 33
+        }
+      }
+    },
+    {
+      "slug": "year3",
+      "label": "Year 3",
+      "totalWeeks": 39,
+      "wordsPerWeek": 15,
+      "wordListPath": "/data/year3/words.json",
+      "capabilities": {
+        "inputMode": "typeRequired",
+        "ttsRate": "standard",
+        "sessionCaps": {
+          "newItemsPerDay": 5,
+          "reviewsPerDay": 30
+        },
+        "wordSearchGrid": {
+          "size": 12,
+          "directions": [
+            "horizontal",
+            "vertical",
+            "diagonal",
+            "backwards"
+          ],
+          "letterCase": "uppercase"
+        },
+        "definitionStyle": "concrete"
+      },
+      "wordCount": 585,
+      "termStructure": {
+        "autumn": {
+          "teachingWeeks": [
+            1,
+            15
+          ],
+          "halfTermAfterWeek": 8
+        },
+        "spring": {
+          "teachingWeeks": [
+            16,
+            27
+          ],
+          "halfTermAfterWeek": 21
+        },
+        "summer": {
+          "teachingWeeks": [
+            28,
+            39
+          ],
+          "halfTermAfterWeek": 33
+        }
+      }
+    },
+    {
+      "slug": "year4",
+      "label": "Year 4",
+      "totalWeeks": 39,
+      "wordsPerWeek": 15,
+      "wordListPath": "/data/year4/words.json",
+      "capabilities": {
+        "inputMode": "typeRequired",
+        "ttsRate": "standard",
+        "sessionCaps": {
+          "newItemsPerDay": 5,
+          "reviewsPerDay": 30
+        },
+        "wordSearchGrid": {
+          "size": 12,
+          "directions": [
+            "horizontal",
+            "vertical",
+            "diagonal",
+            "backwards"
+          ],
+          "letterCase": "uppercase"
+        },
+        "definitionStyle": "concrete"
+      },
+      "wordCount": 585,
+      "termStructure": {
+        "autumn": {
+          "teachingWeeks": [
+            1,
+            15
+          ],
+          "halfTermAfterWeek": 8
+        },
+        "spring": {
+          "teachingWeeks": [
+            16,
+            27
+          ],
+          "halfTermAfterWeek": 21
+        },
+        "summer": {
+          "teachingWeeks": [
+            28,
+            39
+          ],
+          "halfTermAfterWeek": 33
+        }
+      }
+    },
+    {
+      "slug": "year5",
+      "label": "Year 5",
+      "totalWeeks": 39,
+      "wordsPerWeek": 15,
+      "wordListPath": "/data/year5/words.json",
+      "capabilities": {
+        "inputMode": "typeRequired",
+        "ttsRate": "standard",
+        "sessionCaps": {
+          "newItemsPerDay": 5,
+          "reviewsPerDay": 30
+        },
+        "wordSearchGrid": {
+          "size": 12,
+          "directions": [
+            "horizontal",
+            "vertical",
+            "diagonal",
+            "backwards"
+          ],
+          "letterCase": "uppercase"
+        },
+        "definitionStyle": "etymological"
+      },
+      "wordCount": 585,
+      "termStructure": {
+        "autumn": {
+          "teachingWeeks": [
+            1,
+            15
+          ],
+          "halfTermAfterWeek": 8
+        },
+        "spring": {
+          "teachingWeeks": [
+            16,
+            27
+          ],
+          "halfTermAfterWeek": 21
+        },
+        "summer": {
+          "teachingWeeks": [
+            28,
+            39
+          ],
+          "halfTermAfterWeek": 33
+        }
+      }
+    },
+    {
+      "slug": "year6",
+      "label": "Year 6",
+      "totalWeeks": 39,
+      "wordsPerWeek": 15,
+      "wordListPath": "/data/year6/words.json",
+      "capabilities": {
+        "inputMode": "typeRequired",
+        "ttsRate": "standard",
+        "sessionCaps": {
+          "newItemsPerDay": 5,
+          "reviewsPerDay": 30
+        },
+        "wordSearchGrid": {
+          "size": 12,
+          "directions": [
+            "horizontal",
+            "vertical",
+            "diagonal",
+            "backwards"
+          ],
+          "letterCase": "uppercase"
+        },
+        "definitionStyle": "etymological"
+      },
+      "wordCount": 585,
+      "termStructure": {
+        "autumn": {
+          "teachingWeeks": [
+            1,
+            15
+          ],
+          "halfTermAfterWeek": 8
+        },
+        "spring": {
+          "teachingWeeks": [
+            16,
+            27
+          ],
+          "halfTermAfterWeek": 21
+        },
+        "summer": {
+          "teachingWeeks": [
+            28,
+            39
+          ],
+          "halfTermAfterWeek": 33
+        }
+      }
+    }
+  ]
+}

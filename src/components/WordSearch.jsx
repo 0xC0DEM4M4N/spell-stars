@@ -7,10 +7,10 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { loadTimerPrefs, saveTimerPrefs } from "@/lib/timerPrefs";
 
-const SIZE = 12;
-const DIRS = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
 const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const ALPHA_LOWER = "abcdefghijklmnopqrstuvwxyz";
 const COLORS = [
   "bg-cyan-400/40 text-white border-cyan-400",
   "bg-emerald-400/40 text-white border-emerald-400",
@@ -24,22 +24,61 @@ const COLORS = [
   "bg-lime-400/40 text-white border-lime-400",
 ];
 const DEFAULT_SECS = 180;
+const DEFAULT_SIZE = 10;
+const DEFAULT_DIRECTIONS = ["horizontal", "vertical"];
 
-function buildGrid(words) {
-  const clean = words.map(w => w.toUpperCase().replace(/['']/g, ""));
-  const grid = Array.from({ length: SIZE }, () =>
-    Array.from({ length: SIZE }, () => ({ letter: "", wis: [] }))
+// capabilities.wordSearchGrid.directions (category names) -> concrete
+// [dr, dc] step vectors. "backwards" is a modifier on the other
+// categories, not a direction of its own — per
+// next-steps-year-capabilities.md §4: reserved for Year 3+ so a
+// reversed/diagonal word is only ever placed for years with the reading
+// fluency to spot one.
+function buildDirections(directions) {
+  const set = new Set(directions && directions.length ? directions : DEFAULT_DIRECTIONS);
+  const dirs = [];
+  if (set.has("horizontal")) dirs.push([0, 1]);
+  if (set.has("vertical")) dirs.push([1, 0]);
+  if (set.has("diagonal")) dirs.push([1, 1], [1, -1]);
+  if (set.has("backwards")) {
+    if (set.has("horizontal")) dirs.push([0, -1]);
+    if (set.has("vertical")) dirs.push([-1, 0]);
+    if (set.has("diagonal")) dirs.push([-1, 1], [-1, -1]);
+  }
+  return dirs.length ? dirs : [[0, 1], [1, 0]];
+}
+
+// Bigger grid text for the smaller grids Reception/Year 1 use (6x6/8x8) —
+// young children need larger, easier-to-read/tap letters and words than
+// the denser 10x10/12x12 grids Year 2+ use.
+function cellTextSizeClass(size) {
+  if (size <= 6) return "text-2xl sm:text-3xl";
+  if (size <= 8) return "text-xl sm:text-2xl";
+  if (size <= 10) return "text-sm sm:text-base";
+  return "text-[11px] sm:text-xs";
+}
+
+function chipTextSizeClass(size) {
+  if (size <= 8) return "text-sm";
+  return "text-[10px]";
+}
+
+function buildGrid(words, size, dirs, letterCase) {
+  const toGridCase = (w) => (letterCase === "lowercase" ? w.toLowerCase() : w.toUpperCase());
+  const alphabet = letterCase === "lowercase" ? ALPHA_LOWER : ALPHA;
+  const clean = words.map(w => toGridCase(w).replace(/['']/g, ""));
+  const grid = Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => ({ letter: "", wis: [] }))
   );
   const placed = [];
   for (let wi = 0; wi < clean.length; wi++) {
     const up = clean[wi];
     let ok = false;
     for (let t = 0; t < 400 && !ok; t++) {
-      const [dr, dc] = DIRS[Math.floor(Math.random() * 8)];
+      const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
       const rMin = dr > 0 ? 0 : dr < 0 ? up.length - 1 : 0;
-      const rMax = dr > 0 ? SIZE - up.length : dr < 0 ? SIZE - 1 : SIZE - 1;
+      const rMax = dr > 0 ? size - up.length : dr < 0 ? size - 1 : size - 1;
       const cMin = dc > 0 ? 0 : dc < 0 ? up.length - 1 : 0;
-      const cMax = dc > 0 ? SIZE - up.length : dc < 0 ? SIZE - 1 : SIZE - 1;
+      const cMax = dc > 0 ? size - up.length : dc < 0 ? size - 1 : size - 1;
       if (rMin > rMax || cMin > cMax) continue;
       const r0 = rMin + Math.floor(Math.random() * (rMax - rMin + 1));
       const c0 = cMin + Math.floor(Math.random() * (cMax - cMin + 1));
@@ -59,10 +98,10 @@ function buildGrid(words) {
     }
     if (!ok) placed.push({ word: words[wi], up, wi, failed: true });
   }
-  for (let r = 0; r < SIZE; r++)
-    for (let c = 0; c < SIZE; c++)
+  for (let r = 0; r < size; r++)
+    for (let c = 0; c < size; c++)
       if (!grid[r][c].letter)
-        grid[r][c].letter = ALPHA[Math.floor(Math.random() * 26)];
+        grid[r][c].letter = alphabet[Math.floor(Math.random() * 26)];
   return { grid, placed };
 }
 
@@ -76,11 +115,20 @@ function fmtTime(s) {
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
 
-export const WordSearch = ({ week }) => {
-  const words = useMemo(
-    () => week.words.filter(w => !w.challenge).map(w => w.text),
-    [week]
-  );
+/**
+ * Word search driven by a resolved session word list (ScopeSelector +
+ * srs.selectSessionWords, same as PracticeQuiz) and a year's
+ * capabilities.wordSearchGrid ({ size, directions }) — grid size and
+ * allowed placement directions now come from the year's capabilities
+ * instead of being hardcoded, per next-steps-year-capabilities.md §4.
+ *
+ * `words` entries use the wordlist-spec schema — only contentType:
+ * "word" entries should be passed in.
+ */
+export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDirections, gridLetterCase = "uppercase", title = "Word Search", focus = "", trigger }) => {
+  const size = gridSize || DEFAULT_SIZE;
+  const dirs = useMemo(() => buildDirections(gridDirections), [gridDirections]);
+  const words = useMemo(() => wordEntries.map(w => w.word), [wordEntries]);
 
   const [open, setOpen] = useState(false);
   const [game, setGame] = useState(null);
@@ -103,6 +151,16 @@ export const WordSearch = ({ week }) => {
   const [timeUp, setTimeUp] = useState(false);
   const timerRef = useRef(null);
 
+  // Timer style — countdown (auto-reveals at 0) or a normal count-up
+  // stopwatch. Asked via a small dialog the first time the timer is
+  // started each session; the countdown length is remembered as the
+  // default for next time (starts at 3 minutes).
+  const [timerMode, setTimerMode] = useState(() => loadTimerPrefs().mode);
+  const [countdownSeconds, setCountdownSeconds] = useState(() => loadTimerPrefs().countdownSeconds);
+  const [timerSettingsOpen, setTimerSettingsOpen] = useState(false);
+  const [draftMode, setDraftMode] = useState(timerMode);
+  const [draftMinutes, setDraftMinutes] = useState(() => Math.max(1, Math.round(countdownSeconds / 60)));
+
   const pressing = useRef(false);
   const hasDragged = useRef(false); // true once mouse/touch moves after press
 
@@ -112,42 +170,59 @@ export const WordSearch = ({ week }) => {
 
   const startGame = useCallback(() => {
     clearInterval(timerRef.current);
-    const g = buildGrid(words);
+    const g = buildGrid(words, size, dirs, gridLetterCase);
     setGame(g);
     setFound(new Set());
     foundRef.current = new Set();
     setRevealed(false);
     setSelCells([]);
-    setTimeLeft(DEFAULT_SECS);
+    setTimerOn(false);
+    setTimeLeft(timerMode === "countdown" ? countdownSeconds : 0);
     setTimeUp(false);
-  }, [words]);
+  }, [words, size, dirs, gridLetterCase, timerMode, countdownSeconds]);
 
   // ── Timer ─────────────────────────────────────────────────────────────────
   useEffect(() => {
     clearInterval(timerRef.current);
-    if (!timerOn || !game || timeUp) return;
+    if (!timerOn || !game || (timerMode === "countdown" && timeUp)) return;
     timerRef.current = setInterval(() => {
+      if (timerMode === "countup") {
+        setTimeLeft(prev => prev + 1);
+        return;
+      }
       setTimeLeft(prev => {
         if (prev <= 1) { setTimeUp(true); setRevealed(true); return 0; }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [timerOn, game, timeUp]);
+  }, [timerOn, game, timeUp, timerMode]);
 
   useEffect(() => { if (allDone) clearInterval(timerRef.current); }, [allDone]);
 
   const toggleTimer = useCallback(() => {
-    setTimerOn(prev => {
-      if (prev) { clearInterval(timerRef.current); }
-      else { setTimeLeft(DEFAULT_SECS); setTimeUp(false); }
-      return !prev;
-    });
-  }, []);
+    if (timerOn) {
+      clearInterval(timerRef.current);
+      setTimerOn(false);
+      return;
+    }
+    setDraftMode(timerMode);
+    setDraftMinutes(Math.max(1, Math.round(countdownSeconds / 60)));
+    setTimerSettingsOpen(true);
+  }, [timerOn, timerMode, countdownSeconds]);
+
+  const confirmTimerSettings = useCallback(() => {
+    const seconds = draftMode === "countdown" ? Math.max(30, draftMinutes * 60) : countdownSeconds;
+    setTimerMode(draftMode);
+    if (draftMode === "countdown") setCountdownSeconds(seconds);
+    saveTimerPrefs({ mode: draftMode, countdownSeconds: draftMode === "countdown" ? seconds : countdownSeconds });
+    setTimerSettingsOpen(false);
+    setTimeUp(false);
+    setTimeLeft(draftMode === "countdown" ? seconds : 0);
+    setTimerOn(true);
+  }, [draftMode, draftMinutes, countdownSeconds]);
 
   // ── Auto word-match ───────────────────────────────────────────────────────
-  // Fires after every selCells change.  Uses foundRef so `found` is NOT a dep
-  // (avoids the effect re-running on every found update and causing a loop).
   useEffect(() => {
     if (selCells.length < 2 || !game) return;
     const fwd = selCells.map(p => game.grid[p.row][p.col].letter).join("");
@@ -170,11 +245,9 @@ export const WordSearch = ({ week }) => {
     setSelCells(prev => {
       if (!prev.length) return [cell];
       const last = prev[prev.length - 1];
-      if (last.row === cell.row && last.col === cell.col) return prev; // same cell
-      // Adjacent and not already in path → extend
+      if (last.row === cell.row && last.col === cell.col) return prev;
       if (adjacent(last, cell) && !prev.some(p => p.row === cell.row && p.col === cell.col))
         return [...prev, cell];
-      // Not adjacent → restart with just this cell
       return [cell];
     });
   }, []);
@@ -192,9 +265,6 @@ export const WordSearch = ({ week }) => {
     });
   }, []);
 
-  // On release:
-  //   drag → clear the selection (word check already handled by the effect above)
-  //   click → keep selection sticky so the user can continue clicking letter-by-letter
   const confirmSel = useCallback(() => {
     pressing.current = false;
     if (hasDragged.current) setSelCells([]);
@@ -213,7 +283,6 @@ export const WordSearch = ({ week }) => {
     const { wis } = game.grid[r][c];
     const foundWi = wis.find(wi => found.has(wi));
     if (foundWi !== undefined) return COLORS[foundWi % COLORS.length];
-    // Active selection — vivid so it's unmissable
     if (inSel(r, c)) return "bg-cyan-300/50 text-white border-cyan-300 ring-1 ring-inset ring-cyan-200/60 scale-105";
     if (revealed && wis.length > 0) return "bg-white/12 text-slate-300 border-white/25";
     return "bg-white/[0.04] text-slate-400 border-white/10 hover:bg-cyan-300/10 hover:text-white hover:border-cyan-300/30";
@@ -224,20 +293,16 @@ export const WordSearch = ({ week }) => {
     if (!game) return;
     const letters = game.grid.map(row => row.map(cell => cell.letter));
 
-    // Build a lookup from word text → full word object (for sentences)
     const wordObjMap = Object.fromEntries(
-      week.words
-        .filter(w => !w.challenge)
-        .map(w => [w.text.toLowerCase(), w])
+      wordEntries.map(w => [w.word.toLowerCase(), w])
     );
 
     const sentenceRows = game.placed
-      .filter(({ word }) => wordObjMap[word.toLowerCase()]?.sentence)
+      .filter(({ word }) => wordObjMap[word.toLowerCase()]?.exampleSentence)
       .map(({ word }) => {
         const obj = wordObjMap[word.toLowerCase()];
-        // Highlight every occurrence of the spelling word (case-insensitive)
         const re = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
-        const highlighted = obj.sentence.replace(
+        const highlighted = obj.exampleSentence.replace(
           re,
           '<strong class="hl">$1</strong>'
         );
@@ -249,27 +314,27 @@ export const WordSearch = ({ week }) => {
       .join("");
 
     const html = `<!DOCTYPE html><html><head>
-<title>Word Search – Week ${String(week.week).padStart(2, "0")}</title>
+<title>Word Search – ${title}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Courier New',monospace;padding:36px 40px;background:#fff;color:#111}
 .eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#666;margin-bottom:4px}
 h1{font-size:26px;font-weight:900;letter-spacing:-.02em}
 .lp{font-size:12px;color:#444;margin-top:10px;border-left:3px solid #0ea5e9;padding-left:10px;line-height:1.5}
-.grid{display:grid;grid-template-columns:repeat(${SIZE},1fr);gap:2px;margin:22px 0;width:fit-content}
-.cell{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:1px solid #ccc}
+.grid{display:grid;grid-template-columns:repeat(${size},1fr);gap:2px;margin:22px 0;width:fit-content}
+.cell{${gridLetterCase === "lowercase" ? "width:38px;height:38px" : "width:30px;height:30px"};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${gridLetterCase === "lowercase" ? 20 : 13}px;border:1px solid #ccc}
 .label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#777;margin-bottom:8px;margin-top:20px}
 .words{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
-.word{border:1px solid #aaa;padding:3px 11px;border-radius:20px;font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+.word{border:1px solid #aaa;padding:3px 11px;border-radius:20px;font-size:${gridLetterCase === "lowercase" ? 15 : 11}px;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.1em}
 table{width:100%;border-collapse:collapse;margin-top:4px}
-.w-cell{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 10px 5px 0;vertical-align:top;white-space:nowrap;color:#333;width:100px;border-bottom:1px solid #eee}
+.w-cell{font-size:${gridLetterCase === "lowercase" ? 15 : 11}px;font-weight:700;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.08em;padding:5px 10px 5px 0;vertical-align:top;white-space:nowrap;color:#333;width:100px;border-bottom:1px solid #eee}
 .s-cell{font-size:12px;color:#444;line-height:1.6;padding:5px 0;border-bottom:1px solid #eee}
 .hl{font-weight:900;color:#0284c7;text-decoration:underline}
 footer{margin-top:24px;font-size:10px;color:#bbb}
 </style></head><body>
 <p class="eyebrow">SPELL// ST&#9733;RS &mdash; Word Search</p>
-<h1>Week ${String(week.week).padStart(2, "0")}</h1>
-<p class="lp">${week.learningPoint}</p>
+<h1>${title}</h1>
+<p class="lp">${focus}</p>
 <div class="grid">${letters.flat().map(l => `<div class="cell">${l}</div>`).join("")}</div>
 <p class="label">Find these words</p>
 <div class="words">${game.placed.map(({ word }) => `<div class="word">${word}</div>`).join("")}</div>
@@ -285,15 +350,20 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={v => { setOpen(v); if (v) startGame(); else clearInterval(timerRef.current); }}>
       <DialogTrigger asChild>
-        <button
-          onClick={e => e.stopPropagation()}
-          className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-cyan-200"
-          data-testid="word-search-button"
-        >
-          <Grid2x2 className="h-3.5 w-3.5" /> Word search
-        </button>
+        {trigger ? (
+          trigger
+        ) : (
+          <button
+            onClick={e => e.stopPropagation()}
+            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-cyan-200"
+            data-testid="word-search-button"
+          >
+            <Grid2x2 className="h-3.5 w-3.5" /> Word search
+          </button>
+        )}
       </DialogTrigger>
 
       <DialogContent
@@ -304,12 +374,12 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
           <DialogHeader className="mb-5">
             <div className="flex items-center justify-between">
               <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-300">
-                Word Search // Week {String(week.week).padStart(2, "0")}
+                Word Search // {title}
               </div>
               {timerOn && game && (
                 <div
                   className={`font-mono text-xl font-bold tabular-nums transition-colors ${
-                    !timeUp && timeLeft <= 30 ? "animate-pulse text-rose-400" : "text-cyan-300"
+                    timerMode === "countdown" && !timeUp && timeLeft <= 30 ? "animate-pulse text-rose-400" : "text-cyan-300"
                   }`}
                   data-testid="timer-display"
                 >
@@ -320,7 +390,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <DialogTitle className="font-display text-2xl font-extrabold text-white">
               Find all the words.
             </DialogTitle>
-            <p className="text-sm text-slate-400">{week.learningPoint}</p>
+            <p className="text-sm text-slate-400">{focus}</p>
           </DialogHeader>
 
           {timeUp && (
@@ -334,7 +404,6 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             </div>
           )}
 
-          {/* Grid */}
           {game && (
             <div
               className="select-none cursor-crosshair touch-none"
@@ -348,14 +417,14 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             >
               <div
                 className="grid gap-[2px]"
-                style={{ gridTemplateColumns: `repeat(${SIZE}, minmax(0, 1fr))` }}
+                style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
               >
-                {Array.from({ length: SIZE }, (_, r) =>
-                  Array.from({ length: SIZE }, (_, c) => (
+                {Array.from({ length: size }, (_, r) =>
+                  Array.from({ length: size }, (_, c) => (
                     <div
                       key={`${r}-${c}`}
                       data-rc={`${r},${c}`}
-                      className={`flex aspect-square items-center justify-center rounded border font-mono text-[11px] font-bold transition-all duration-75 sm:text-xs ${cellClass(r, c)}`}
+                      className={`flex aspect-square items-center justify-center rounded border font-mono font-bold transition-all duration-75 ${cellTextSizeClass(size)} ${cellClass(r, c)}`}
                     >
                       {game.grid[r][c].letter}
                     </div>
@@ -365,13 +434,14 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             </div>
           )}
 
-          {/* Word chips */}
           {game && (
             <div className="mt-5 flex flex-wrap gap-2">
               {game.placed.map(({ word, wi }) => (
                 <span
                   key={word}
-                  className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] transition-all duration-300 ${
+                  className={`rounded-full border px-3 py-1 font-mono tracking-[0.15em] transition-all duration-300 ${chipTextSizeClass(size)} ${
+                    gridLetterCase === "lowercase" ? "" : "uppercase"
+                  } ${
                     found.has(wi)
                       ? `line-through opacity-40 ${COLORS[wi % COLORS.length]}`
                       : "border-white/15 bg-white/5 text-slate-400"
@@ -383,7 +453,6 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             </div>
           )}
 
-          {/* Controls */}
           <div className="mt-5 flex flex-wrap gap-3">
             <Button
               onClick={startGame}
@@ -458,5 +527,73 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
         </div>
       </DialogContent>
     </Dialog>
+
+    <Dialog open={timerSettingsOpen} onOpenChange={setTimerSettingsOpen}>
+      <DialogContent className="max-w-sm border-cyan-300/20 bg-[#08101f] text-slate-100" data-testid="timer-settings-dialog">
+        <DialogHeader>
+          <DialogTitle className="font-display text-xl font-extrabold text-white">Timer</DialogTitle>
+        </DialogHeader>
+
+        <div className="mt-3 flex flex-col gap-5">
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDraftMode("countdown")}
+              className={`flex-1 rounded-full ${draftMode === "countdown" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10"}`}
+              data-testid="timer-mode-countdown"
+            >
+              Countdown
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDraftMode("countup")}
+              className={`flex-1 rounded-full ${draftMode === "countup" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10"}`}
+              data-testid="timer-mode-countup"
+            >
+              Normal (count up)
+            </Button>
+          </div>
+
+          {draftMode === "countdown" && (
+            <div>
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-slate-400">Minutes</div>
+              <div className="mt-2 flex items-center gap-3">
+                <Button
+                  type="button" variant="outline" size="icon"
+                  onClick={() => setDraftMinutes(m => Math.max(1, m - 1))}
+                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
+                  aria-label="Fewer minutes"
+                  data-testid="timer-minutes-decrement"
+                >
+                  −
+                </Button>
+                <span className="w-10 text-center text-lg font-bold text-white" data-testid="timer-minutes-value">{draftMinutes}</span>
+                <Button
+                  type="button" variant="outline" size="icon"
+                  onClick={() => setDraftMinutes(m => Math.min(30, m + 1))}
+                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
+                  aria-label="More minutes"
+                  data-testid="timer-minutes-increment"
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <Button
+            type="button"
+            onClick={confirmTimerSettings}
+            className="rounded-full bg-emerald-400 px-6 font-semibold text-slate-950 hover:bg-emerald-300"
+            data-testid="timer-settings-start"
+          >
+            Start timer
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 };

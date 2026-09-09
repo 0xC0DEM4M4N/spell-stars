@@ -1,10 +1,15 @@
+.bg-grid-squares {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px, 44px 44px;
+}
+
 .hero-grid {
   background-image:
-    radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.16), transparent 28%),
-    radial-gradient(circle at 80% 10%, rgba(236, 72, 153, 0.1), transparent 24%),
-    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-  background-size: auto, auto, 44px 44px, 44px 44px;
+    radial-gradient(circle at 18% 15%, rgba(6, 182, 212, 0.28), transparent 32%),
+    radial-gradient(circle at 82% 8%, rgba(236, 72, 153, 0.14), transparent 26%),
+    radial-gradient(circle at 65% 85%, rgba(251, 191, 36, 0.12), transparent 34%);
 }
 
 .hero-mask-line {
@@ -93,4 +98,26 @@
   background: linear-gradient(transparent 0 48%, rgba(103, 232, 249, 0.08) 50%, transparent 52% 100%);
   background-size: 100% 8px;
   mix-blend-mode: screen;
+}
+
+.slim-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+}
+
+.slim-scrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.slim-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slim-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+}
+
+.slim-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.45);
 }

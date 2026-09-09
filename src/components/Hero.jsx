@@ -11,7 +11,7 @@ export const Hero = ({ programme, activeWeek }) => (
         <h1 className="font-display text-6xl font-extrabold uppercase leading-[0.88] tracking-tighter text-white sm:text-7xl lg:text-8xl" data-testid="hero-title">
           <span className="hero-mask-line">
             <motion.span className="block" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0, ease: [0.22, 1, 0.36, 1] }}>
-              SPELL//
+              SPELL
             </motion.span>
           </span>
           <span className="hero-mask-line">

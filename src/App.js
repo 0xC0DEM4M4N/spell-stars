@@ -1,22 +1,36 @@
-import { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Lenis from "lenis";
 import "@/App.css";
-import { Footer } from "@/components/Footer";
-import { Hero } from "@/components/Hero";
-import { Navbar } from "@/components/Navbar";
-import { NotesSection } from "@/components/NotesSection";
-import { PrintSheet } from "@/components/PrintSheet";
-import { WeekCarousel } from "@/components/WeekCarousel";
-import { Toaster, toast } from "@/components/ui/sonner";
-import programmeData from "@/data/programme.json";
+import YearIndex from "@/pages/YearIndex";
+import YearPage from "@/pages/YearPage";
+import { Toaster } from "@/components/ui/sonner";
 
-const Home = () => {
-  const [selectedWeek, setSelectedWeek] = useState(null);
-  const data = programmeData;
+// react-router's client-side navigation keeps whatever scroll position
+// the previous page was at, so clicking a year card partway down the
+// landing page lands you partway down the year page too. This resets
+// the scroll to the top on every route change. It goes through the
+// Lenis instance (rather than a plain window.scrollTo) so Lenis's own
+// idea of the scroll position stays in sync with the jump — otherwise
+// the next wheel/touch event can snap the page straight back to the
+// old spot.
+function ScrollToTop({ lenisRef }) {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    lenisRef.current?.scrollTo(0, { immediate: true });
+    // lenisRef is a ref (stable identity) — the effect only actually
+    // needs to re-run when pathname changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+  return null;
+}
+
+function App() {
+  const lenisRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    lenisRef.current = lenis;
     let frameId;
     const raf = (time) => {
       lenis.raf(time);
@@ -26,46 +40,20 @@ const Home = () => {
     return () => {
       cancelAnimationFrame(frameId);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
-  const activeWeekNumber = selectedWeek ?? data.currentWeek;
-  const activeWeek = data.weeks.find((week) => week.week === activeWeekNumber) ?? data.weeks[0];
-
-  const handlePrint = () => {
-    toast.success("Printable weekly list ready", {
-      description: `Week ${activeWeek.week} is formatted as a clean A4 spelling sheet.`,
-    });
-    window.print();
-  };
-
-  return (
-    <div className="min-h-screen overflow-x-clip bg-[#05070d] text-slate-100" data-testid="app-shell">
-      <Navbar activeWeek={activeWeek} totalWeeks={data.totalWeeks} onPrint={handlePrint} />
-      <main>
-        <Hero programme={data} activeWeek={activeWeek} />
-        <WeekCarousel
-          weeks={data.weeks}
-          currentWeek={data.currentWeek}
-          selectedWeek={activeWeek.week}
-          onSelectWeek={setSelectedWeek}
-          onPrint={handlePrint}
-        />
-        <NotesSection notes={data.notes} />
-      </main>
-      <Footer onPrint={handlePrint} />
-      <PrintSheet week={activeWeek} programmeTitle={data.title} />
-      <Toaster position="bottom-right" />
-    </div>
-  );
-};
-
-function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <div data-testid="app-shell">
+        <ScrollToTop lenisRef={lenisRef} />
+        <Routes>
+          <Route path="/" element={<YearIndex />} />
+          <Route path="/:yearSlug" element={<YearPage />} />
+        </Routes>
+        <Toaster position="bottom-right" />
+      </div>
     </BrowserRouter>
   );
 }

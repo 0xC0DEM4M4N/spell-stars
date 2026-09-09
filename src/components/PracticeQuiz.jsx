@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, Ear, RotateCcw, Sparkles, Star, Trophy, XCircle } from "lucide-react";
+import { CheckCircle2, Ear, Puzzle, RotateCcw, Shuffle, Trophy, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
+import { ConfettiBurst } from "@/components/ConfettiBurst";
 
 const normalize = (value) => value.trim().toLowerCase().replace(/['']/g, "'");
 
@@ -15,36 +16,68 @@ const makeHint = (word) =>
     .map((char, index) => (/[a-z]/i.test(char) ? (index === 0 ? char : "_") : char))
     .join(" ");
 
-const ConfettiBurst = ({ burstKey }) => {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 24 }, (_, index) => ({
-        id: `${burstKey}-${index}`,
-        x: (index % 2 === 0 ? 1 : -1) * (42 + ((index * 19) % 150)),
-        y: -42 - ((index * 23) % 150),
-        rotate: (index * 41) % 220,
-        color: ["#67e8f9", "#34d399", "#fbbf24", "#f472b6"][index % 4],
-      })),
-    [burstKey],
-  );
+// Meaning mode reveals no letters at all — just the shape of the word,
+// like a crossword grid with no checkers filled in yet.
+const makeBlank = (word) =>
+  word
+    .split("")
+    .map((char) => (/[a-z]/i.test(char) ? "_" : char))
+    .join(" ");
 
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      {particles.map((particle) => (
-        <motion.span
-          key={particle.id}
-          className="absolute left-1/2 top-1/2 h-2.5 w-2.5 rounded-sm"
-          style={{ backgroundColor: particle.color }}
-          initial={{ opacity: 1, scale: 0, x: 0, y: 0, rotate: 0 }}
-          animate={{ opacity: 0, scale: 1, x: particle.x, y: particle.y, rotate: particle.rotate }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-        />
-      ))}
-    </div>
-  );
+// Hides the spelling word inside its example sentence so meaning mode
+// doesn't give the answer away — "The ___ sailed into the harbour."
+const blankSentence = (sentence, word) => {
+  if (!sentence || !word) return sentence;
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(escaped, "gi");
+  return sentence.replace(re, (match) => "_".repeat(match.length));
 };
 
-export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
+// Fisher-Yates — so a session's word order isn't just the page order.
+const shuffle = (list) => {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
+
+// capabilities.ttsRate -> SpeechSynthesisUtterance.rate
+const TTS_RATE = { slow: 0.65, standard: 0.92 };
+
+const MODES = {
+  listen: {
+    title: "Type the spelling.",
+    description: "Listen carefully, then type it exactly. Apostrophes count.",
+  },
+  meaning: {
+    title: "Guess from the clue.",
+    description: "Read the meaning, then spell the word — no audio this time.",
+  },
+};
+
+/**
+ * Typed spelling practice, driven by a resolved session word list (from
+ * ScopeSelector + srs.selectSessionWords) rather than a single week —
+ * a session can span multiple weeks once scope is "term" or "all".
+ *
+ * `words` entries use the wordlist-spec schema (id, word, focus, ...),
+ * not the old programme.json {text, challenge} shape. Only
+ * contentType: "word" entries should be passed in — Reception's
+ * "letter" items need the separate letter-tile flow (not built yet).
+ *
+ * Every time the dialog opens it (a) shuffles the word order, so a
+ * session isn't just the page's listing order, and (b) starts on a mode
+ * picker: "Listen & spell" (word is read aloud, auto-played ~1s after
+ * each word opens) or "Guess from the meaning" (a definition/example
+ * sentence clue instead of audio, crossword-style — no letters given
+ * away). Calls onAttempt(wordId, correct) after every check, so the
+ * caller can feed it into the SRS engine (src/lib/srs.js).
+ */
+export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "standard", open, onOpenChange }) => {
+  const [sessionWords, setSessionWords] = useState(() => shuffle(words));
+  const [mode, setMode] = useState(null);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [status, setStatus] = useState("idle");
@@ -52,30 +85,22 @@ export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
   const [firstTryScore, setFirstTryScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
-  const [challengeMode, setChallengeMode] = useState(false);
 
-  const challengeWords = useMemo(() => week.words.filter((w) => w.challenge), [week.words]);
-  const activeWords = challengeMode ? challengeWords : week.words;
-  const currentWord = activeWords[index];
-  const progress = finished ? 100 : (index / activeWords.length) * 100;
+  const currentWord = sessionWords[index];
+  const progress = finished ? 100 : (index / sessionWords.length) * 100;
 
   const resetAll = () => {
-    setIndex(0); setAnswer(""); setStatus("idle");
-    setWordAttempts(0); setFirstTryScore(0);
-    setFinished(false); setBurstKey(0); setChallengeMode(false);
-  };
-
-  const startChallenge = () => {
+    setSessionWords(shuffle(words));
+    setMode(null);
     setIndex(0); setAnswer(""); setStatus("idle");
     setWordAttempts(0); setFirstTryScore(0);
     setFinished(false); setBurstKey(0);
-    setChallengeMode(true);
   };
 
   const goNext = () => {
-    if (index === activeWords.length - 1) {
+    if (index === sessionWords.length - 1) {
       setFinished(true); setStatus("idle"); setAnswer("");
-      if (!challengeMode) onComplete(week.week);
+      onSessionComplete?.({ firstTryScore, total: sessionWords.length });
       return;
     }
     setIndex((v) => v + 1); setAnswer(""); setStatus("idle"); setWordAttempts(0);
@@ -84,26 +109,48 @@ export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
   const speakWord = () => {
     if (!window.speechSynthesis) { toast.error("Audio is not available in this browser"); return; }
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(currentWord.text);
-    utterance.lang = "en-GB"; utterance.rate = 0.82;
+    const utterance = new SpeechSynthesisUtterance(currentWord.word);
+    utterance.lang = "en-GB";
+    utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
     window.speechSynthesis.speak(utterance);
   };
 
+  // Listen mode: read the word aloud automatically, ~1s after each new
+  // word is shown (as well as being replayable via the "Hear word"
+  // button). Cleared on unmount/word-change so a quick skip can't queue
+  // up a stale utterance.
+  useEffect(() => {
+    if (mode !== "listen" || !open || finished || !currentWord) return;
+    const timer = window.setTimeout(() => {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(currentWord.word);
+      utterance.lang = "en-GB";
+      utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+      window.speechSynthesis.speak(utterance);
+    }, 1000);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, open, finished, currentWord?.id]);
+
   const checkAnswer = () => {
     if (!answer.trim() || status === "correct") return;
-    const correct = normalize(answer) === normalize(currentWord.text);
+    const correct = normalize(answer) === normalize(currentWord.word);
+    onAttempt?.(currentWord.id, correct);
     if (correct) {
       setStatus("correct"); setBurstKey(Date.now());
       if (wordAttempts === 0) setFirstTryScore((v) => v + 1);
-      toast.success("Brilliant spelling!", { description: `${currentWord.text} is correct.` });
+      toast.success("Brilliant spelling!", { description: `${currentWord.word} is correct.` });
       window.setTimeout(goNext, 950);
     } else {
       setStatus("incorrect"); setWordAttempts((v) => v + 1);
-      toast.error("Not quite yet", { description: "Listen again or use the letter hint, then have another go." });
+      toast.error("Not quite yet", { description: mode === "meaning" ? "Re-read the clue, then have another go." : "Listen again, then have another go." });
     }
   };
 
-  const isChallenge = challengeMode;
+  if (!currentWord) return null;
+
+  const copy = mode ? MODES[mode] : { title: "Choose how to practise.", description: "Pick a mode to start this session — words are shuffled fresh each time." };
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (v) resetAll(); }}>
@@ -111,55 +158,132 @@ export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
         <div className="holo-card relative p-6 sm:p-8">
           {burstKey > 0 && <ConfettiBurst burstKey={burstKey} />}
           <DialogHeader>
-            <div className={`font-mono text-xs uppercase tracking-[0.28em] ${isChallenge ? "text-amber-300" : "text-pink-300"}`}>
-              {isChallenge ? "Challenge round" : "Practice mode"} // Week {String(week.week).padStart(2, "0")}
+            <div className="flex items-center justify-between gap-4">
+              <div className="font-mono text-xs uppercase tracking-[0.28em] text-pink-300">
+                Practice mode
+              </div>
+              {mode && !finished && (
+                <button
+                  type="button"
+                  onClick={resetAll}
+                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 transition-colors hover:text-cyan-300"
+                  data-testid="quiz-change-mode-button"
+                >
+                  Change mode
+                </button>
+              )}
             </div>
             <DialogTitle className="font-display text-3xl font-extrabold text-white" data-testid="quiz-title">
-              {isChallenge ? "Star word challenge." : "Type the spelling."}
+              {copy.title}
             </DialogTitle>
             <DialogDescription className="text-slate-400">
-              {isChallenge
-                ? "Only the star words now — push yourself to get them all on the first try."
-                : "Hear the word, use the hint, then type it exactly. Apostrophes count."}
+              {copy.description}
             </DialogDescription>
           </DialogHeader>
 
-          {!finished ? (
+          {!mode ? (
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="quiz-mode-picker">
+              <button
+                type="button"
+                onClick={() => setMode("listen")}
+                className="group rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-left transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/5"
+                data-testid="quiz-mode-listen"
+              >
+                <Ear className="h-6 w-6 text-cyan-300" />
+                <div className="mt-3 font-display text-lg font-bold text-white">Listen &amp; spell</div>
+                <p className="mt-1.5 text-sm leading-snug text-slate-400">
+                  Hear each word read aloud, then type it. A letter hint gets you started.
+                </p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("meaning")}
+                className="group rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-left transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/5"
+                data-testid="quiz-mode-meaning"
+              >
+                <Puzzle className="h-6 w-6 text-pink-300" />
+                <div className="mt-3 font-display text-lg font-bold text-white">Guess from the meaning</div>
+                <p className="mt-1.5 text-sm leading-snug text-slate-400">
+                  No audio — read the definition (a bit like a crossword clue) and spell it.
+                </p>
+              </button>
+            </div>
+          ) : !finished ? (
             <div className="mt-8">
               <div className="mb-5 flex items-center justify-between gap-4 font-mono text-xs uppercase tracking-[0.2em] text-slate-400">
-                <span data-testid="quiz-progress-label">Word {index + 1} / {activeWords.length}</span>
-                <span data-testid="quiz-score-label">First try {firstTryScore}</span>
+                <span data-testid="quiz-progress-label">Word {index + 1} / {sessionWords.length}</span>
+                <span className="flex items-center gap-3">
+                  <span className="flex items-center gap-1 normal-case tracking-normal text-slate-500">
+                    <Shuffle className="h-3 w-3" /> shuffled
+                  </span>
+                  <span data-testid="quiz-score-label">First try {firstTryScore}</span>
+                </span>
               </div>
               <Progress value={progress} className="h-2 bg-white/10" data-testid="quiz-progress-bar" />
 
-              <div className={`mt-8 rounded-3xl border p-6 text-center ${isChallenge ? "border-amber-300/20 bg-amber-400/5" : "border-white/10 bg-white/[0.04]"}`}>
-                <div className={`font-mono text-2xl tracking-[0.35em] sm:text-3xl ${isChallenge ? "text-amber-200" : "text-cyan-200"}`} data-testid="quiz-word-hint">
-                  {makeHint(currentWord.text)}
+              {mode === "listen" ? (
+                <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-center">
+                  <div className="font-mono text-2xl tracking-[0.35em] text-cyan-200 sm:text-3xl" data-testid="quiz-word-hint">
+                    {makeHint(currentWord.word)}
+                  </div>
+                  <div className="mt-3 text-sm text-slate-400">{currentWord.focus}</div>
                 </div>
-                <div className="mt-3 text-sm text-slate-400">{week.focus}</div>
-              </div>
+              ) : (
+                <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6" data-testid="quiz-meaning-clue">
+                  <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-pink-300">
+                    <Puzzle className="h-3.5 w-3.5" /> Meaning clue
+                  </div>
+                  {currentWord.definition ? (
+                    <p className="text-lg font-semibold leading-snug text-white">{currentWord.definition}</p>
+                  ) : (
+                    <p className="text-sm italic text-slate-500">No written clue for this word yet — here's the length instead.</p>
+                  )}
+                  {currentWord.exampleSentence && (
+                    <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                      <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-slate-500">in a sentence</span>
+                      {blankSentence(currentWord.exampleSentence, currentWord.word)}
+                    </p>
+                  )}
+                  <div className="mt-4 text-center font-mono text-xl tracking-[0.4em] text-cyan-200/80">
+                    {makeBlank(currentWord.word)}
+                  </div>
+                  {!currentWord.definition && !currentWord.exampleSentence && (
+                    <div className="mt-4 flex justify-center">
+                      <Button
+                        type="button" variant="outline" onClick={speakWord}
+                        className="border-cyan-300/30 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950"
+                        data-testid="quiz-hear-fallback-button"
+                      >
+                        <Ear className="h-4 w-4" /> Hear it instead
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button
-                  type="button" variant="outline" onClick={speakWord}
-                  className={isChallenge ? "border-amber-300/30 bg-amber-300/10 text-amber-200 hover:bg-amber-300 hover:text-slate-950" : "border-cyan-300/30 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950"}
-                  data-testid="quiz-hear-button"
-                >
-                  <Ear className="h-4 w-4" /> Hear word
-                </Button>
+                {mode === "listen" && (
+                  <Button
+                    type="button" variant="outline" onClick={speakWord}
+                    className="border-cyan-300/30 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950"
+                    data-testid="quiz-hear-button"
+                  >
+                    <Ear className="h-4 w-4" /> Hear word
+                  </Button>
+                )}
                 <Input
                   value={answer}
                   onChange={(e) => { setAnswer(e.target.value); if (status === "incorrect") setStatus("idle"); }}
                   onKeyDown={(e) => { if (e.key === "Enter") checkAnswer(); }}
                   placeholder="Type the word here"
                   disabled={status === "correct"}
-                  className={`h-12 flex-1 border-white/15 bg-white/5 text-lg text-white placeholder:text-slate-500 ${isChallenge ? "focus-visible:ring-amber-300" : "focus-visible:ring-cyan-300"}`}
+                  className="h-12 flex-1 border-white/15 bg-white/5 text-lg text-white placeholder:text-slate-500 focus-visible:ring-cyan-300"
                   data-testid="quiz-answer-input"
                   aria-label="Type the spelling word"
                 />
                 <Button
                   type="button" onClick={checkAnswer} disabled={status === "correct"}
-                  className={`h-12 px-6 font-semibold text-slate-950 ${isChallenge ? "bg-amber-400 hover:bg-amber-300" : "bg-emerald-400 hover:bg-emerald-300"}`}
+                  className="h-12 bg-emerald-400 px-6 font-semibold text-slate-950 hover:bg-emerald-300"
                   data-testid="quiz-check-button"
                 >
                   Check
@@ -177,7 +301,7 @@ export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
                   >
                     {status === "correct" ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                     <span className="text-sm font-medium">
-                      {status === "correct" ? "Correct — brilliant work!" : `Not yet. The answer starts with "${currentWord.text[0]}" and has ${currentWord.text.replace(/[^a-z']/gi, "").length} letters.`}
+                      {status === "correct" ? "Correct — brilliant work!" : `Not yet. The answer starts with "${currentWord.word[0]}" and has ${currentWord.word.replace(/[^a-z']/gi, "").length} letters.`}
                     </span>
                   </motion.div>
                 )}
@@ -189,35 +313,17 @@ export const PracticeQuiz = ({ week, onComplete, open, onOpenChange }) => {
                 </Button>
               )}
             </div>
-          ) : isChallenge ? (
-            /* ── Challenge complete ── */
-            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 rounded-3xl border border-amber-300/30 bg-amber-400/10 p-8 text-center" data-testid="challenge-complete-panel">
-              <Star className="mx-auto h-12 w-12 fill-amber-400 text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)]" />
-              <h3 className="mt-5 font-display text-3xl font-extrabold text-white">Challenge complete!</h3>
-              <p className="mt-3 text-slate-300">
-                You nailed <span className="font-bold text-amber-300">{firstTryScore} / {challengeWords.length}</span> star words first try.
-              </p>
-              <Button type="button" onClick={resetAll} className="mt-7 rounded-full bg-cyan-400 px-6 font-semibold text-slate-950 hover:bg-cyan-300" data-testid="challenge-restart-button">
-                <RotateCcw className="h-4 w-4" /> Practise again
-              </Button>
-            </motion.div>
           ) : (
-            /* ── Main quiz complete ── */
             <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 rounded-3xl border border-emerald-300/30 bg-emerald-400/10 p-8 text-center" data-testid="quiz-complete-panel">
               <Trophy className="mx-auto h-12 w-12 text-amber-300" />
-              <h3 className="mt-5 font-display text-3xl font-extrabold text-white">Quiz complete!</h3>
+              <h3 className="mt-5 font-display text-3xl font-extrabold text-white">Session complete!</h3>
               <p className="mt-3 text-slate-300">
-                You scored <span className="font-bold text-emerald-300">{firstTryScore} / {week.words.length}</span> on your first try.
+                You scored <span className="font-bold text-emerald-300">{firstTryScore} / {sessionWords.length}</span> on your first try.
               </p>
               <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
                 <Button type="button" onClick={resetAll} variant="outline" className="rounded-full border-white/20 px-6 font-semibold text-slate-300 hover:bg-white/10" data-testid="quiz-restart-button">
                   <RotateCcw className="h-4 w-4" /> Practise again
                 </Button>
-                {challengeWords.length > 0 && (
-                  <Button type="button" onClick={startChallenge} className="rounded-full bg-amber-400 px-6 font-semibold text-slate-950 hover:bg-amber-300" data-testid="challenge-round-button">
-                    <Star className="h-4 w-4 fill-slate-950" /> Challenge round
-                  </Button>
-                )}
               </div>
             </motion.div>
           )}
