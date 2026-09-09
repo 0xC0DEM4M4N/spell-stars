@@ -3,12 +3,12 @@
 //
 // This is deliberately separate from srs.js: this file decides WHICH
 // words are in play (a content-scope concept), srs.js decides which OF
-// THOSE to actually show in a session (a scheduling concept). "By day"
+// THOSE to actually show in a session (a scheduling concept). "By week"
 // uses only this file; "By term"/"By all" feed this file's output into
 // srs.selectSessionWords.
 
 export const SCOPES = [
-  { value: "day", label: "By day" },
+  { value: "week", label: "By week" },
   { value: "term", label: "By term" },
   { value: "all", label: "By all up to now" },
 ];

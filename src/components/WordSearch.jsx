@@ -8,9 +8,8 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { loadTimerPrefs, saveTimerPrefs } from "@/lib/timerPrefs";
+import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
 
-const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const ALPHA_LOWER = "abcdefghijklmnopqrstuvwxyz";
 const COLORS = [
   "bg-cyan-400/40 text-white border-cyan-400",
   "bg-emerald-400/40 text-white border-emerald-400",
@@ -25,27 +24,6 @@ const COLORS = [
 ];
 const DEFAULT_SECS = 180;
 const DEFAULT_SIZE = 10;
-const DEFAULT_DIRECTIONS = ["horizontal", "vertical"];
-
-// capabilities.wordSearchGrid.directions (category names) -> concrete
-// [dr, dc] step vectors. "backwards" is a modifier on the other
-// categories, not a direction of its own — per
-// next-steps-year-capabilities.md §4: reserved for Year 3+ so a
-// reversed/diagonal word is only ever placed for years with the reading
-// fluency to spot one.
-function buildDirections(directions) {
-  const set = new Set(directions && directions.length ? directions : DEFAULT_DIRECTIONS);
-  const dirs = [];
-  if (set.has("horizontal")) dirs.push([0, 1]);
-  if (set.has("vertical")) dirs.push([1, 0]);
-  if (set.has("diagonal")) dirs.push([1, 1], [1, -1]);
-  if (set.has("backwards")) {
-    if (set.has("horizontal")) dirs.push([0, -1]);
-    if (set.has("vertical")) dirs.push([-1, 0]);
-    if (set.has("diagonal")) dirs.push([-1, 1], [-1, -1]);
-  }
-  return dirs.length ? dirs : [[0, 1], [1, 0]];
-}
 
 // Bigger grid text for the smaller grids Reception/Year 1 use (6x6/8x8) —
 // young children need larger, easier-to-read/tap letters and words than
@@ -60,49 +38,6 @@ function cellTextSizeClass(size) {
 function chipTextSizeClass(size) {
   if (size <= 8) return "text-sm";
   return "text-[10px]";
-}
-
-function buildGrid(words, size, dirs, letterCase) {
-  const toGridCase = (w) => (letterCase === "lowercase" ? w.toLowerCase() : w.toUpperCase());
-  const alphabet = letterCase === "lowercase" ? ALPHA_LOWER : ALPHA;
-  const clean = words.map(w => toGridCase(w).replace(/['']/g, ""));
-  const grid = Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => ({ letter: "", wis: [] }))
-  );
-  const placed = [];
-  for (let wi = 0; wi < clean.length; wi++) {
-    const up = clean[wi];
-    let ok = false;
-    for (let t = 0; t < 400 && !ok; t++) {
-      const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
-      const rMin = dr > 0 ? 0 : dr < 0 ? up.length - 1 : 0;
-      const rMax = dr > 0 ? size - up.length : dr < 0 ? size - 1 : size - 1;
-      const cMin = dc > 0 ? 0 : dc < 0 ? up.length - 1 : 0;
-      const cMax = dc > 0 ? size - up.length : dc < 0 ? size - 1 : size - 1;
-      if (rMin > rMax || cMin > cMax) continue;
-      const r0 = rMin + Math.floor(Math.random() * (rMax - rMin + 1));
-      const c0 = cMin + Math.floor(Math.random() * (cMax - cMin + 1));
-      let valid = true;
-      for (let i = 0; i < up.length && valid; i++) {
-        const ex = grid[r0 + i * dr][c0 + i * dc].letter;
-        if (ex && ex !== up[i]) valid = false;
-      }
-      if (valid) {
-        for (let i = 0; i < up.length; i++) {
-          grid[r0 + i * dr][c0 + i * dc].letter = up[i];
-          grid[r0 + i * dr][c0 + i * dc].wis.push(wi);
-        }
-        placed.push({ word: words[wi], up, wi });
-        ok = true;
-      }
-    }
-    if (!ok) placed.push({ word: words[wi], up, wi, failed: true });
-  }
-  for (let r = 0; r < size; r++)
-    for (let c = 0; c < size; c++)
-      if (!grid[r][c].letter)
-        grid[r][c].letter = alphabet[Math.floor(Math.random() * 26)];
-  return { grid, placed };
 }
 
 // true when b is directly adjacent (8-directional) to a
@@ -457,7 +392,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <Button
               onClick={startGame}
               variant="outline" size="sm"
-              className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"
+              className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
               data-testid="new-game-button"
             >
               <RotateCcw className="h-3.5 w-3.5" /> New game
@@ -467,7 +402,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline" size="sm"
-                  className={`rounded-full transition-colors ${revealed ? "border-pink-300/40 bg-pink-400/10 text-pink-200 hover:bg-pink-400/20" : "border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"}`}
+                  className={`rounded-full transition-colors ${revealed ? "border-pink-300/40 bg-pink-400/10 text-pink-200 hover:bg-pink-400/20 hover:text-white" : "border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
                   data-testid="reveal-button"
                 >
                   <Eye className="h-3.5 w-3.5" /> {revealed ? "Hide" : "Reveal"}
@@ -482,7 +417,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10">Keep trying</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white">Keep trying</AlertDialogCancel>
                     <AlertDialogAction onClick={() => setRevealed(true)} className="rounded-full bg-pink-500 text-white hover:bg-pink-600" data-testid="reveal-confirm">
                       Yes, reveal
                     </AlertDialogAction>
@@ -497,7 +432,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white">Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={() => setRevealed(false)} className="rounded-full bg-cyan-500 text-slate-950 hover:bg-cyan-400" data-testid="hide-confirm">
                       Yes, hide
                     </AlertDialogAction>
@@ -509,7 +444,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <Button
               onClick={toggleTimer}
               variant="outline" size="sm"
-              className={`rounded-full transition-colors ${timerOn ? "border-cyan-300/40 bg-cyan-400/10 text-cyan-200 hover:bg-cyan-400/20" : "border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"}`}
+              className={`rounded-full transition-colors ${timerOn ? "border-cyan-300/40 bg-cyan-400/10 text-cyan-200 hover:bg-cyan-400/20 hover:text-white" : "border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
               data-testid="timer-toggle"
             >
               <Timer className="h-3.5 w-3.5" /> Timer
@@ -518,7 +453,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <Button
               onClick={handlePrint}
               variant="outline" size="sm"
-              className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10"
+              className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
               data-testid="print-word-search"
             >
               <Printer className="h-3.5 w-3.5" /> Print
@@ -540,7 +475,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               type="button"
               variant="outline"
               onClick={() => setDraftMode("countdown")}
-              className={`flex-1 rounded-full ${draftMode === "countdown" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10"}`}
+              className={`flex-1 rounded-full ${draftMode === "countdown" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200 hover:bg-cyan-300/15 hover:text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
               data-testid="timer-mode-countdown"
             >
               Countdown
@@ -549,7 +484,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               type="button"
               variant="outline"
               onClick={() => setDraftMode("countup")}
-              className={`flex-1 rounded-full ${draftMode === "countup" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10"}`}
+              className={`flex-1 rounded-full ${draftMode === "countup" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200 hover:bg-cyan-300/15 hover:text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
               data-testid="timer-mode-countup"
             >
               Normal (count up)
@@ -563,7 +498,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                 <Button
                   type="button" variant="outline" size="icon"
                   onClick={() => setDraftMinutes(m => Math.max(1, m - 1))}
-                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
+                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                   aria-label="Fewer minutes"
                   data-testid="timer-minutes-decrement"
                 >
@@ -573,7 +508,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                 <Button
                   type="button" variant="outline" size="icon"
                   onClick={() => setDraftMinutes(m => Math.min(30, m + 1))}
-                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10"
+                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
                   aria-label="More minutes"
                   data-testid="timer-minutes-increment"
                 >

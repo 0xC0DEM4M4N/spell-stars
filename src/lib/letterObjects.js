@@ -83,6 +83,58 @@ export function buildRound(prompt, distractorCount = 5) {
   return shuffledCopy(targets.concat(distractors));
 }
 
+// Browser text-to-speech reads a bare letter character as its NAME
+// ("s" -> "ess", "t" -> "tee"), not the phonics sound a Reception
+// child is actually being taught ("sss", "tuh"). speechSynthesis takes
+// plain text only (no SSML/IPA phoneme control), so the only lever
+// available is spelling each sound out in a way an English TTS voice's
+// grapheme-to-phoneme rules will land closer to the real sound:
+// continuant sounds (s, f, m, n, r, l, v, z, sh, th) get elongated by
+// repeating the letter; stop/plosive sounds (t, p, k, b, d, g, j) get
+// a short schwa after them ("tuh", "puh") -- the same convention the
+// person who asked for this used themselves. This is inherently a
+// best-effort hack, not real phoneme audio -- voice quality varies by
+// OS/browser, so some of these are worth an actual listen and a tweak
+// here if a particular one still comes out sounding like the letter
+// name rather than its sound.
+export const PHONICS_SOUND_TEXT = {
+  s: "sssss",
+  a: "a",
+  t: "tuh",
+  p: "puh",
+  i: "i",
+  n: "nnnn",
+  m: "mmmm",
+  d: "duh",
+  g: "guh",
+  o: "o",
+  c: "kuh",
+  k: "kuh",
+  ck: "kuh",
+  e: "e",
+  u: "u",
+  r: "rrrr",
+  h: "huh",
+  b: "buh",
+  f: "fffff",
+  ff: "fffff",
+  l: "llll",
+  ll: "llll",
+  ss: "sssss",
+  j: "juh",
+  v: "vvvv",
+  w: "wuh",
+  x: "ks",
+  y: "yuh",
+  z: "zzzz",
+  zz: "zzzz",
+  qu: "kwuh",
+  ch: "chuh",
+  sh: "shhh",
+  th: "thhh",
+  ng: "nng",
+};
+
 // The 25 single-character graphemes Reception covers (excludes the
 // digraphs/trigraphs like "ch", "ck", "ng" — letter mode is about
 // recognising one letter shape among others, which only makes sense

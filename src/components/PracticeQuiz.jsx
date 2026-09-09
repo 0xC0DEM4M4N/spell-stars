@@ -1,28 +1,82 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Ear, Puzzle, RotateCcw, Shuffle, Trophy, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
 import { ConfettiBurst } from "@/components/ConfettiBurst";
+import { SpeakButton } from "@/components/SpeakButton";
 
 const normalize = (value) => value.trim().toLowerCase().replace(/['']/g, "'");
 
-const makeHint = (word) =>
-  word
-    .split("")
-    .map((char, index) => (/[a-z]/i.test(char) ? (index === 0 ? char : "_") : char))
-    .join(" ");
+// Small check/cross badge that overlays a corner of the word box on a
+// result -- absolutely positioned (inside a `relative` parent) so it
+// never adds height and never shifts the page, unlike a text banner.
+function FeedbackBadge({ status }) {
+  return (
+    <AnimatePresence>
+      {status === "correct" && (
+        <motion.div
+          key="correct"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.2 }}
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400 text-slate-950 shadow-lg"
+          aria-hidden="true"
+        >
+          <CheckCircle2 className="h-5 w-5" strokeWidth={2.5} />
+        </motion.div>
+      )}
+      {status === "incorrect" && (
+        <motion.div
+          key="incorrect"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.2 }}
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg"
+          aria-hidden="true"
+        >
+          <XCircle className="h-5 w-5" strokeWidth={2.5} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
-// Meaning mode reveals no letters at all — just the shape of the word,
-// like a crossword grid with no checkers filled in yet.
-const makeBlank = (word) =>
-  word
-    .split("")
-    .map((char) => (/[a-z]/i.test(char) ? "_" : char))
-    .join(" ");
+// Renders the crossword-style blank tiles as JSX (rather than a plain
+// string) so the next empty letter slot can flash a "waiting for a
+// letter" cue. Never reveals any letter, including the first -- both
+// Listen and Meaning mode start fully blank.
+function renderBlankTiles(word, typed) {
+  const chars = word.split("");
+
+  let nextIndex = -1;
+  for (let i = 0; i < chars.length; i++) {
+    if (!/[a-z]/i.test(chars[i])) continue;
+    const typedChar = typed[i];
+    if (!(typedChar && /[a-z]/i.test(typedChar))) {
+      nextIndex = i;
+      break;
+    }
+  }
+
+  return chars.map((char, i) => {
+    let display = char;
+    if (/[a-z]/i.test(char)) {
+      const typedChar = typed[i];
+      display = typedChar && /[a-z]/i.test(typedChar) ? typedChar : "_";
+    }
+    return (
+      <span key={i}>
+        {i > 0 ? " " : ""}
+        <span className={i === nextIndex ? "animate-pulse text-cyan-100" : undefined}>{display}</span>
+      </span>
+    );
+  });
+}
 
 // Hides the spelling word inside its example sentence so meaning mode
 // doesn't give the answer away — "The ___ sailed into the harbour."
@@ -31,6 +85,16 @@ const blankSentence = (sentence, word) => {
   const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const re = new RegExp(escaped, "gi");
   return sentence.replace(re, (match) => "_".repeat(match.length));
+};
+
+// Same idea, but for text-to-speech: says "blank" in place of the word
+// instead of underscores (which most voices either skip or read oddly),
+// so reading the clue aloud still doesn't give the spelling away.
+const speakableSentence = (sentence, word) => {
+  if (!sentence || !word) return sentence;
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(escaped, "gi");
+  return sentence.replace(re, "blank");
 };
 
 // Fisher-Yates — so a session's word order isn't just the page order.
@@ -85,6 +149,8 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
   const [firstTryScore, setFirstTryScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
+  const [showSentenceHint, setShowSentenceHint] = useState(false);
+  const inputRef = useRef(null);
 
   const currentWord = sessionWords[index];
   const progress = finished ? 100 : (index / sessionWords.length) * 100;
@@ -94,7 +160,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
     setMode(null);
     setIndex(0); setAnswer(""); setStatus("idle");
     setWordAttempts(0); setFirstTryScore(0);
-    setFinished(false); setBurstKey(0);
+    setFinished(false); setBurstKey(0); setShowSentenceHint(false);
   };
 
   const goNext = () => {
@@ -103,7 +169,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
       onSessionComplete?.({ firstTryScore, total: sessionWords.length });
       return;
     }
-    setIndex((v) => v + 1); setAnswer(""); setStatus("idle"); setWordAttempts(0);
+    setIndex((v) => v + 1); setAnswer(""); setStatus("idle"); setWordAttempts(0); setShowSentenceHint(false);
   };
 
   const speakWord = () => {
@@ -112,6 +178,10 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
     const utterance = new SpeechSynthesisUtterance(currentWord.word);
     utterance.lang = "en-GB";
     utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+    // Once the word's finished playing, move focus (back) onto the
+    // answer input so typing lands in the right place straight away --
+    // clicking "Hear word" would otherwise leave focus on that button.
+    utterance.onend = () => inputRef.current?.focus();
     window.speechSynthesis.speak(utterance);
   };
 
@@ -127,11 +197,30 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
       const utterance = new SpeechSynthesisUtterance(currentWord.word);
       utterance.lang = "en-GB";
       utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+      // Same as speakWord: focus the answer input once the word's been
+      // read, so a typed answer lands correctly without an extra tap.
+      utterance.onend = () => inputRef.current?.focus();
       window.speechSynthesis.speak(utterance);
     }, 1000);
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, open, finished, currentWord?.id]);
+
+  // Keeps the (visually hidden) answer input focused whenever there's a
+  // word to type into -- desktop players can just start typing, and
+  // tapping the blank tiles (below) refocuses it for mobile/on-screen
+  // keyboards.
+  useEffect(() => {
+    if (!open || !mode || finished) return;
+    const id = window.setTimeout(() => inputRef.current?.focus(), 50);
+    return () => window.clearTimeout(id);
+  }, [open, mode, finished, currentWord?.id]);
+
+  const handleClear = () => {
+    setAnswer("");
+    if (status === "incorrect") setStatus("idle");
+    inputRef.current?.focus();
+  };
 
   const checkAnswer = () => {
     if (!answer.trim() || status === "correct") return;
@@ -151,6 +240,18 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
   if (!currentWord) return null;
 
   const copy = mode ? MODES[mode] : { title: "Choose how to practise.", description: "Pick a mode to start this session — words are shuffled fresh each time." };
+
+  // What the "read the clue aloud" button says in meaning mode -- the
+  // definition, then the example sentence with the answer word swapped
+  // for "blank" so listening in doesn't just hand over the spelling.
+  const meaningSpeechText = [
+    currentWord.definition,
+    currentWord.exampleSentence && showSentenceHint
+      ? `In a sentence: ${speakableSentence(currentWord.exampleSentence, currentWord.word)}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join(". ");
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (v) resetAll(); }}>
@@ -221,17 +322,57 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
               </div>
               <Progress value={progress} className="h-2 bg-white/10" data-testid="quiz-progress-bar" />
 
+              {/* Visually the result shows as a background flash + badge on the
+                  word box below (no layout shift); this is the same
+                  information for screen readers. */}
+              <span className="sr-only" role="status" aria-live="polite">
+                {status === "correct"
+                  ? "Correct — brilliant work!"
+                  : status === "incorrect"
+                  ? "Not quite yet, try again."
+                  : ""}
+              </span>
+
               {mode === "listen" ? (
-                <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-center">
-                  <div className="font-mono text-2xl tracking-[0.35em] text-cyan-200 sm:text-3xl" data-testid="quiz-word-hint">
-                    {makeHint(currentWord.word)}
-                  </div>
+                <div
+                  className={`relative mt-8 rounded-3xl border p-6 text-center transition-colors duration-300 ${
+                    status === "correct"
+                      ? "border-emerald-300/70 bg-emerald-400/25"
+                      : status === "incorrect"
+                      ? "border-rose-400/60 bg-rose-500/15"
+                      : "border-white/10 bg-white/[0.04]"
+                  }`}
+                >
+                  <FeedbackBadge status={status} />
+                  <button
+                    type="button"
+                    onClick={() => inputRef.current?.focus()}
+                    className="block w-full cursor-text bg-transparent font-mono text-2xl tracking-[0.35em] text-cyan-200 sm:text-3xl"
+                    data-testid="quiz-word-hint"
+                  >
+                    {renderBlankTiles(currentWord.word, answer)}
+                  </button>
                   <div className="mt-3 text-sm text-slate-400">{currentWord.focus}</div>
                 </div>
               ) : (
-                <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6" data-testid="quiz-meaning-clue">
-                  <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-pink-300">
-                    <Puzzle className="h-3.5 w-3.5" /> Meaning clue
+                <div
+                  className={`relative mt-8 rounded-3xl border p-6 transition-colors duration-300 ${
+                    status === "correct"
+                      ? "border-emerald-300/70 bg-emerald-400/25"
+                      : status === "incorrect"
+                      ? "border-rose-400/60 bg-rose-500/15"
+                      : "border-white/10 bg-white/[0.04]"
+                  }`}
+                  data-testid="quiz-meaning-clue"
+                >
+                  <FeedbackBadge status={status} />
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-pink-300">
+                      <Puzzle className="h-3.5 w-3.5" /> Meaning clue
+                    </div>
+                    {meaningSpeechText && (
+                      <SpeakButton text={meaningSpeechText} ttsRate={ttsRate} label="Read the clue aloud" />
+                    )}
                   </div>
                   {currentWord.definition ? (
                     <p className="text-lg font-semibold leading-snug text-white">{currentWord.definition}</p>
@@ -239,14 +380,30 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                     <p className="text-sm italic text-slate-500">No written clue for this word yet — here's the length instead.</p>
                   )}
                   {currentWord.exampleSentence && (
-                    <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                      <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-slate-500">in a sentence</span>
-                      {blankSentence(currentWord.exampleSentence, currentWord.word)}
-                    </p>
+                    showSentenceHint ? (
+                      <p className="mt-3 text-sm leading-relaxed text-slate-300" data-testid="quiz-sentence-hint">
+                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-slate-500">in a sentence</span>
+                        {blankSentence(currentWord.exampleSentence, currentWord.word)}
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowSentenceHint(true)}
+                        className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-pink-300/80 underline decoration-dotted underline-offset-4 transition-colors hover:text-pink-200"
+                        data-testid="quiz-sentence-hint-button"
+                      >
+                        Need a hint? Show the sentence
+                      </button>
+                    )
                   )}
-                  <div className="mt-4 text-center font-mono text-xl tracking-[0.4em] text-cyan-200/80">
-                    {makeBlank(currentWord.word)}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => inputRef.current?.focus()}
+                    className="mt-4 block w-full cursor-text bg-transparent text-center font-mono text-xl tracking-[0.4em] text-cyan-200/80"
+                    data-testid="quiz-meaning-blank"
+                  >
+                    {renderBlankTiles(currentWord.word, answer)}
+                  </button>
                   {!currentWord.definition && !currentWord.exampleSentence && (
                     <div className="mt-4 flex justify-center">
                       <Button
@@ -261,7 +418,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                 </div>
               )}
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-6 flex flex-col items-center gap-3">
                 {mode === "listen" && (
                   <Button
                     type="button" variant="outline" onClick={speakWord}
@@ -271,47 +428,42 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                     <Ear className="h-4 w-4" /> Hear word
                   </Button>
                 )}
-                <Input
+                <input
+                  ref={inputRef}
                   value={answer}
                   onChange={(e) => { setAnswer(e.target.value); if (status === "incorrect") setStatus("idle"); }}
                   onKeyDown={(e) => { if (e.key === "Enter") checkAnswer(); }}
-                  placeholder="Type the word here"
                   disabled={status === "correct"}
-                  className="h-12 flex-1 border-white/15 bg-white/5 text-lg text-white placeholder:text-slate-500 focus-visible:ring-cyan-300"
+                  className="sr-only"
                   data-testid="quiz-answer-input"
                   aria-label="Type the spelling word"
                 />
-                <Button
-                  type="button" onClick={checkAnswer} disabled={status === "correct"}
-                  className="h-12 bg-emerald-400 px-6 font-semibold text-slate-950 hover:bg-emerald-300"
-                  data-testid="quiz-check-button"
-                >
-                  Check
-                </Button>
-              </div>
-
-              <AnimatePresence mode="wait">
-                {status !== "idle" && (
-                  <motion.div
-                    key={status}
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                    className={`mt-5 flex items-center gap-3 rounded-2xl border p-4 ${status === "correct" ? "border-emerald-300/40 bg-emerald-400/10 text-emerald-200" : "border-pink-400/40 bg-pink-500/10 text-pink-200"}`}
-                    data-testid={status === "correct" ? "quiz-correct-feedback" : "quiz-incorrect-feedback"}
-                    aria-live="polite"
+                <div className="flex items-center justify-center gap-3">
+                  <Button
+                    type="button" variant="outline" onClick={handleClear} disabled={!answer || status === "correct"}
+                    className="h-12 rounded-full border-white/15 bg-white/5 px-5 text-slate-300 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid="quiz-clear-button"
                   >
-                    {status === "correct" ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
-                    <span className="text-sm font-medium">
-                      {status === "correct" ? "Correct — brilliant work!" : `Not yet. The answer starts with "${currentWord.word[0]}" and has ${currentWord.word.replace(/[^a-z']/gi, "").length} letters.`}
-                    </span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {status === "incorrect" && (
-                <Button type="button" variant="ghost" onClick={goNext} className="mt-4 text-slate-400 hover:text-white" data-testid="quiz-skip-button">
-                  Skip to next word
-                </Button>
-              )}
+                    Clear
+                  </Button>
+                  <Button
+                    type="button" onClick={checkAnswer} disabled={status === "correct"}
+                    className="h-12 bg-emerald-400 px-8 font-semibold text-slate-950 hover:bg-emerald-300"
+                    data-testid="quiz-check-button"
+                  >
+                    Check
+                  </Button>
+                  {status === "incorrect" && (
+                    <Button
+                      type="button" variant="ghost" onClick={goNext}
+                      className="h-12 text-slate-400 hover:text-white"
+                      data-testid="quiz-skip-button"
+                    >
+                      Skip to next word
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 rounded-3xl border border-emerald-300/30 bg-emerald-400/10 p-8 text-center" data-testid="quiz-complete-panel">
@@ -321,7 +473,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                 You scored <span className="font-bold text-emerald-300">{firstTryScore} / {sessionWords.length}</span> on your first try.
               </p>
               <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                <Button type="button" onClick={resetAll} variant="outline" className="rounded-full border-white/20 px-6 font-semibold text-slate-300 hover:bg-white/10" data-testid="quiz-restart-button">
+                <Button type="button" onClick={resetAll} variant="outline" className="rounded-full border-white/20 px-6 font-semibold text-slate-300 hover:bg-white/10 hover:text-white" data-testid="quiz-restart-button">
                   <RotateCcw className="h-4 w-4" /> Practise again
                 </Button>
               </div>

@@ -60,7 +60,7 @@ def main():
         # Stable sort: term (curriculum order), then first week taught,
         # then the word itself -- i.e. the order a child actually meets
         # each word in, which is also the order in the app's own Year >
-        # Term > Day (week) navigation.
+        # Term > Week navigation.
         missing.sort(key=lambda w: (TERM_ORDER.index(w["term"]), w["weekOfYear"], w["word"]))
 
         for w in missing:

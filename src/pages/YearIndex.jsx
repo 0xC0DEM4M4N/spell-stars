@@ -207,7 +207,7 @@ export default function YearIndex() {
                 </motion.span>
               </span>
               <span className="block overflow-hidden">
-                <motion.span className="block text-cyan-400" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}>
+                <motion.span className="block text-cyan-400 pb-4" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}>
                   ST<Star className="inline-block h-[0.72em] w-[0.72em] text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)]" style={{ verticalAlign: "-0.1em" }} aria-hidden="true" />RS
                 </motion.span>
               </span>

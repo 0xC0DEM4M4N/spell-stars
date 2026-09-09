@@ -154,7 +154,7 @@ export function pickNewWords(pool, progress, limit) {
  * user's 10/15/20 picker) from the remaining pool if the capped mix came
  * up short, so the session size the user asked for is still honoured.
  *
- * Per spec, "By day" scope does NOT go through this — it's always just
+ * Per spec, "By week" scope does NOT go through this — it's always just
  * that week's fixed list, untouched by SRS selection.
  */
 export function selectSessionWords(pool, { progress, sessionCaps, requestedCount, todayISOStr }) {

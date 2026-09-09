@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { WordSearch } from "./WordSearch";
 import { PracticeQuiz } from "./PracticeQuiz";
 import { FindTheLetter } from "./FindTheLetter";
+import { PrintWeekMenu } from "./PrintWeekMenu";
 import { formatWeekCommencing } from "@/lib/weekDates";
 
 // Renders sentence text with the spelling word highlighted in bold cyan
@@ -113,6 +114,7 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
           >
             <Sparkles className="h-3.5 w-3.5" /> Practice
           </button>
+          <PrintWeekMenu weekData={weekData} capabilities={capabilities} />
         </div>
       </div>
 

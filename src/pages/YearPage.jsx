@@ -12,6 +12,7 @@ import { Star, Info, Grid2x2, Sparkles, Shuffle } from "lucide-react";
 import { motion } from "framer-motion";
 import { getYearAccent, rgba } from "@/lib/yearTheme";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PrintTermListButton } from "@/components/PrintTermListButton";
 
 const SCOPE_EXPLAINERS = {
   term: "\u201cBy term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
@@ -41,7 +42,7 @@ const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
  * whichever year's config + word list is loaded via the :yearSlug route
  * param — no per-year forks, per the routing plan.
  *
- * "By day" scope renders the swipeable week-by-week carousel (one card
+ * "By week" scope renders the swipeable week-by-week carousel (one card
  * per week, full word list, Practice/Word Search launchable per card —
  * the original app's curriculum-browser UI, now driven by any year's
  * data). "By term"/"By all" scope pull a cross-week pool through the
@@ -227,7 +228,7 @@ export default function YearPage() {
                 onClick={() => setScope(option.value)}
                 className={
                   "rounded-full border-white/15 px-4 text-sm " +
-                  (scope === option.value ? "" : "bg-white/5 text-slate-300 hover:bg-white/10")
+                  (scope === option.value ? "" : "bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white")
                 }
                 style={
                   scope === option.value
@@ -447,11 +448,12 @@ function PooledScopeView({
                   variant="outline"
                   onClick={regenerateTerm}
                   disabled={regenPhase !== "idle"}
-                  className="ml-1 h-8 rounded-full border-white/15 bg-white/5 px-3 text-xs text-slate-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="ml-1 h-8 rounded-full border-white/15 bg-white/5 px-3 text-xs text-slate-300 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                   data-testid="regenerate-term-words-button"
                 >
                   <Shuffle className="h-3.5 w-3.5" /> Regenerate
                 </Button>
+                <PrintTermListButton words={termPool} term={activeTerm} yearLabel={yearLabel} />
               </div>
             </div>
 
@@ -490,7 +492,7 @@ function PooledScopeView({
               variant="outline"
               onClick={regenerateAll}
               disabled={regenPhase !== "idle"}
-              className="rounded-full border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="regenerate-words-button"
             >
               <Shuffle className="h-4 w-4" /> Regenerate
