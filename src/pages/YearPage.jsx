@@ -194,8 +194,16 @@ export default function YearPage() {
   const capabilities = yearMeta.capabilities || {};
   const accent = getYearAccent(yearSlug);
 
+  const pageTitle = `${yearMeta.label} Spelling Practice | SPELL// STARS`;
+  const pageDescription = `Weekly ${yearMeta.label} spelling lists, quizzes and word searches matched to the UK National Curriculum — listen, practise and test yourself for free.`;
+
   return (
     <div className="bg-grid-squares min-h-screen bg-[#05070d] text-slate-100">
+      {/* React 19 hoists these into <head> for this route, and restores
+          index.html's defaults again on unmount -- see YearIndex.jsx. */}
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <link rel="canonical" href={`https://spell-stars.pages.dev/${yearSlug}`} />
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#05070d]/75 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
           <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-white">

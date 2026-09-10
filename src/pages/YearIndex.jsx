@@ -168,6 +168,15 @@ export default function YearIndex() {
 
   return (
     <div className="bg-grid-squares min-h-screen bg-[#05070d] text-slate-100">
+      {/* React 19 hoists title/meta/link tags rendered anywhere in the
+          tree into <head> automatically, and restores index.html's
+          defaults on unmount -- no react-helmet needed. */}
+      <title>SPELL// STARS — Free UK Primary Spelling Practice, Reception to Year 6</title>
+      <meta
+        name="description"
+        content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6."
+      />
+      <link rel="canonical" href="https://spell-stars.pages.dev/" />
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#05070d]/75 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
           <a href="#top" className="font-display text-lg font-extrabold tracking-tight text-white">

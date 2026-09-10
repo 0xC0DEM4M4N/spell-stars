@@ -1,15 +1,67 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#08101f" />
-        <meta name="description" content="Weekly Spelling Programme — SPELL// STARS" />
-        <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-32.png" />
+
+        <!-- Primary SEO -->
+        <title>SPELL// STARS — Free UK Primary Spelling Practice, Reception to Year 6</title>
+        <meta name="description" content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://spell-stars.pages.dev/" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="SPELL// STARS" />
+        <meta property="og:title" content="SPELL// STARS — Free UK Primary Spelling Practice, Reception to Year 6" />
+        <meta property="og:description" content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6." />
+        <meta property="og:url" content="https://spell-stars.pages.dev/" />
+        <meta property="og:image" content="https://spell-stars.pages.dev/logo512.png" />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
+        <meta property="og:locale" content="en_GB" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="SPELL// STARS — Free UK Primary Spelling Practice, Reception to Year 6" />
+        <meta name="twitter:description" content="Free weekly spelling practice for UK primary schools, matched to the National Curriculum — Reception through to Year 6." />
+        <meta name="twitter:image" content="https://spell-stars.pages.dev/logo512.png" />
+
+        <!-- Icons + PWA manifest -->
+        <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32.png" />
         <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
+
+        <!-- Structured data -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "SPELL// STARS",
+          "url": "https://spell-stars.pages.dev/",
+          "description": "Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6.",
+          "applicationCategory": "EducationalApplication",
+          "operatingSystem": "Any",
+          "inLanguage": "en-GB",
+          "audience": {
+            "@type": "EducationalAudience",
+            "educationalRole": "student",
+            "audienceType": "UK primary school pupils, Reception to Year 6"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "GBP"
+          }
+        }
+        </script>
+
         <!--
         manifest.json provides metadata used when your web app is installed on a
         user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -23,7 +75,6 @@
         work correctly both with client-side routing and a non-root public URL.
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
-        <title>SPELL// STARS | Spelling Programme</title>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
     </head>

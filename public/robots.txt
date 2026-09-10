@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spell-stars.pages.dev/sitemap.xml
