@@ -5,6 +5,43 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#08101f" />
 
+        <!-- Display/accessibility preferences (theme, text scale, reduced
+             motion) are stored in localStorage and applied here, before
+             first paint, so there is no flash of the wrong theme. Must
+             stay in sync with the storage keys and defaults read by
+             src/context/ThemeContext.jsx. -->
+        <script>
+          (function () {
+            try {
+              var THEMES = ["light", "dark", "dyslexia", "highContrast"];
+              var TEXT_SCALES = ["standard", "large", "extraLarge"];
+              var DYSLEXIA_FONTS = ["lexend", "opendyslexic"];
+
+              var theme = localStorage.getItem("spellstars.theme");
+              if (THEMES.indexOf(theme) === -1) {
+                theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+              }
+
+              var textScale = localStorage.getItem("spellstars.textScale");
+              if (TEXT_SCALES.indexOf(textScale) === -1) textScale = "standard";
+
+              var reducedMotion = localStorage.getItem("spellstars.reducedMotion");
+              if (reducedMotion !== "true" && reducedMotion !== "false") {
+                reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "true" : "false";
+              }
+
+              var dyslexiaFont = localStorage.getItem("spellstars.dyslexiaFont");
+              if (DYSLEXIA_FONTS.indexOf(dyslexiaFont) === -1) dyslexiaFont = "lexend";
+
+              var root = document.documentElement;
+              root.setAttribute("data-theme", theme);
+              root.setAttribute("data-text-scale", textScale);
+              root.setAttribute("data-reduced-motion", reducedMotion);
+              root.setAttribute("data-dyslexia-font", dyslexiaFont);
+            } catch (e) {}
+          })();
+        </script>
+
         <!-- Primary SEO -->
         <title>SPELL// STARS — Free UK Primary Spelling Practice, Reception to Year 6</title>
         <meta name="description" content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6." />

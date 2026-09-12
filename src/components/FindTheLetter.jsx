@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Ear, Grid2x2, RotateCcw, Sparkles, Volume2 } from "lucide-react";
+import { CheckCircle2, Ear, Grid2x2, RotateCcw, Sparkles, Volume2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { buildRound, buildLetterRound, isSingleLetterPrompt, PHONICS_SOUND_TEXT } from "@/lib/letterObjects";
@@ -235,35 +235,35 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
       <DialogTrigger asChild>
         <button
           onClick={(e) => e.stopPropagation()}
-          className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-cyan-200"
+          className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
           data-testid="find-the-letter-button"
         >
           <Sparkles className="h-3.5 w-3.5" /> Find the letter
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl overflow-hidden border-cyan-300/20 bg-[#08101f] p-0 text-slate-100" data-testid="find-the-letter-dialog">
+      <DialogContent className="max-w-xl overflow-hidden border-cyan-300/20 bg-popover p-0 text-foreground" data-testid="find-the-letter-dialog">
         <div className="holo-card p-6 sm:p-8">
           <DialogHeader>
             <div className="flex items-center justify-between gap-4">
-              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-300">Find the letter</div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">Find the letter</div>
               {mode && letterModeAvailable && (
                 <button
                   type="button"
                   onClick={backToChooser}
-                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 transition-colors hover:text-cyan-300"
+                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
                   data-testid="find-the-letter-change-mode"
                 >
                   Change practice
                 </button>
               )}
             </div>
-            <DialogTitle className="font-display text-3xl font-extrabold text-white">
+            <DialogTitle className="font-display text-3xl font-extrabold text-foreground">
               Today's sound is "{prompt}".
             </DialogTitle>
             {mode === null ? (
               <div className="flex items-center gap-2">
-                <p className="text-base text-slate-300">What would you like to practise?</p>
+                <p className="text-base text-muted-foreground">What would you like to practise?</p>
                 <SpeakButton
                   text={`Today's sound is ${prompt}. What would you like to practise?`}
                   ttsRate={ttsRate}
@@ -271,7 +271,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <p className="text-base text-slate-300">{instructionText}</p>
+                <p className="text-base text-muted-foreground">{instructionText}</p>
                 <SpeakButton
                   text={`Today's sound is ${prompt}. ${instructionText}`}
                   ttsRate={ttsRate}
@@ -289,12 +289,12 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                     key={option.value}
                     type="button"
                     onClick={() => chooseMode(option.value)}
-                    className="group rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-left transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/5"
+                    className="group rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-5 text-left transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/5"
                     data-testid={`find-the-letter-mode-${option.value}`}
                   >
-                    <Icon className="h-6 w-6 text-cyan-300" />
-                    <div className="mt-3 font-display text-base font-bold text-white">{option.title}</div>
-                    <p className="mt-1.5 text-sm leading-snug text-slate-400">{option.description}</p>
+                    <Icon className="h-6 w-6 text-primary" />
+                    <div className="mt-3 font-display text-base font-bold text-foreground">{option.title}</div>
+                    <p className="mt-1.5 text-sm leading-snug text-muted-foreground">{option.description}</p>
                   </button>
                 );
               })}
@@ -303,8 +303,8 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
             <>
               {roundComplete && (
                 <div className="mt-5 flex items-center justify-center gap-3 rounded-2xl border border-emerald-300/40 bg-emerald-400/10 p-4" data-testid="find-the-letter-complete">
-                  <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-300" />
-                  <p className="font-semibold text-emerald-200">
+                  <CheckCircle2 className="h-6 w-6 shrink-0 text-success" />
+                  <p className="font-semibold text-success">
                     {mode === "letter"
                       ? "All found — sharp eyes!"
                       : mode === "listen"
@@ -321,7 +321,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                       type="button"
                       onClick={speakPrompt}
                       variant="outline"
-                      className="rounded-full border-cyan-300/40 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950"
+                      className="rounded-full border-cyan-300/40 bg-cyan-300/10 text-primary hover:bg-cyan-300 hover:text-slate-950"
                       data-testid="find-the-letter-hear-again"
                     >
                       <Volume2 className="h-4 w-4" /> Hear it again
@@ -343,10 +343,10 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                             transition={{ duration: 0.3 }}
                             className={`relative flex h-11 w-8 items-center justify-center rounded-lg border font-display text-lg font-bold lowercase transition-colors duration-200 sm:h-14 sm:w-11 sm:text-2xl ${
                               isKeyFound
-                                ? "border-emerald-300/60 bg-emerald-400/20 text-emerald-200"
+                                ? "border-emerald-300/60 bg-emerald-400/20 text-success"
                                 : isKeyWrongFlash
-                                ? "border-rose-400/50 bg-rose-400/10 text-rose-200"
-                                : "border-white/15 bg-white/[0.05] text-slate-200 hover:border-cyan-300/40 hover:bg-cyan-300/10"
+                                ? "border-rose-400/50 bg-rose-400/10 text-error"
+                                : "border-foreground/15 bg-foreground/[0.05] text-foreground hover:border-cyan-300/40 hover:bg-cyan-300/10"
                             }`}
                             data-testid={`keyboard-key-${letter}`}
                           >
@@ -361,8 +361,8 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
               ) : (
                 <>
                   {mode === "picture" && (
-                    <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5">
-                      <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400">
+                    <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-foreground/10 bg-foreground/[0.03] px-4 py-2.5">
+                      <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                         <Volume2 className="h-3.5 w-3.5" /> Say the word on hover
                       </span>
                       <button
@@ -371,7 +371,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                         aria-checked={previewOnHover}
                         onClick={() => setPreviewOnHover((v) => !v)}
                         className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200 ${
-                          previewOnHover ? "justify-end bg-cyan-400" : "justify-start bg-white/15"
+                          previewOnHover ? "justify-end bg-cyan-400" : "justify-start bg-foreground/15"
                         }`}
                         data-testid="find-the-letter-hover-toggle"
                       >
@@ -401,19 +401,31 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                               ? "border-emerald-300/60 bg-emerald-400/15"
                               : isWrongFlash
                               ? "border-rose-400/50 bg-rose-400/10"
-                              : "border-white/10 bg-white/[0.04] hover:border-cyan-300/40 hover:bg-cyan-300/10"
+                              : "border-foreground/10 bg-foreground/[0.04] hover:border-cyan-300/40 hover:bg-cyan-300/10"
                           }`}
                           data-testid={`find-the-letter-tile-${index}`}
                         >
                           {isFound && <ConfettiBurst burstKey={index} />}
+                          {isFound && (
+                            <CheckCircle2
+                              className="absolute right-2 top-2 h-5 w-5 text-success"
+                              aria-hidden="true"
+                            />
+                          )}
+                          {isWrongFlash && (
+                            <XCircle
+                              className="absolute right-2 top-2 h-5 w-5 text-error"
+                              aria-hidden="true"
+                            />
+                          )}
                           {mode === "letter" ? (
-                            <span className="font-display text-6xl font-extrabold lowercase text-white sm:text-7xl">
+                            <span className="font-display text-6xl font-extrabold lowercase text-foreground sm:text-7xl">
                               {tile.letter}
                             </span>
                           ) : (
                             <>
                               <span className="text-6xl sm:text-7xl" aria-hidden="true">{tile.emoji}</span>
-                              <span className="font-mono text-base tracking-[0.1em] text-slate-300">{tile.word}</span>
+                              <span className="font-mono text-base tracking-[0.1em] text-muted-foreground">{tile.word}</span>
                             </>
                           )}
                         </motion.button>
@@ -428,7 +440,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                   type="button"
                   onClick={() => startRound(mode)}
                   variant="outline"
-                  className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+                  className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
                   data-testid="find-the-letter-practice-again"
                 >
                   <RotateCcw className="h-4 w-4" /> Practise again

@@ -219,8 +219,8 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     const foundWi = wis.find(wi => found.has(wi));
     if (foundWi !== undefined) return COLORS[foundWi % COLORS.length];
     if (inSel(r, c)) return "bg-cyan-300/50 text-white border-cyan-300 ring-1 ring-inset ring-cyan-200/60 scale-105";
-    if (revealed && wis.length > 0) return "bg-white/12 text-slate-300 border-white/25";
-    return "bg-white/[0.04] text-slate-400 border-white/10 hover:bg-cyan-300/10 hover:text-white hover:border-cyan-300/30";
+    if (revealed && wis.length > 0) return "bg-foreground/12 text-muted-foreground border-foreground/25";
+    return "bg-foreground/[0.04] text-muted-foreground border-foreground/10 hover:bg-cyan-300/10 hover:text-foreground hover:border-cyan-300/30";
   };
 
   // ── Print ─────────────────────────────────────────────────────────────────
@@ -293,7 +293,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
         ) : (
           <button
             onClick={e => e.stopPropagation()}
-            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-cyan-200"
+            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
             data-testid="word-search-button"
           >
             <Grid2x2 className="h-3.5 w-3.5" /> Word search
@@ -302,19 +302,19 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
       </DialogTrigger>
 
       <DialogContent
-        className="max-w-2xl overflow-hidden border-cyan-300/20 bg-[#08101f] p-0 text-slate-100"
+        className="max-w-2xl overflow-hidden border-cyan-300/20 bg-popover p-0 text-foreground"
         data-testid="word-search-dialog"
       >
         <div className="holo-card p-5 sm:p-7">
           <DialogHeader className="mb-5">
             <div className="flex items-center justify-between">
-              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-300">
+              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
                 Word Search // {title}
               </div>
               {timerOn && game && (
                 <div
                   className={`font-mono text-xl font-bold tabular-nums transition-colors ${
-                    timerMode === "countdown" && !timeUp && timeLeft <= 30 ? "animate-pulse text-rose-400" : "text-cyan-300"
+                    timerMode === "countdown" && !timeUp && timeLeft <= 30 ? "animate-pulse text-error" : "text-primary"
                   }`}
                   data-testid="timer-display"
                 >
@@ -322,20 +322,20 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                 </div>
               )}
             </div>
-            <DialogTitle className="font-display text-2xl font-extrabold text-white">
+            <DialogTitle className="font-display text-2xl font-extrabold text-foreground">
               Find all the words.
             </DialogTitle>
-            <p className="text-sm text-slate-400">{focus}</p>
+            <p className="text-sm text-muted-foreground">{focus}</p>
           </DialogHeader>
 
           {timeUp && (
             <div className="mb-5 rounded-2xl border border-rose-300/30 bg-rose-400/10 p-3 text-center" data-testid="time-up-banner">
-              <p className="font-display text-lg font-bold text-rose-300">Time's up! Here are the hidden words.</p>
+              <p className="font-display text-lg font-bold text-error">Time's up! Here are the hidden words.</p>
             </div>
           )}
           {allDone && !timeUp && (
             <div className="mb-5 rounded-2xl border border-emerald-300/30 bg-emerald-400/10 p-3 text-center" data-testid="all-done-banner">
-              <p className="font-display text-lg font-bold text-emerald-300">All words found — brilliant work!</p>
+              <p className="font-display text-lg font-bold text-success">All words found — brilliant work!</p>
             </div>
           )}
 
@@ -351,8 +351,8 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               onTouchEnd={confirmSel}
             >
               <div
-                className="grid gap-[2px]"
-                style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+                className="grid"
+                style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`, gap: "var(--wordsearch-gap, 2px)" }}
               >
                 {Array.from({ length: size }, (_, r) =>
                   Array.from({ length: size }, (_, c) => (
@@ -379,7 +379,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                   } ${
                     found.has(wi)
                       ? `line-through opacity-40 ${COLORS[wi % COLORS.length]}`
-                      : "border-white/15 bg-white/5 text-slate-400"
+                      : "border-foreground/15 bg-foreground/5 text-muted-foreground"
                   }`}
                 >
                   {word}
@@ -392,7 +392,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <Button
               onClick={startGame}
               variant="outline" size="sm"
-              className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+              className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
               data-testid="new-game-button"
             >
               <RotateCcw className="h-3.5 w-3.5" /> New game
@@ -402,37 +402,37 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline" size="sm"
-                  className={`rounded-full transition-colors ${revealed ? "border-pink-300/40 bg-pink-400/10 text-pink-200 hover:bg-pink-400/20 hover:text-white" : "border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
+                  className={`rounded-full transition-colors ${revealed ? "border-pink-300/40 bg-pink-400/10 text-accent2 hover:bg-pink-400/20 hover:text-foreground" : "border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"}`}
                   data-testid="reveal-button"
                 >
                   <Eye className="h-3.5 w-3.5" /> {revealed ? "Hide" : "Reveal"}
                 </Button>
               </AlertDialogTrigger>
               {!revealed ? (
-                <AlertDialogContent className="border-white/15 bg-[#08101f] text-slate-100">
+                <AlertDialogContent className="border-foreground/15 bg-popover text-foreground">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="font-display text-white">Reveal the words?</AlertDialogTitle>
-                    <AlertDialogDescription className="text-slate-400">
+                    <AlertDialogTitle className="font-display text-foreground">Reveal the words?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-muted-foreground">
                       This will highlight all the hidden words in the grid. Are you sure you want to give up?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white">Keep trying</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground">Keep trying</AlertDialogCancel>
                     <AlertDialogAction onClick={() => setRevealed(true)} className="rounded-full bg-pink-500 text-white hover:bg-pink-600" data-testid="reveal-confirm">
                       Yes, reveal
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               ) : (
-                <AlertDialogContent className="border-white/15 bg-[#08101f] text-slate-100">
+                <AlertDialogContent className="border-foreground/15 bg-popover text-foreground">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="font-display text-white">Hide the words?</AlertDialogTitle>
-                    <AlertDialogDescription className="text-slate-400">
+                    <AlertDialogTitle className="font-display text-foreground">Hide the words?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-muted-foreground">
                       This will hide the highlighted positions. Give it another go?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground">Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={() => setRevealed(false)} className="rounded-full bg-cyan-500 text-slate-950 hover:bg-cyan-400" data-testid="hide-confirm">
                       Yes, hide
                     </AlertDialogAction>
@@ -444,7 +444,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <Button
               onClick={toggleTimer}
               variant="outline" size="sm"
-              className={`rounded-full transition-colors ${timerOn ? "border-cyan-300/40 bg-cyan-400/10 text-cyan-200 hover:bg-cyan-400/20 hover:text-white" : "border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
+              className={`rounded-full transition-colors ${timerOn ? "border-cyan-300/40 bg-cyan-400/10 text-primary hover:bg-cyan-400/20 hover:text-foreground" : "border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"}`}
               data-testid="timer-toggle"
             >
               <Timer className="h-3.5 w-3.5" /> Timer
@@ -453,7 +453,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             <Button
               onClick={handlePrint}
               variant="outline" size="sm"
-              className="rounded-full border-white/20 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
+              className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
               data-testid="print-word-search"
             >
               <Printer className="h-3.5 w-3.5" /> Print
@@ -464,9 +464,9 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
     </Dialog>
 
     <Dialog open={timerSettingsOpen} onOpenChange={setTimerSettingsOpen}>
-      <DialogContent className="max-w-sm border-cyan-300/20 bg-[#08101f] text-slate-100" data-testid="timer-settings-dialog">
+      <DialogContent className="max-w-sm border-cyan-300/20 bg-popover text-foreground" data-testid="timer-settings-dialog">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl font-extrabold text-white">Timer</DialogTitle>
+          <DialogTitle className="font-display text-xl font-extrabold text-foreground">Timer</DialogTitle>
         </DialogHeader>
 
         <div className="mt-3 flex flex-col gap-5">
@@ -475,7 +475,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               type="button"
               variant="outline"
               onClick={() => setDraftMode("countdown")}
-              className={`flex-1 rounded-full ${draftMode === "countdown" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200 hover:bg-cyan-300/15 hover:text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
+              className={`flex-1 rounded-full ${draftMode === "countdown" ? "border-cyan-300 bg-cyan-300/15 text-primary hover:bg-cyan-300/15 hover:text-primary" : "border-foreground/15 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"}`}
               data-testid="timer-mode-countdown"
             >
               Countdown
@@ -484,7 +484,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
               type="button"
               variant="outline"
               onClick={() => setDraftMode("countup")}
-              className={`flex-1 rounded-full ${draftMode === "countup" ? "border-cyan-300 bg-cyan-300/15 text-cyan-200 hover:bg-cyan-300/15 hover:text-cyan-200" : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"}`}
+              className={`flex-1 rounded-full ${draftMode === "countup" ? "border-cyan-300 bg-cyan-300/15 text-primary hover:bg-cyan-300/15 hover:text-primary" : "border-foreground/15 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"}`}
               data-testid="timer-mode-countup"
             >
               Normal (count up)
@@ -493,22 +493,22 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
 
           {draftMode === "countdown" && (
             <div>
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-slate-400">Minutes</div>
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Minutes</div>
               <div className="mt-2 flex items-center gap-3">
                 <Button
                   type="button" variant="outline" size="icon"
                   onClick={() => setDraftMinutes(m => Math.max(1, m - 1))}
-                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                  className="h-9 w-9 rounded-full border-foreground/15 bg-foreground/5 text-foreground hover:bg-foreground/10 hover:text-foreground"
                   aria-label="Fewer minutes"
                   data-testid="timer-minutes-decrement"
                 >
                   −
                 </Button>
-                <span className="w-10 text-center text-lg font-bold text-white" data-testid="timer-minutes-value">{draftMinutes}</span>
+                <span className="w-10 text-center text-lg font-bold text-foreground" data-testid="timer-minutes-value">{draftMinutes}</span>
                 <Button
                   type="button" variant="outline" size="icon"
                   onClick={() => setDraftMinutes(m => Math.min(30, m + 1))}
-                  className="h-9 w-9 rounded-full border-white/15 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white"
+                  className="h-9 w-9 rounded-full border-foreground/15 bg-foreground/5 text-foreground hover:bg-foreground/10 hover:text-foreground"
                   aria-label="More minutes"
                   data-testid="timer-minutes-increment"
                 >

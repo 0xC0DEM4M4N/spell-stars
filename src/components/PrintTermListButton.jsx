@@ -8,15 +8,15 @@ const TERM_LABELS = { autumn: "Autumn", spring: "Spring", summer: "Summer" };
 
 function Toggle({ checked, onChange, label, testId }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-      <span className="text-sm text-slate-300">{label}</span>
+    <div className="flex items-center justify-between gap-4 rounded-xl border border-foreground/10 bg-foreground/[0.04] px-4 py-3">
+      <span className="text-sm text-muted-foreground">{label}</span>
       <button
         type="button"
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200 ${
-          checked ? "justify-end bg-cyan-400" : "justify-start bg-white/15"
+          checked ? "justify-end bg-cyan-400" : "justify-start bg-foreground/15"
         }`}
         data-testid={testId}
       >
@@ -60,7 +60,7 @@ export const PrintTermListButton = ({ words, term, yearLabel }) => {
         <Button
           type="button"
           variant="outline"
-          className="h-8 rounded-full border-white/15 bg-white/5 px-3 text-xs text-slate-300 hover:bg-white/10 hover:text-white"
+          className="h-8 rounded-full border-foreground/15 bg-foreground/5 px-3 text-xs text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           data-testid="print-term-words-button"
         >
           <Printer className="h-3.5 w-3.5" /> Print list
@@ -68,18 +68,18 @@ export const PrintTermListButton = ({ words, term, yearLabel }) => {
       </DialogTrigger>
 
       <DialogContent
-        className="max-w-md overflow-hidden border-cyan-300/20 bg-[#08101f] p-0 text-slate-100"
+        className="max-w-md overflow-hidden border-cyan-300/20 bg-popover p-0 text-foreground"
         data-testid="print-term-dialog"
       >
         <div className="holo-card p-6 sm:p-7">
           <DialogHeader>
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-300">
+            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
               Print // {title}
             </div>
-            <DialogTitle className="font-display text-2xl font-extrabold text-white">
+            <DialogTitle className="font-display text-2xl font-extrabold text-foreground">
               Print the full word list.
             </DialogTitle>
-            <p className="text-sm text-slate-400">All {words.length} words covered so far this term.</p>
+            <p className="text-sm text-muted-foreground">All {words.length} words covered so far this term.</p>
           </DialogHeader>
 
           <div className="mt-6 flex flex-col gap-3">

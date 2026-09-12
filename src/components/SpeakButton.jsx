@@ -33,7 +33,7 @@ export const SpeakButton = ({ text, ttsRate, label = "Read this aloud", classNam
       type="button"
       onClick={handleClick}
       aria-label={label}
-      className={`inline-flex shrink-0 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 p-1.5 text-cyan-200 transition-colors duration-200 hover:bg-cyan-300 hover:text-slate-950 ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 p-1.5 text-primary transition-colors duration-200 hover:bg-cyan-300 hover:text-slate-950 ${className}`}
       data-testid="speak-button"
     >
       <Volume2 className="h-3.5 w-3.5" />

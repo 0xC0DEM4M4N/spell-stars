@@ -72,7 +72,7 @@ function renderBlankTiles(word, typed) {
     return (
       <span key={i}>
         {i > 0 ? " " : ""}
-        <span className={i === nextIndex ? "animate-pulse text-cyan-100" : undefined}>{display}</span>
+        <span className={i === nextIndex ? "animate-pulse text-primary" : undefined}>{display}</span>
       </span>
     );
   });
@@ -255,29 +255,29 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (v) resetAll(); }}>
-      <DialogContent className="max-w-2xl overflow-hidden border-cyan-300/30 bg-[#08101f] p-0 text-slate-100" data-testid="practice-quiz-dialog">
+      <DialogContent className="max-w-2xl overflow-hidden border-cyan-300/30 bg-popover p-0 text-foreground" data-testid="practice-quiz-dialog">
         <div className="holo-card relative p-6 sm:p-8">
           {burstKey > 0 && <ConfettiBurst burstKey={burstKey} />}
           <DialogHeader>
             <div className="flex items-center justify-between gap-4">
-              <div className="font-mono text-xs uppercase tracking-[0.28em] text-pink-300">
+              <div className="font-mono text-xs uppercase tracking-[0.28em] text-accent2">
                 Practice mode
               </div>
               {mode && !finished && (
                 <button
                   type="button"
                   onClick={resetAll}
-                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500 transition-colors hover:text-cyan-300"
+                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
                   data-testid="quiz-change-mode-button"
                 >
                   Change mode
                 </button>
               )}
             </div>
-            <DialogTitle className="font-display text-3xl font-extrabold text-white" data-testid="quiz-title">
+            <DialogTitle className="font-display text-3xl font-extrabold text-foreground" data-testid="quiz-title">
               {copy.title}
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-muted-foreground">
               {copy.description}
             </DialogDescription>
           </DialogHeader>
@@ -287,40 +287,40 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
               <button
                 type="button"
                 onClick={() => setMode("listen")}
-                className="group rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-left transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/5"
+                className="group rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-6 text-left transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/5"
                 data-testid="quiz-mode-listen"
               >
-                <Ear className="h-6 w-6 text-cyan-300" />
-                <div className="mt-3 font-display text-lg font-bold text-white">Listen &amp; spell</div>
-                <p className="mt-1.5 text-sm leading-snug text-slate-400">
+                <Ear className="h-6 w-6 text-primary" />
+                <div className="mt-3 font-display text-lg font-bold text-foreground">Listen &amp; spell</div>
+                <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
                   Hear each word read aloud, then type it. A letter hint gets you started.
                 </p>
               </button>
               <button
                 type="button"
                 onClick={() => setMode("meaning")}
-                className="group rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-left transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/5"
+                className="group rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-6 text-left transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/5"
                 data-testid="quiz-mode-meaning"
               >
-                <Puzzle className="h-6 w-6 text-pink-300" />
-                <div className="mt-3 font-display text-lg font-bold text-white">Guess from the meaning</div>
-                <p className="mt-1.5 text-sm leading-snug text-slate-400">
+                <Puzzle className="h-6 w-6 text-accent2" />
+                <div className="mt-3 font-display text-lg font-bold text-foreground">Guess from the meaning</div>
+                <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
                   No audio — read the definition (a bit like a crossword clue) and spell it.
                 </p>
               </button>
             </div>
           ) : !finished ? (
             <div className="mt-8">
-              <div className="mb-5 flex items-center justify-between gap-4 font-mono text-xs uppercase tracking-[0.2em] text-slate-400">
+              <div className="mb-5 flex items-center justify-between gap-4 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 <span data-testid="quiz-progress-label">Word {index + 1} / {sessionWords.length}</span>
                 <span className="flex items-center gap-3">
-                  <span className="flex items-center gap-1 normal-case tracking-normal text-slate-500">
+                  <span className="flex items-center gap-1 normal-case tracking-normal text-muted-foreground">
                     <Shuffle className="h-3 w-3" /> shuffled
                   </span>
                   <span data-testid="quiz-score-label">First try {firstTryScore}</span>
                 </span>
               </div>
-              <Progress value={progress} className="h-2 bg-white/10" data-testid="quiz-progress-bar" />
+              <Progress value={progress} className="h-2 bg-foreground/10" data-testid="quiz-progress-bar" />
 
               {/* Visually the result shows as a background flash + badge on the
                   word box below (no layout shift); this is the same
@@ -340,19 +340,19 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                       ? "border-emerald-300/70 bg-emerald-400/25"
                       : status === "incorrect"
                       ? "border-rose-400/60 bg-rose-500/15"
-                      : "border-white/10 bg-white/[0.04]"
+                      : "border-foreground/10 bg-foreground/[0.04]"
                   }`}
                 >
                   <FeedbackBadge status={status} />
                   <button
                     type="button"
                     onClick={() => inputRef.current?.focus()}
-                    className="block w-full cursor-text bg-transparent font-mono text-2xl tracking-[0.35em] text-cyan-200 sm:text-3xl"
+                    className="block w-full cursor-text bg-transparent font-mono text-2xl tracking-[0.35em] text-primary sm:text-3xl"
                     data-testid="quiz-word-hint"
                   >
                     {renderBlankTiles(currentWord.word, answer)}
                   </button>
-                  <div className="mt-3 text-sm text-slate-400">{currentWord.focus}</div>
+                  <div className="mt-3 text-sm text-muted-foreground">{currentWord.focus}</div>
                 </div>
               ) : (
                 <div
@@ -361,13 +361,13 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                       ? "border-emerald-300/70 bg-emerald-400/25"
                       : status === "incorrect"
                       ? "border-rose-400/60 bg-rose-500/15"
-                      : "border-white/10 bg-white/[0.04]"
+                      : "border-foreground/10 bg-foreground/[0.04]"
                   }`}
                   data-testid="quiz-meaning-clue"
                 >
                   <FeedbackBadge status={status} />
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-pink-300">
+                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-accent2">
                       <Puzzle className="h-3.5 w-3.5" /> Meaning clue
                     </div>
                     {meaningSpeechText && (
@@ -375,21 +375,21 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                     )}
                   </div>
                   {currentWord.definition ? (
-                    <p className="text-lg font-semibold leading-snug text-white">{currentWord.definition}</p>
+                    <p className="text-lg font-semibold leading-snug text-foreground">{currentWord.definition}</p>
                   ) : (
-                    <p className="text-sm italic text-slate-500">No written clue for this word yet — here's the length instead.</p>
+                    <p className="text-sm italic text-muted-foreground">No written clue for this word yet — here's the length instead.</p>
                   )}
                   {currentWord.exampleSentence && (
                     showSentenceHint ? (
-                      <p className="mt-3 text-sm leading-relaxed text-slate-300" data-testid="quiz-sentence-hint">
-                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-slate-500">in a sentence</span>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground" data-testid="quiz-sentence-hint">
+                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">in a sentence</span>
                         {blankSentence(currentWord.exampleSentence, currentWord.word)}
                       </p>
                     ) : (
                       <button
                         type="button"
                         onClick={() => setShowSentenceHint(true)}
-                        className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-pink-300/80 underline decoration-dotted underline-offset-4 transition-colors hover:text-pink-200"
+                        className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-accent2/80 underline decoration-dotted underline-offset-4 transition-colors hover:text-accent2"
                         data-testid="quiz-sentence-hint-button"
                       >
                         Need a hint? Show the sentence
@@ -399,7 +399,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                   <button
                     type="button"
                     onClick={() => inputRef.current?.focus()}
-                    className="mt-4 block w-full cursor-text bg-transparent text-center font-mono text-xl tracking-[0.4em] text-cyan-200/80"
+                    className="mt-4 block w-full cursor-text bg-transparent text-center font-mono text-xl tracking-[0.4em] text-primary/80"
                     data-testid="quiz-meaning-blank"
                   >
                     {renderBlankTiles(currentWord.word, answer)}
@@ -408,7 +408,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                     <div className="mt-4 flex justify-center">
                       <Button
                         type="button" variant="outline" onClick={speakWord}
-                        className="border-cyan-300/30 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950"
+                        className="border-cyan-300/30 bg-cyan-300/10 text-primary hover:bg-cyan-300 hover:text-slate-950"
                         data-testid="quiz-hear-fallback-button"
                       >
                         <Ear className="h-4 w-4" /> Hear it instead
@@ -422,7 +422,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                 {mode === "listen" && (
                   <Button
                     type="button" variant="outline" onClick={speakWord}
-                    className="border-cyan-300/30 bg-cyan-300/10 text-cyan-200 hover:bg-cyan-300 hover:text-slate-950"
+                    className="border-cyan-300/30 bg-cyan-300/10 text-primary hover:bg-cyan-300 hover:text-slate-950"
                     data-testid="quiz-hear-button"
                   >
                     <Ear className="h-4 w-4" /> Hear word
@@ -441,7 +441,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                 <div className="flex items-center justify-center gap-3">
                   <Button
                     type="button" variant="outline" onClick={handleClear} disabled={!answer || status === "correct"}
-                    className="h-12 rounded-full border-white/15 bg-white/5 px-5 text-slate-300 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    className="h-12 rounded-full border-foreground/15 bg-foreground/5 px-5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                     data-testid="quiz-clear-button"
                   >
                     Clear
@@ -456,7 +456,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                   {status === "incorrect" && (
                     <Button
                       type="button" variant="ghost" onClick={goNext}
-                      className="h-12 text-slate-400 hover:text-white"
+                      className="h-12 text-muted-foreground hover:text-foreground"
                       data-testid="quiz-skip-button"
                     >
                       Skip to next word
@@ -467,13 +467,13 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
             </div>
           ) : (
             <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 rounded-3xl border border-emerald-300/30 bg-emerald-400/10 p-8 text-center" data-testid="quiz-complete-panel">
-              <Trophy className="mx-auto h-12 w-12 text-amber-300" />
-              <h3 className="mt-5 font-display text-3xl font-extrabold text-white">Session complete!</h3>
-              <p className="mt-3 text-slate-300">
-                You scored <span className="font-bold text-emerald-300">{firstTryScore} / {sessionWords.length}</span> on your first try.
+              <Trophy className="mx-auto h-12 w-12 text-warning" />
+              <h3 className="mt-5 font-display text-3xl font-extrabold text-foreground">Session complete!</h3>
+              <p className="mt-3 text-muted-foreground">
+                You scored <span className="font-bold text-success">{firstTryScore} / {sessionWords.length}</span> on your first try.
               </p>
               <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-                <Button type="button" onClick={resetAll} variant="outline" className="rounded-full border-white/20 px-6 font-semibold text-slate-300 hover:bg-white/10 hover:text-white" data-testid="quiz-restart-button">
+                <Button type="button" onClick={resetAll} variant="outline" className="rounded-full border-foreground/20 px-6 font-semibold text-muted-foreground hover:bg-foreground/10 hover:text-foreground" data-testid="quiz-restart-button">
                   <RotateCcw className="h-4 w-4" /> Practise again
                 </Button>
               </div>

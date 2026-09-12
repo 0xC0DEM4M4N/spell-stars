@@ -16,7 +16,7 @@ function HighlightWord({ text, word }) {
   const parts = text.split(new RegExp(`(${escaped})`, "gi"));
   return parts.map((part, i) =>
     part.toLowerCase() === word.toLowerCase()
-      ? <strong key={i} className="font-bold text-cyan-300 underline decoration-cyan-300">{part}</strong>
+      ? <strong key={i} className="font-bold text-primary underline decoration-cyan-300">{part}</strong>
       : part
   );
 }
@@ -30,7 +30,7 @@ const WordChip = ({ entry, index, week, active, pinned, onHover, onLeave, onSele
         ? "border-cyan-300/60 bg-cyan-300/15"
         : active
         ? "border-cyan-300/40 bg-cyan-300/8"
-        : "border-white/10 bg-white/[0.04] hover:border-cyan-300/30 hover:bg-cyan-300/5"
+        : "border-foreground/10 bg-foreground/[0.04] hover:border-cyan-300/30 hover:bg-cyan-300/5"
     }`}
     tabIndex={0}
     role="button"
@@ -44,11 +44,11 @@ const WordChip = ({ entry, index, week, active, pinned, onHover, onLeave, onSele
     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(e); } }}
     data-testid={`word-chip-week-${week}-${index + 1}`}
   >
-    <span className="font-display text-lg font-bold tracking-wide text-slate-100">{entry.word}</span>
-    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+    <span className="font-display text-lg font-bold tracking-wide text-foreground">{entry.word}</span>
+    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
       {String(index + 1).padStart(2, "0")}
       {(entry.exampleSentence || entry.definition) && (
-        <Info className={`h-3 w-3 transition-colors ${pinned ? "text-cyan-300" : active ? "text-slate-400" : "text-slate-600"}`} aria-hidden="true" />
+        <Info className={`h-3 w-3 transition-colors ${pinned ? "text-primary" : active ? "text-muted-foreground" : "text-slate-600"}`} aria-hidden="true" />
       )}
     </span>
   </div>
@@ -78,24 +78,26 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
       whileHover={isDragging ? {} : {
         y: -6,
         boxShadow: active
-          ? "0 0 0 1px rgba(103,232,249,0.22), 0 12px 56px rgba(103,232,249,0.26), 0 24px 80px rgba(0,0,0,0.5)"
-          : "0 0 0 1px rgba(148,163,184,0.14), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)",
+          ? "0 0 0 2px rgba(34,211,238,0.95), 0 0 0 8px rgba(34,211,238,0.25), 0 14px 60px rgba(34,211,238,0.32), 0 24px 80px rgba(0,0,0,0.5)"
+          : "0 0 0 1px rgba(148,163,184,0.14), 0 0 0 1px rgba(148,163,184,0.08), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)",
       }}
-      style={active ? {
-        boxShadow: "0 0 0 1px rgba(103,232,249,0.18), 0 8px 48px rgba(103,232,249,0.2), 0 24px 80px rgba(0,0,0,0.4)",
-      } : undefined}
+      style={{
+        boxShadow: active
+          ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
+          : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)",
+      }}
       transition={{ type: "spring", stiffness: 260, damping: 24 }}
       className={`holo-card h-full rounded-[1.75rem] p-6 sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-cyan-300">{capitalize(weekData.term)} term</div>
-          <h3 className="mt-3 font-display text-4xl font-extrabold text-white">Week {String(weekData.week).padStart(2, "0")}</h3>
+          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
+          <h3 className="mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {current && (
-            <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-emerald-300" data-testid="current-week-pill">
+            <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
               Current
             </div>
           )}
@@ -109,7 +111,7 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
           />
           <button
             onClick={e => { e.stopPropagation(); setQuizOpen(true); }}
-            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/10 hover:text-pink-200"
+            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/10 hover:text-accent2"
             data-testid="practice-button"
           >
             <Sparkles className="h-3.5 w-3.5" /> Practice
@@ -118,16 +120,16 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
         </div>
       </div>
 
-      <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-slate-400">
+      <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
         Week {weekData.weekOfTerm} of term
       </div>
 
       {/* Fixed-height info panel — prevents card from jumping */}
       <div className="mt-7 h-[6.25rem] overflow-hidden border-l-2 border-cyan-300 pl-5">
-        <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-cyan-200">
+        <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
           <Target className="h-4 w-4" />
           {activeWordInfo ? activeWordInfo.word : "Learning point"}
-          {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-cyan-300">pinned</span>}
+          {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-primary">pinned</span>}
         </div>
         <AnimatePresence mode="wait">
           {activeWordInfo ? (
@@ -137,19 +139,19 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
               transition={{ duration: 0.12 }}
             >
               {activeWordInfo.exampleSentence && (
-                <p className="text-sm leading-snug text-slate-200">
-                  <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-cyan-400">eg</span>
+                <p className="text-sm leading-snug text-foreground">
+                  <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-primary">eg</span>
                   <HighlightWord text={activeWordInfo.exampleSentence} word={activeWordInfo.word} />
                 </p>
               )}
               {activeWordInfo.definition && (
-                <p className="mt-1 text-sm leading-snug text-slate-400">
-                  <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-slate-500">means</span>
+                <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                  <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">means</span>
                   {activeWordInfo.definition}
                 </p>
               )}
               {!activeWordInfo.exampleSentence && !activeWordInfo.definition && (
-                <p className="text-sm italic text-slate-500">Definition coming soon.</p>
+                <p className="text-sm italic text-muted-foreground">Definition coming soon.</p>
               )}
             </motion.div>
           ) : (
@@ -157,7 +159,7 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
               key="lp"
               initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.12 }}
-              className="text-base font-semibold leading-snug text-slate-100"
+              className="text-base font-semibold leading-snug text-foreground"
               data-testid={`learning-point-week-${weekData.week}`}
             >
               {weekData.focus}
@@ -200,29 +202,31 @@ function LetterWeekCard({ weekData, active, current, isDragging, onClick, onAtte
       whileHover={isDragging ? {} : {
         y: -6,
         boxShadow: active
-          ? "0 0 0 1px rgba(103,232,249,0.22), 0 12px 56px rgba(103,232,249,0.26), 0 24px 80px rgba(0,0,0,0.5)"
-          : "0 0 0 1px rgba(148,163,184,0.14), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)",
+          ? "0 0 0 2px rgba(34,211,238,0.95), 0 0 0 8px rgba(34,211,238,0.25), 0 14px 60px rgba(34,211,238,0.32), 0 24px 80px rgba(0,0,0,0.5)"
+          : "0 0 0 1px rgba(148,163,184,0.14), 0 0 0 1px rgba(148,163,184,0.08), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)",
       }}
-      style={active ? {
-        boxShadow: "0 0 0 1px rgba(103,232,249,0.18), 0 8px 48px rgba(103,232,249,0.2), 0 24px 80px rgba(0,0,0,0.4)",
-      } : undefined}
+      style={{
+        boxShadow: active
+          ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
+          : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)",
+      }}
       transition={{ type: "spring", stiffness: 260, damping: 24 }}
       className={`holo-card h-full rounded-[1.75rem] p-6 sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-cyan-300">{capitalize(weekData.term)} term</div>
-          <h3 className="mt-3 font-display text-4xl font-extrabold text-white">Week {String(weekData.week).padStart(2, "0")}</h3>
+          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
+          <h3 className="mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
         </div>
         {current && (
-          <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-emerald-300" data-testid="current-week-pill">
+          <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
             Current
           </div>
         )}
       </div>
 
-      <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-slate-400">
+      <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
         Letter of the day — one new sound each school day
       </div>
 
@@ -234,8 +238,8 @@ function LetterWeekCard({ weekData, active, current, isDragging, onClick, onAtte
             onClick={(e) => { e.stopPropagation(); setActiveDay(index); }}
             className={`rounded-full border px-3 py-2 font-mono text-xs tracking-[0.14em] transition-colors duration-200 ${
               index === activeDay
-                ? "border-cyan-300 bg-cyan-300/15 text-cyan-200"
-                : "border-white/10 bg-white/5 text-slate-400 hover:border-cyan-300/40 hover:text-cyan-200"
+                ? "border-cyan-300 bg-cyan-300/15 text-primary"
+                : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/40 hover:text-primary"
             }`}
             data-testid={`letter-day-${index}`}
           >
@@ -244,9 +248,9 @@ function LetterWeekCard({ weekData, active, current, isDragging, onClick, onAtte
         ))}
       </div>
 
-      <div className="mt-6 flex flex-col items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-slate-400">{dayEntry.focus}</div>
-        <div className="font-display text-7xl font-extrabold text-cyan-200" data-testid="letter-of-the-day">
+      <div className="mt-6 flex flex-col items-center gap-4 rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 text-center">
+        <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{dayEntry.focus}</div>
+        <div className="font-display text-7xl font-extrabold text-primary" data-testid="letter-of-the-day">
           {dayEntry.prompt}
         </div>
         <FindTheLetter prompt={dayEntry.prompt} entryId={dayEntry.id} onAttempt={onAttempt} ttsRate={capabilities?.ttsRate} />
@@ -308,11 +312,11 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
             <button
               key={weekData.week}
               onClick={() => onSelectWeek(weekData.week)}
-              className={`group relative min-w-11 rounded-full border px-3 py-2 font-mono text-xs transition-colors duration-300 ${weekData.week === selectedWeek ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-white/10 bg-white/5 text-slate-400 hover:border-cyan-300/50 hover:text-cyan-200"}`}
+              className={`group relative min-w-11 rounded-full border px-3 py-2 font-mono text-xs transition-colors duration-300 ${weekData.week === selectedWeek ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/50 hover:text-primary"}`}
               data-testid={`week-jump-${weekData.week}`}
             >
               {String(weekData.week).padStart(2, "0")}
-              <span className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#0b0f1a] px-2 py-1 text-[10px] font-normal normal-case tracking-normal text-slate-300 opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+              <span className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-foreground/10 bg-popover px-2 py-1 text-[10px] font-normal normal-case tracking-normal text-muted-foreground opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
                 {formatWeekCommencing(weekData.week)}
               </span>
             </button>
@@ -320,11 +324,13 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
         </div>
         <div className="mx-auto max-w-7xl">
          {activeWeek && (
-          <div className="mt-6 border border-white/10 bg-white/[0.03] p-5 font-mono text-xs uppercase tracking-[0.2em] text-slate-400" data-testid="active-week-summary">
-            Active selection: <span className="text-cyan-200">Week {String(activeWeek.week).padStart(2, "0")}</span> // {activeWeek.focus}
+          <div className="mt-6 flex flex-wrap items-center gap-3 border-l-4 border-cyan-400 bg-foreground/[0.04] p-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="active-week-summary">
+            <span>Active selection:</span>
+            <span className="rounded-full bg-cyan-400 px-2.5 py-1 font-bold text-slate-950">Week {String(activeWeek.week).padStart(2, "0")}</span>
+            <span>// {activeWeek.focus}</span>
           </div>
         )}
-        <div className={`overflow-hidden pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} ref={emblaRef} data-testid="week-carousel-viewport">
+        <div className={`-mb-10 overflow-hidden pb-10 pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} ref={emblaRef} data-testid="week-carousel-viewport">
           <div className="-ml-4 flex">
             {weeks.map((weekData) => (
               <div className="min-w-0 flex-[0_0_92%] pl-4 sm:flex-[0_0_68%] lg:flex-[0_0_52%] xl:flex-[0_0_46%]" key={weekData.week}>
@@ -355,10 +361,10 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
         </div>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button variant="outline" size="icon" onClick={scrollPrev} className="rounded-full border-white/15 bg-white/5 text-white hover:bg-cyan-300 hover:text-slate-950" data-testid="carousel-prev-button" aria-label="Previous week">
+          <Button variant="outline" size="icon" onClick={scrollPrev} className="rounded-full border-foreground/15 bg-foreground/5 text-foreground hover:bg-cyan-300 hover:text-slate-950" data-testid="carousel-prev-button" aria-label="Previous week">
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <Button variant="outline" size="icon" onClick={scrollNext} className="rounded-full border-white/15 bg-white/5 text-white hover:bg-cyan-300 hover:text-slate-950" data-testid="carousel-next-button" aria-label="Next week">
+          <Button variant="outline" size="icon" onClick={scrollNext} className="rounded-full border-foreground/15 bg-foreground/5 text-foreground hover:bg-cyan-300 hover:text-slate-950" data-testid="carousel-next-button" aria-label="Next week">
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>

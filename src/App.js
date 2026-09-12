@@ -1,10 +1,13 @@
 import { useEffect, useRef } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import Lenis from "lenis";
 import "@/App.css";
 import YearIndex from "@/pages/YearIndex";
 import YearPage from "@/pages/YearPage";
 import { Toaster } from "@/components/ui/sonner";
+import { AccessibilityMenu } from "@/components/AccessibilityMenu";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 
 // react-router's client-side navigation keeps whatever scroll position
 // the previous page was at, so clicking a year card partway down the
@@ -25,11 +28,15 @@ function ScrollToTop({ lenisRef }) {
   return null;
 }
 
-function App() {
+function AppShell() {
   const lenisRef = useRef(null);
+  const { reducedMotion } = useTheme();
 
   useEffect(() => {
-    const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    // Reduced motion turns off Lenis's inertial smooth-scrolling too,
+    // not just CSS/framer-motion animations — a near-zero duration
+    // makes it track the raw scroll position immediately.
+    const lenis = new Lenis({ duration: reducedMotion ? 0.001 : 1.15, smoothWheel: !reducedMotion });
     lenisRef.current = lenis;
     let frameId;
     const raf = (time) => {
@@ -42,19 +49,34 @@ function App() {
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, []);
+  }, [reducedMotion]);
 
   return (
-    <BrowserRouter>
-      <div data-testid="app-shell">
-        <ScrollToTop lenisRef={lenisRef} />
-        <Routes>
-          <Route path="/" element={<YearIndex />} />
-          <Route path="/:yearSlug" element={<YearPage />} />
-        </Routes>
-        <Toaster position="bottom-right" />
-      </div>
-    </BrowserRouter>
+    // reducedMotion "always" forces every framer-motion animation in the
+    // app (motion.div / AnimatePresence, wherever it's used) down to an
+    // instant transition when our own toggle is on; "user" otherwise
+    // still respects the OS-level prefers-reduced-motion setting.
+    <MotionConfig reducedMotion={reducedMotion ? "always" : "user"}>
+      <BrowserRouter>
+        <div data-testid="app-shell">
+          <ScrollToTop lenisRef={lenisRef} />
+          <Routes>
+            <Route path="/" element={<YearIndex />} />
+            <Route path="/:yearSlug" element={<YearPage />} />
+          </Routes>
+          <Toaster position="bottom-right" />
+          <AccessibilityMenu />
+        </div>
+      </BrowserRouter>
+    </MotionConfig>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
   );
 }
 

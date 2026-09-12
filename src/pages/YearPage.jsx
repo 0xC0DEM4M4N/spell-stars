@@ -198,22 +198,23 @@ export default function YearPage() {
   const pageDescription = `Weekly ${yearMeta.label} spelling lists, quizzes and word searches matched to the UK National Curriculum — listen, practise and test yourself for free.`;
 
   return (
-    <div className="bg-grid-squares min-h-screen bg-[#05070d] text-slate-100">
+    <div className="bg-grid-squares min-h-screen bg-background text-foreground">
       {/* React 19 hoists these into <head> for this route, and restores
           index.html's defaults again on unmount -- see YearIndex.jsx. */}
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
       <link rel="canonical" href={`https://spell-stars.pages.dev/${yearSlug}`} />
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#05070d]/75 backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/75 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-          <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-white">
-            SPELL<span className="text-cyan-300">//</span><span className="text-cyan-400">ST<Star className="inline-block h-[0.85em] w-[0.85em] text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" style={{ verticalAlign: "-0.12em" }} aria-hidden="true" />RS</span>
+          <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-foreground">
+            SPELL<span className="text-primary">//</span><span className="text-primary">ST<Star className="inline-block h-[0.85em] w-[0.85em] text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" style={{ verticalAlign: "-0.12em" }} aria-hidden="true" />RS</span>
           </Link>
-          <nav className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.22em] text-slate-400 md:flex" aria-label="Primary">
-            <Link to="/#years" className="transition-colors duration-300 hover:text-cyan-300">Years</Link>
-            <Link to="/#how-it-works" className="transition-colors duration-300 hover:text-cyan-300">How it works</Link>
-            <Link to="/#for-educators" className="transition-colors duration-300 hover:text-cyan-300">Educators</Link>
-            <Link to="/#faq" className="transition-colors duration-300 hover:text-cyan-300">FAQs</Link>
+          <nav className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex" aria-label="Primary">
+            <Link to="/#years" className="transition-colors duration-300 hover:text-primary">Years</Link>
+            <Link to="/#how-it-works" className="transition-colors duration-300 hover:text-primary">How it works</Link>
+            <Link to="/#offline-routine" className="transition-colors duration-300 hover:text-primary">Offline routine</Link>
+            <Link to="/#for-educators" className="transition-colors duration-300 hover:text-primary">Educators</Link>
+            <Link to="/#faq" className="transition-colors duration-300 hover:text-primary">FAQs</Link>
           </nav>
         </div>
       </header>
@@ -222,7 +223,7 @@ export default function YearPage() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent, boxShadow: `0 0 12px ${rgba(accent, 0.8)}` }} aria-hidden="true" />
-            <h1 className="font-display text-3xl font-extrabold text-white" data-testid="year-page-title">
+            <h1 className="font-display text-3xl font-extrabold text-foreground" data-testid="year-page-title">
               {yearMeta.label}
             </h1>
           </div>
@@ -235,8 +236,8 @@ export default function YearPage() {
                 variant="outline"
                 onClick={() => setScope(option.value)}
                 className={
-                  "rounded-full border-white/15 px-4 text-sm " +
-                  (scope === option.value ? "" : "bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white")
+                  "rounded-full border-foreground/15 px-4 text-sm " +
+                  (scope === option.value ? "" : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground")
                 }
                 style={
                   scope === option.value
@@ -253,15 +254,15 @@ export default function YearPage() {
       </div>
 
       {scope !== "day" && !explainerDismissed && (
-        <div className="border-b border-white/10 bg-white/[0.03] px-6 py-4" data-testid="scope-explainer">
+        <div className="border-b border-foreground/10 bg-foreground/[0.03] px-6 py-4" data-testid="scope-explainer">
           <div className="mx-auto flex max-w-7xl flex-wrap items-start gap-3 sm:items-center">
             <Info className="mt-0.5 h-4 w-4 shrink-0 sm:mt-0" style={{ color: accent }} aria-hidden="true" />
-            <p className="flex-1 text-sm leading-relaxed text-slate-300">{SCOPE_EXPLAINERS[scope]}</p>
+            <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{SCOPE_EXPLAINERS[scope]}</p>
             <Button
               type="button"
               size="sm"
               onClick={handleDismissExplainer}
-              className="shrink-0 rounded-full bg-white/10 px-4 text-xs font-semibold text-white hover:bg-white/20"
+              className="shrink-0 rounded-full bg-foreground/10 px-4 text-xs font-semibold text-foreground hover:bg-foreground/20"
               data-testid="scope-explainer-dismiss"
             >
               Got it
@@ -310,7 +311,7 @@ function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt,
   const weeks = buildWeeksForYear(words, totalWeeks);
   if (!weeks.length) {
     return (
-      <div className="border border-amber-300/20 bg-amber-400/5 p-5 text-sm text-amber-200" data-testid="letter-only-empty-state">
+      <div className="border border-amber-300/20 bg-amber-400/5 p-5 text-sm text-warning" data-testid="letter-only-empty-state">
         This year is about letter sounds, not full words yet — word practice and word search unlock
         once this year's words begin. (Letter-tile practice mode isn't built yet.)
       </div>
@@ -431,11 +432,11 @@ function PooledScopeView({
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-slate-400" data-testid="term-scope-summary">
+              <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="term-scope-summary">
                 {termWords.length} words selected for this session
               </div>
               <div className="flex items-center gap-2" data-testid="term-count-picker">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Words</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Words</span>
                 {SESSION_COUNT_OPTIONS.map((option) => (
                   <button
                     key={option}
@@ -443,8 +444,8 @@ function PooledScopeView({
                     onClick={() => setCount(option)}
                     className={`h-8 w-11 rounded-md border font-mono text-sm transition-colors duration-200 ${
                       count === option
-                        ? "border-emerald-300 bg-emerald-300/15 text-emerald-200"
-                        : "border-white/15 bg-white/5 text-slate-300 hover:bg-white/10"
+                        ? "border-emerald-300 bg-emerald-300/15 text-success"
+                        : "border-foreground/15 bg-foreground/5 text-muted-foreground hover:bg-foreground/10"
                     }`}
                     data-testid={`term-count-${option}`}
                   >
@@ -456,7 +457,7 @@ function PooledScopeView({
                   variant="outline"
                   onClick={regenerateTerm}
                   disabled={regenPhase !== "idle"}
-                  className="ml-1 h-8 rounded-full border-white/15 bg-white/5 px-3 text-xs text-slate-300 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="ml-1 h-8 rounded-full border-foreground/15 bg-foreground/5 px-3 text-xs text-muted-foreground hover:bg-foreground/10 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
                   data-testid="regenerate-term-words-button"
                 >
                   <Shuffle className="h-3.5 w-3.5" /> Regenerate
@@ -492,7 +493,7 @@ function PooledScopeView({
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-slate-400" data-testid="all-scope-summary">
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="all-scope-summary">
               {allWords.length} of {allPool.length} words covered so far
             </div>
             <Button
@@ -500,7 +501,7 @@ function PooledScopeView({
               variant="outline"
               onClick={regenerateAll}
               disabled={regenPhase !== "idle"}
-              className="rounded-full border-white/15 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full border-foreground/15 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="regenerate-words-button"
             >
               <Shuffle className="h-4 w-4" /> Regenerate
@@ -538,21 +539,21 @@ function TermCarousel({ termStructure, currentTerm, selectedTerm, onSelectTerm, 
             key={term}
             type="button"
             onClick={() => onSelectTerm(term)}
-            className={`min-w-[200px] flex-1 rounded-2xl border p-4 text-left transition-colors duration-200 ${active ? "" : "border-white/10 bg-white/[0.03] hover:border-white/20"}`}
+            className={`min-w-[200px] flex-1 rounded-2xl border p-4 text-left transition-colors duration-200 ${active ? "" : "border-foreground/10 bg-foreground/[0.03] hover:border-foreground/20"}`}
             style={active ? { borderColor: rgba(accent, 0.6), backgroundColor: rgba(accent, 0.34) } : undefined}
             data-testid={`term-option-${term}`}
             aria-pressed={active}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="font-display text-lg font-bold text-white">{TERM_LABELS[term]} term</span>
+              <span className="font-display text-lg font-bold text-foreground">{TERM_LABELS[term]} term</span>
               {isCurrent && (
-                <span className="shrink-0 rounded-full border border-emerald-300/40 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-emerald-300" data-testid={`term-current-pill-${term}`}>
+                <span className="shrink-0 rounded-full border border-emerald-300/40 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-success" data-testid={`term-current-pill-${term}`}>
                   Current
                 </span>
               )}
             </div>
             {range && (
-              <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-slate-500">
+              <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                 Weeks {range[0]}–{range[1]}
               </div>
             )}
@@ -583,7 +584,7 @@ function ScrambleChip({ length }) {
   }, [length]);
   return (
     <div
-      className="truncate rounded-xl border border-white/15 bg-white/[0.06] px-3 py-2.5 text-center font-display text-sm font-semibold tracking-wide text-white/50 shadow-sm"
+      className="truncate rounded-xl border border-foreground/15 bg-foreground/[0.06] px-3 py-2.5 text-center font-display text-sm font-semibold tracking-wide text-foreground/50 shadow-sm"
       aria-hidden="true"
     >
       {text}
@@ -630,7 +631,7 @@ function WordListPreview({ words, testIdPrefix, accent, phase = "idle" }) {
       {words.map((entry, i) => (
         <motion.div
           key={entry.id}
-          className="truncate rounded-xl border px-3 py-2.5 text-center font-display text-sm font-semibold text-white shadow-sm"
+          className="truncate rounded-xl border px-3 py-2.5 text-center font-display text-sm font-semibold text-foreground shadow-sm"
           style={{ backgroundColor: rgba(accent, 0.34), borderColor: rgba(accent, 0.55) }}
           title={entry.word}
           initial={phase === "in" ? { opacity: 0, y: 10, scale: 0.9 } : false}
@@ -664,8 +665,8 @@ function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPract
             data-testid="scope-card-word-search"
           >
             <Grid2x2 className="h-6 w-6" style={{ color: accent }} />
-            <div className="mt-3 font-display text-lg font-bold text-white">Word search</div>
-            <p className="mt-1.5 text-sm leading-snug text-slate-400">
+            <div className="mt-3 font-display text-lg font-bold text-foreground">Word search</div>
+            <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
               Find all {words.length} words hidden in a grid.
             </p>
           </button>
@@ -677,9 +678,9 @@ function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPract
         className="rounded-3xl border border-emerald-300/25 bg-emerald-400/5 p-6 text-left transition-colors duration-200 hover:border-emerald-300/50 hover:bg-emerald-400/10"
         data-testid="scope-card-spelling-test"
       >
-        <Sparkles className="h-6 w-6 text-emerald-300" />
-        <div className="mt-3 font-display text-lg font-bold text-white">Spelling test</div>
-        <p className="mt-1.5 text-sm leading-snug text-slate-400">
+        <Sparkles className="h-6 w-6 text-success" />
+        <div className="mt-3 font-display text-lg font-bold text-foreground">Spelling test</div>
+        <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
           Type all {words.length} words — listen aloud, or guess from the meaning.
         </p>
       </button>
@@ -689,7 +690,7 @@ function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPract
 
 function LetterOnlyNotice() {
   return (
-    <div className="border border-amber-300/20 bg-amber-400/5 p-5 text-sm text-amber-200" data-testid="letter-only-empty-state">
+    <div className="border border-amber-300/20 bg-amber-400/5 p-5 text-sm text-warning" data-testid="letter-only-empty-state">
       This year is about letter sounds, not full words yet — word practice and word search unlock
       once this year's words begin. (Letter-tile practice mode isn't built yet.)
     </div>
@@ -698,7 +699,7 @@ function LetterOnlyNotice() {
 
 function EmptyScopeNotice() {
   return (
-    <div className="border border-white/10 bg-white/[0.03] p-5 text-sm text-slate-400" data-testid="empty-scope-state">
+    <div className="border border-foreground/10 bg-foreground/[0.03] p-5 text-sm text-muted-foreground" data-testid="empty-scope-state">
       No words to show for this scope yet — try an earlier week.
     </div>
   );
@@ -706,7 +707,7 @@ function EmptyScopeNotice() {
 
 function Centered({ children }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#05070d] px-6 text-center text-slate-300">
+    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center text-muted-foreground">
       <div>{children}</div>
     </div>
   );

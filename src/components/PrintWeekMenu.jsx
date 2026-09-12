@@ -75,7 +75,7 @@ export const PrintWeekMenu = ({ weekData, capabilities }) => {
       <DialogTrigger asChild>
         <button
           onClick={(e) => e.stopPropagation()}
-          className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-cyan-200"
+          className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
           data-testid="print-week-button"
         >
           <Printer className="h-3.5 w-3.5" /> Print
@@ -83,18 +83,18 @@ export const PrintWeekMenu = ({ weekData, capabilities }) => {
       </DialogTrigger>
 
       <DialogContent
-        className="max-w-lg overflow-hidden border-cyan-300/20 bg-[#08101f] p-0 text-slate-100"
+        className="max-w-lg overflow-hidden border-cyan-300/20 bg-popover p-0 text-foreground"
         data-testid="print-week-dialog"
       >
         <div className="holo-card p-6 sm:p-7">
           <DialogHeader>
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-300">
+            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
               Print // {title}
             </div>
-            <DialogTitle className="font-display text-2xl font-extrabold text-white">
+            <DialogTitle className="font-display text-2xl font-extrabold text-foreground">
               What would you like to print?
             </DialogTitle>
-            <p className="text-sm text-slate-400">Pick one or more — they'll print together.</p>
+            <p className="text-sm text-muted-foreground">Pick one or more — they'll print together.</p>
           </DialogHeader>
 
           <div className="mt-6 flex flex-col gap-3" data-testid="print-week-options">
@@ -110,18 +110,18 @@ export const PrintWeekMenu = ({ weekData, capabilities }) => {
                   className={`flex items-start gap-3 rounded-2xl border p-4 text-left transition-colors duration-200 ${
                     checked
                       ? "border-cyan-300/60 bg-cyan-300/10"
-                      : "border-white/10 bg-white/[0.04] hover:border-cyan-300/40 hover:bg-cyan-300/5"
+                      : "border-foreground/10 bg-foreground/[0.04] hover:border-cyan-300/40 hover:bg-cyan-300/5"
                   }`}
                   data-testid={`print-option-${option.value}`}
                 >
-                  <option.icon className="mt-0.5 h-5 w-5 shrink-0 text-cyan-300" aria-hidden="true" />
+                  <option.icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
                   <div className="flex-1">
-                    <div className="font-display text-base font-bold text-white">{option.label}</div>
-                    <p className="mt-1 text-sm leading-snug text-slate-400">{option.description}</p>
+                    <div className="font-display text-base font-bold text-foreground">{option.label}</div>
+                    <p className="mt-1 text-sm leading-snug text-muted-foreground">{option.description}</p>
                   </div>
                   <span
                     className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors duration-200 ${
-                      checked ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-white/25 bg-transparent"
+                      checked ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-foreground/25 bg-transparent"
                     }`}
                     aria-hidden="true"
                   >
