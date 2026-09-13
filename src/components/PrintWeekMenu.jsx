@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { formatWeekCommencing } from "@/lib/weekDates";
 import { buildCombinedSheet, openPrintWindow } from "@/lib/printSheets";
+import { loadLetterCasePref } from "@/lib/letterCasePrefs";
 
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
@@ -64,7 +65,7 @@ export const PrintWeekMenu = ({ weekData, capabilities }) => {
         words: weekData.words,
         gridSize: caps.wordSearchGrid?.size,
         gridDirections: caps.wordSearchGrid?.directions,
-        gridLetterCase: caps.wordSearchGrid?.letterCase,
+        gridLetterCase: loadLetterCasePref() || caps.wordSearchGrid?.letterCase,
       }),
     );
     setOpen(false);

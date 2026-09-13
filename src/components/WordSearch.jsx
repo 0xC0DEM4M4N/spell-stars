@@ -8,6 +8,7 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { loadTimerPrefs, saveTimerPrefs } from "@/lib/timerPrefs";
+import { loadLetterCasePref, saveLetterCasePref } from "@/lib/letterCasePrefs";
 import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
 
 const COLORS = [
@@ -69,6 +70,11 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
   const [game, setGame] = useState(null);
   const [found, setFound] = useState(new Set());
 
+  // Upper/lowercase for both the grid letters and the word list --
+  // defaults to the year's own capability (e.g. Reception starts
+  // lowercase) but remembers whatever the user picks from then on.
+  const [letterCase, setLetterCase] = useState(() => loadLetterCasePref() || gridLetterCase);
+
   // Keep a ref so the word-match effect can read latest found without it being a dep
   const foundRef = useRef(new Set());
   useEffect(() => { foundRef.current = found; }, [found]);
@@ -103,9 +109,9 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     ? found.size >= game.placed.filter(p => !p.failed).length && game.placed.length > 0
     : false;
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((caseOverride) => {
     clearInterval(timerRef.current);
-    const g = buildGrid(words, size, dirs, gridLetterCase);
+    const g = buildGrid(words, size, dirs, caseOverride || letterCase);
     setGame(g);
     setFound(new Set());
     foundRef.current = new Set();
@@ -114,7 +120,14 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     setTimerOn(false);
     setTimeLeft(timerMode === "countdown" ? countdownSeconds : 0);
     setTimeUp(false);
-  }, [words, size, dirs, gridLetterCase, timerMode, countdownSeconds]);
+  }, [words, size, dirs, letterCase, timerMode, countdownSeconds]);
+
+  const changeLetterCase = useCallback((next) => {
+    if (next === letterCase) return;
+    setLetterCase(next);
+    saveLetterCasePref(next);
+    startGame(next);
+  }, [letterCase, startGame]);
 
   // ── Timer ─────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -232,18 +245,13 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
       wordEntries.map(w => [w.word.toLowerCase(), w])
     );
 
-    const sentenceRows = game.placed
-      .filter(({ word }) => wordObjMap[word.toLowerCase()]?.exampleSentence)
+    const meaningRows = game.placed
+      .filter(({ word }) => wordObjMap[word.toLowerCase()]?.definition)
       .map(({ word }) => {
         const obj = wordObjMap[word.toLowerCase()];
-        const re = new RegExp(`(${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
-        const highlighted = obj.exampleSentence.replace(
-          re,
-          '<strong class="hl">$1</strong>'
-        );
         return `<tr>
           <td class="w-cell">${word}</td>
-          <td class="s-cell">${highlighted}</td>
+          <td class="s-cell">${obj.definition}</td>
         </tr>`;
       })
       .join("");
@@ -257,12 +265,12 @@ body{font-family:'Courier New',monospace;padding:36px 40px;background:#fff;color
 h1{font-size:26px;font-weight:900;letter-spacing:-.02em}
 .lp{font-size:12px;color:#444;margin-top:10px;border-left:3px solid #0ea5e9;padding-left:10px;line-height:1.5}
 .grid{display:grid;grid-template-columns:repeat(${size},1fr);gap:2px;margin:22px 0;width:fit-content}
-.cell{${gridLetterCase === "lowercase" ? "width:38px;height:38px" : "width:30px;height:30px"};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${gridLetterCase === "lowercase" ? 20 : 13}px;border:1px solid #ccc}
+.cell{${letterCase === "lowercase" ? "width:38px;height:38px" : "width:30px;height:30px"};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${letterCase === "lowercase" ? 20 : 13}px;border:1px solid #ccc}
 .label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#777;margin-bottom:8px;margin-top:20px}
 .words{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
-.word{border:1px solid #aaa;padding:3px 11px;border-radius:20px;font-size:${gridLetterCase === "lowercase" ? 15 : 11}px;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.1em}
+.word{border:1px solid #aaa;padding:3px 11px;border-radius:20px;font-size:${letterCase === "lowercase" ? 15 : 11}px;${letterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.1em}
 table{width:100%;border-collapse:collapse;margin-top:4px}
-.w-cell{font-size:${gridLetterCase === "lowercase" ? 15 : 11}px;font-weight:700;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.08em;padding:5px 10px 5px 0;vertical-align:top;white-space:nowrap;color:#333;width:100px;border-bottom:1px solid #eee}
+.w-cell{font-size:${letterCase === "lowercase" ? 15 : 11}px;font-weight:700;${letterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.08em;padding:5px 10px 5px 0;vertical-align:top;white-space:nowrap;color:#333;width:100px;border-bottom:1px solid #eee}
 .s-cell{font-size:12px;color:#444;line-height:1.6;padding:5px 0;border-bottom:1px solid #eee}
 .hl{font-weight:900;color:#0284c7;text-decoration:underline}
 footer{margin-top:24px;font-size:10px;color:#bbb}
@@ -273,7 +281,7 @@ footer{margin-top:24px;font-size:10px;color:#bbb}
 <div class="grid">${letters.flat().map(l => `<div class="cell">${l}</div>`).join("")}</div>
 <p class="label">Find these words</p>
 <div class="words">${game.placed.map(({ word }) => `<div class="word">${word}</div>`).join("")}</div>
-${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}</table>` : ""}
+${meaningRows ? `<p class="label">What they mean</p><table>${meaningRows}</table>` : ""}
 <footer>Find all the words hidden in the grid above.</footer>
 </body></html>`;
     const win = window.open("", "_blank");
@@ -375,7 +383,7 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
                 <span
                   key={word}
                   className={`rounded-full border px-3 py-1 font-mono tracking-[0.15em] transition-all duration-300 ${chipTextSizeClass(size)} ${
-                    gridLetterCase === "lowercase" ? "" : "uppercase"
+                    letterCase === "lowercase" ? "" : "uppercase"
                   } ${
                     found.has(wi)
                       ? `line-through opacity-40 ${COLORS[wi % COLORS.length]}`
@@ -388,9 +396,34 @@ ${sentenceRows ? `<p class="label">Words in sentences</p><table>${sentenceRows}<
             </div>
           )}
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="flex overflow-hidden rounded-full border border-foreground/20" role="group" aria-label="Letter case" data-testid="letter-case-toggle">
+              <button
+                type="button"
+                onClick={() => changeLetterCase("uppercase")}
+                className={`px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
+                  letterCase === "uppercase" ? "bg-cyan-400 text-slate-950" : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                }`}
+                aria-pressed={letterCase === "uppercase"}
+                data-testid="letter-case-uppercase"
+              >
+                ABC
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLetterCase("lowercase")}
+                className={`border-l border-foreground/20 px-3 py-1.5 font-mono text-xs tracking-[0.1em] transition-colors ${
+                  letterCase === "lowercase" ? "bg-cyan-400 text-slate-950" : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                }`}
+                aria-pressed={letterCase === "lowercase"}
+                data-testid="letter-case-lowercase"
+              >
+                abc
+              </button>
+            </div>
+
             <Button
-              onClick={startGame}
+              onClick={() => startGame()}
               variant="outline" size="sm"
               className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
               data-testid="new-game-button"
