@@ -379,7 +379,7 @@ export default function YearIndex() {
           <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Five steps, aligned to what school is already teaching.
           </h2>
-          <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-foreground/10 bg-foreground/10 sm:grid-cols-5">
+          <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-foreground/10 bg-foreground/10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {SESSION_STEPS.map((item, index) => (
               <motion.div
                 key={item.step}
@@ -411,7 +411,7 @@ export default function YearIndex() {
             a word, to recalling it on screen, to writing it from memory, to producing it with nothing
             in front of you at all, covers a lot more ground than any one of those on its own.
           </p>
-          <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-foreground/10 bg-foreground/10 sm:grid-cols-5">
+          <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-foreground/10 bg-foreground/10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {WEEKLY_ROUTINE.map((item, index) => (
               <motion.div
                 key={item.step}

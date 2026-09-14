@@ -307,7 +307,7 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
 
   return (
     <section id="weekly-carousel" className="relative pb-6" data-testid="weekly-carousel-section">
-       <div className="slim-scrollbar mt-5 flex gap-2 overflow-x-auto overflow-y-visible pb-3 pt-8" data-testid="week-jump-strip" aria-label="Jump to week">
+       <div className="max-w-7xl mx-auto slim-scrollbar mt-5 flex gap-2 overflow-x-auto overflow-y-visible pb-3 pt-8" data-testid="week-jump-strip" aria-label="Jump to week">
           {weeks.map((weekData) => (
             <button
               key={weekData.week}
@@ -322,16 +322,16 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
             </button>
           ))}
         </div>
-        <div className="mx-auto max-w-7xl">
+        <div className="">
          {activeWeek && (
-          <div className="mt-6 flex flex-wrap items-center gap-3 border-l-4 border-cyan-400 bg-foreground/[0.04] p-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="active-week-summary">
+          <div className="mx-auto max-w-7xl mt-6 flex flex-wrap items-center gap-3 border-l-4 border-cyan-400 bg-foreground/[0.04] p-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="active-week-summary">
             <span>Active selection:</span>
             <span className="rounded-full bg-cyan-400 px-2.5 py-1 font-bold text-slate-950">Week {String(activeWeek.week).padStart(2, "0")}</span>
             <span>// {activeWeek.focus}</span>
           </div>
         )}
         <div className={`-mb-10 overflow-hidden pb-10 pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} ref={emblaRef} data-testid="week-carousel-viewport">
-          <div className="-ml-4 flex">
+          <div className="lg:ml-[5%] md:ml-0 flex">
             {weeks.map((weekData) => (
               <div className="min-w-0 flex-[0_0_92%] pl-4 sm:flex-[0_0_68%] lg:flex-[0_0_52%] xl:flex-[0_0_46%]" key={weekData.week}>
                 {weekData.kind === "letters" ? (

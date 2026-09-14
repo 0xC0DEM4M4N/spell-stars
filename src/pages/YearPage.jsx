@@ -271,7 +271,7 @@ export default function YearPage() {
         </div>
       )}
 
-      <main className="mx-auto max-w-7xl space-y-6 px-6 py-8 pt-0">
+      <main className="mx-auto space-y-6 px-6 py-8 pt-0">
         {scope === "day" ? (
           <DayScopeView
             words={words}
