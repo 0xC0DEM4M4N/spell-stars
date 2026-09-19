@@ -5,6 +5,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useYearsConfig } from "@/lib/yearData";
 import { useTheme } from "@/context/ThemeContext";
 import { getYearAccent, getYearDepth, getYearInk, rgba } from "@/lib/yearTheme";
+import { PRESS, SPRING, revealOnScroll } from "@/lib/motion";
+import { useScrolled } from "@/hooks/useScrolled";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const FEATURES = [
@@ -195,6 +197,7 @@ const HERO_BG_WORDS = [
 export default function YearIndex() {
   const { status, yearsConfig, error } = useYearsConfig();
   const { theme } = useTheme();
+  const scrolled = useScrolled();
 
   if (status === "loading") {
     return <Centered>Loading…</Centered>;
@@ -218,7 +221,7 @@ export default function YearIndex() {
         content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6."
       />
       <link rel="canonical" href="https://spell-stars.pages.dev/" />
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/75 backdrop-blur-xl">
+      <header className="material-bar fixed inset-x-0 top-0 z-50" data-scrolled={scrolled}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
           <a href="#top" className="font-display text-lg font-extrabold tracking-tight text-foreground">
             SPELL<span className="text-primary">//</span><span className="text-primary">ST<Star className="inline-block h-[0.85em] w-[0.85em] text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" style={{ verticalAlign: "-0.12em" }} aria-hidden="true" />RS</span>
@@ -259,27 +262,32 @@ export default function YearIndex() {
         </div>
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="max-w-4xl">
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="mb-8 inline-flex items-center gap-3 border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.28em] text-[#09c4dc]">
+            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={SPRING.reveal} className="mb-8 inline-flex items-center gap-3 border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.28em] text-[#09c4dc]">
               <Sparkles className="h-4 w-4" /> Reception – Year 6 // National Curriculum aligned
             </motion.div>
-            <h1 className="font-display text-6xl font-extrabold uppercase leading-[0.88] tracking-tighter text-slate-50 sm:text-7xl lg:text-8xl">
+            <h1 className="type-display font-display text-6xl font-extrabold uppercase text-slate-50 sm:text-7xl lg:text-8xl">
               <span className="block overflow-hidden">
-                <motion.span className="block" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
+                <motion.span className="block" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ ...SPRING.reveal, duration: 0.8 }}>
                   SPELL
                 </motion.span>
               </span>
               <span className="block overflow-hidden">
-                <motion.span className="block pb-4 text-[#09c4dc]" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}>
+                <motion.span className="block pb-4 text-[#09c4dc]" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ ...SPRING.reveal, duration: 0.8, delay: 0.1 }}>
                   ST<Star className="inline-block h-[0.72em] w-[0.72em] text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)]" style={{ verticalAlign: "-0.1em" }} aria-hidden="true" />RS
                 </motion.span>
               </span>
             </h1>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.7 }} className="mt-6 flex flex-wrap items-center gap-4">
-              <a href="#years" className="group inline-flex items-center gap-3 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition-transform duration-300 hover:-translate-y-1 hover:bg-cyan-300">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING.reveal, delay: 0.35 }} className="mt-6 flex flex-wrap items-center gap-4">
+              <motion.a
+                href="#years"
+                whileHover={{ y: -3, transition: SPRING.settle }}
+                whileTap={{ ...PRESS, transition: SPRING.snappy }}
+                className="group inline-flex items-center gap-3 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition-colors duration-300 hover:bg-cyan-300"
+              >
                 Jump to your year <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
-              </a>
+              </motion.a>
             </motion.div>
-            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85, duration: 0.7 }} className="mt-5 max-w-2xl border-l border-cyan-300/30 pl-5 font-mono text-sm text-slate-400">
+            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING.reveal, delay: 0.45 }} className="mt-5 max-w-2xl border-l border-cyan-300/30 pl-5 font-mono text-sm text-slate-400">
               Progressive spelling practice for keen beans — from first letter sounds in
               Reception through to Year 6 spelling confidence, one week at a time.
             </motion.p>
@@ -314,7 +322,7 @@ export default function YearIndex() {
       <section id="years" className="px-5 py-16 sm:px-8" data-testid="year-grid-section">
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Choose a year</div>
-          <h2 className="mt-3 font-display text-3xl font-extrabold text-foreground sm:text-4xl">Pick up where you are.</h2>
+          <h2 className="mt-3 type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">Pick up where you are.</h2>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {yearsConfig.years.map((year, index) => {
               const accent = getYearAccent(year.slug);
@@ -323,15 +331,20 @@ export default function YearIndex() {
               const bgAlpha = 0.1 + depth * 0.035;
               const borderAlpha = 0.38 + depth * 0.03;
               return (
-                <motion.div key={year.slug} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.04 }}>
+                <motion.div
+                  key={year.slug}
+                  {...revealOnScroll(index)}
+                  whileHover={{ y: -4, transition: SPRING.settle }}
+                  whileTap={{ ...PRESS, transition: SPRING.snappy }}
+                >
                   <Link
                     to={`/${year.slug}`}
-                    className="group relative block h-full overflow-hidden rounded-2xl border p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:brightness-110"
+                    className="group relative block h-full overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
                     style={{ backgroundColor: rgba(accent, bgAlpha), borderColor: rgba(accent, borderAlpha) }}
                     data-testid={`year-link-${year.slug}`}
                   >
                     <span className="absolute inset-x-0 top-0 h-[3px]" style={{ backgroundColor: accent }} aria-hidden="true" />
-                    <div className="font-display text-xl font-bold text-foreground">{year.label}</div>
+                    <div className="type-card font-display text-xl font-bold text-foreground">{year.label}</div>
                     <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: ink }}>
                       {year.wordsPerWeek}/week · {year.wordCount} words
                     </div>
@@ -347,20 +360,17 @@ export default function YearIndex() {
       <section id="how-it-works" className="px-5 py-16 sm:px-8" data-testid="how-it-works-section">
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">How it works</div>
-          <h2 className="mt-3 font-display text-3xl font-extrabold text-foreground sm:text-4xl">One app, every year, no forks.</h2>
+          <h2 className="mt-3 type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">One app, every year, no forks.</h2>
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                {...revealOnScroll(index)}
                 className="holo-card rounded-2xl p-6"
               >
                 <feature.icon className="h-6 w-6 text-primary" />
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">{feature.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{feature.body}</p>
+                <h3 className="mt-4 type-card font-display text-lg font-bold text-foreground">{feature.title}</h3>
+                <p className="mt-2 type-body text-sm text-muted-foreground">{feature.body}</p>
               </motion.div>
             ))}
           </div>
@@ -376,22 +386,19 @@ export default function YearIndex() {
       <section id="how-a-session-works" className="px-5 py-16 sm:px-8" data-testid="how-a-session-works-section">
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">How a session works</div>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold text-foreground sm:text-4xl">
+          <h2 className="mt-3 max-w-2xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Five steps, aligned to what school is already teaching.
           </h2>
           <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-foreground/10 bg-foreground/10 sm:grid-cols-5">
             {SESSION_STEPS.map((item, index) => (
               <motion.div
                 key={item.step}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                {...revealOnScroll(index)}
                 className="bg-background p-6"
               >
                 <div className="font-mono text-xs text-primary">{item.step}</div>
-                <h3 className="mt-3 font-display text-base font-bold text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                <h3 className="mt-3 type-card font-display text-base font-bold text-foreground">{item.title}</h3>
+                <p className="mt-2 type-body text-sm text-muted-foreground">{item.body}</p>
               </motion.div>
             ))}
           </div>
@@ -402,10 +409,10 @@ export default function YearIndex() {
       <section id="offline-routine" className="px-5 py-16 sm:px-8" data-testid="offline-routine-section">
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Beyond the screen</div>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold text-foreground sm:text-4xl">
+          <h2 className="mt-3 max-w-2xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Screen practice, then paper and voice.
           </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-2xl type-body text-sm text-muted-foreground">
             Typing a word correctly isn't quite the same skill as writing it, and spelling tests are
             still mostly said aloud and written by hand. A weekly routine that moves from recognising
             a word, to recalling it on screen, to writing it from memory, to producing it with nothing
@@ -415,16 +422,13 @@ export default function YearIndex() {
             {WEEKLY_ROUTINE.map((item, index) => (
               <motion.div
                 key={item.step}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                {...revealOnScroll(index)}
                 className="bg-background p-6"
               >
                 <item.icon className="h-5 w-5 text-primary" />
                 <div className="mt-3 font-mono text-xs text-primary">{item.step}</div>
-                <h3 className="mt-2 font-display text-base font-bold text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                <h3 className="mt-2 type-card font-display text-base font-bold text-foreground">{item.title}</h3>
+                <p className="mt-2 type-body text-sm text-muted-foreground">{item.body}</p>
               </motion.div>
             ))}
           </div>
@@ -439,10 +443,10 @@ export default function YearIndex() {
       <section id="beyond-spelling" className="px-5 py-16 sm:px-8" data-testid="beyond-spelling-section">
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">More than spelling</div>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold text-foreground sm:text-4xl">
+          <h2 className="mt-3 max-w-2xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Understand the word, not just its letters.
           </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-2xl type-body text-sm text-muted-foreground">
             Spelling a word correctly is only half the job — every word in SPELL// STARS is built to
             broaden vocabulary too.
           </p>
@@ -450,15 +454,12 @@ export default function YearIndex() {
             {VOCAB_CARDS.map((card, index) => (
               <motion.div
                 key={card.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                {...revealOnScroll(index)}
                 className="holo-card rounded-2xl p-6"
               >
                 <card.icon className="h-6 w-6 text-primary" />
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">{card.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+                <h3 className="mt-4 type-card font-display text-lg font-bold text-foreground">{card.title}</h3>
+                <p className="mt-2 type-body text-sm text-muted-foreground">{card.body}</p>
               </motion.div>
             ))}
           </div>
@@ -469,10 +470,10 @@ export default function YearIndex() {
       <section id="for-educators" className="px-5 py-16 sm:px-8" data-testid="for-educators-section">
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">For educators &amp; parents</div>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold text-foreground sm:text-4xl">
+          <h2 className="mt-3 max-w-2xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Built the way you'd sequence it yourself.
           </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-2xl type-body text-sm text-muted-foreground">
             Every one of the {totalYears} year lists follows its own statutory or phonics sequence —
             Letters and Sounds graphemes for Reception, then the National Curriculum's English
             Appendix 1 word lists from Year 1 onward — ordered so each week builds on the rule or
@@ -482,15 +483,12 @@ export default function YearIndex() {
             {EDUCATOR_NOTES.map((note, index) => (
               <motion.div
                 key={note.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                {...revealOnScroll(index)}
                 className="holo-card rounded-2xl p-6"
               >
                 <note.icon className="h-6 w-6 text-primary" />
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">{note.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{note.body}</p>
+                <h3 className="mt-4 type-card font-display text-lg font-bold text-foreground">{note.title}</h3>
+                <p className="mt-2 type-body text-sm text-muted-foreground">{note.body}</p>
               </motion.div>
             ))}
           </div>
@@ -503,17 +501,17 @@ export default function YearIndex() {
           <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.28em] text-primary">
             <MessageCircleQuestion className="h-4 w-4" /> FAQs
           </div>
-          <h2 className="mt-3 font-display text-3xl font-extrabold text-foreground sm:text-4xl">Good to know.</h2>
+          <h2 className="mt-3 type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">Good to know.</h2>
           <Accordion type="single" collapsible className="mt-8 border-t border-foreground/10">
             {FAQS.map((item) => (
               <AccordionItem key={item.q} value={item.q} className="border-foreground/10">
-                <AccordionTrigger className="group py-5 text-left font-display text-base font-bold text-foreground hover:no-underline [&>svg]:hidden">
+                <AccordionTrigger className="press-soft group py-5 text-left type-card font-display text-base font-bold text-foreground hover:no-underline [&>svg]:hidden">
                   <span className="flex items-center gap-3">
-                    <ChevronRight className="h-4 w-4 shrink-0 text-primary transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-primary transition-transform duration-300 ease-fluid group-data-[state=open]:rotate-90" />
                     {item.q}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-5 pl-7 text-sm leading-relaxed text-muted-foreground">
+                <AccordionContent className="pb-5 pl-7 type-body text-sm text-muted-foreground">
                   {item.a}
                 </AccordionContent>
               </AccordionItem>

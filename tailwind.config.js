@@ -79,8 +79,9 @@ module.exports = {
         }
       },
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
+        // Same decelerating, no-overshoot curve as --ease-fluid in index.css.
+        'accordion-down': 'accordion-down 0.32s cubic-bezier(0.32, 0.72, 0, 1)',
+        'accordion-up': 'accordion-up 0.28s cubic-bezier(0.32, 0.72, 0, 1)'
       }
     }
   },

@@ -321,6 +321,45 @@
   .font-handwritten {
     font-family: "Caveat", cursive;
   }
+
+  /* Size-specific type: tracking tightens as text grows and opens up as it
+     shrinks, and leading shrinks as size grows. One fixed value is wrong
+     somewhere on the scale, so each role gets its own pair. */
+  .type-display {
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+  .type-section {
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .type-card {
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .type-body {
+    letter-spacing: 0.005em;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .ease-fluid {
+    transition-timing-function: var(--ease-fluid);
+  }
+
+  /* Extends the tappable area ~4px past the visible edge without changing
+     layout, so small pills are easier to hit and a near-miss still lands. */
+  .hit-slop {
+    position: relative;
+  }
+  .hit-slop::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+  }
 }
 
 /* Word search grid spacing: the dyslexia theme widens the gaps between
@@ -345,6 +384,157 @@
 }
 [data-theme="light"] .bg-amber-400\/5 {
   background-color: rgba(217, 119, 6, 0.1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Fluid interface layer
+   Everything here is behaviour and materials only: no colour tokens are
+   introduced or changed. Colours come from the existing theme variables.
+   ───────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Decelerating curve with no overshoot — the CSS-side stand-in for a
+     critically damped spring. JS-driven motion uses src/lib/motion.js. */
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Press feedback: respond on pointer-down, release with a soft return.
+   Uses the standalone `scale` property so it composes with any
+   `transform` (hover lifts) instead of fighting it, and lists the
+   properties explicitly so it doesn't drop the colour transitions that
+   Tailwind's transition-colors utilities set on the same elements. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+.press {
+  transition-property: color, background-color, border-color, box-shadow, opacity, filter, transform, scale;
+  transition-duration: 240ms;
+  transition-timing-function: var(--ease-fluid);
+}
+button:not(:disabled):active,
+[role="button"]:not([aria-disabled="true"]):active,
+.press:active {
+  scale: 0.97;
+  transition-duration: 80ms;
+}
+
+/* Softer press for large surfaces (cards): big things move less. The
+   doubled class out-ranks the generic button:active rule above. */
+.press-soft.press-soft:active {
+  scale: 0.985;
+}
+
+/* Materials: translucent floating chrome with content passing underneath.
+   The bar is always a material (the hero is always dark, so a fully
+   transparent bar would put theme-coloured text on the wrong surface).
+   Once the page scrolls, the hard divider gives way to a soft edge fade. */
+.material-bar {
+  background-color: hsl(var(--background) / 0.62);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.06), inset 0 -1px 0 hsl(var(--foreground) / 0.06);
+  transition: background-color 300ms var(--ease-fluid), box-shadow 300ms var(--ease-fluid);
+}
+.material-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(hsl(var(--background) / 0.5), transparent);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-fluid);
+}
+.material-bar[data-scrolled="true"] {
+  background-color: hsl(var(--background) / 0.78);
+  box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.08), 0 8px 32px rgb(0 0 0 / 0.18);
+}
+.material-bar[data-scrolled="true"]::after {
+  opacity: 1;
+}
+
+/* Dimming scrim behind modal tasks: dim and soften the background so the
+   task in front carries focus. */
+.material-scrim {
+  background-color: rgb(0 0 0 / 0.7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* Dialogs settle with the same decelerating curve instead of the
+   library's default ease. */
+.dialog-fluid {
+  animation-timing-function: var(--ease-fluid);
+}
+
+/* Accessibility themes and OS preferences make materials solid. */
+@media (prefers-reduced-transparency: reduce) {
+  .material-bar,
+  .material-bar[data-scrolled="true"] {
+    background-color: hsl(var(--background));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .material-bar::after {
+    display: none;
+  }
+  .material-scrim {
+    background-color: rgb(0 0 0 / 0.85);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .material-bar,
+  .material-bar[data-scrolled="true"] {
+    background-color: hsl(var(--background));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: inset 0 -1px 0 hsl(var(--foreground) / 0.6);
+  }
+  .material-bar::after {
+    display: none;
+  }
+}
+[data-theme="highContrast"] .material-bar,
+[data-theme="highContrast"] .material-bar[data-scrolled="true"] {
+  background-color: hsl(var(--background));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 -2px 0 hsl(var(--foreground));
+}
+[data-theme="highContrast"] .material-bar::after {
+  display: none;
+}
+[data-theme="highContrast"] .material-scrim {
+  background-color: rgb(0 0 0 / 0.9);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* The dyslexia theme sets its own tracking and leading on purpose, so the
+   size-specific type roles defer to it. */
+[data-theme="dyslexia"] .type-display,
+[data-theme="dyslexia"] .type-section,
+[data-theme="dyslexia"] .type-card,
+[data-theme="dyslexia"] .type-body {
+  letter-spacing: var(--letter-spacing-base);
+  line-height: var(--line-height-base);
+}
+
+/* Reduced motion keeps feedback but drops movement: presses dim instead
+   of shrinking, and the looping decorative animations stop. */
+[data-reduced-motion="true"] button:not(:disabled):active,
+[data-reduced-motion="true"] [role="button"]:not([aria-disabled="true"]):active,
+[data-reduced-motion="true"] .press:active,
+[data-reduced-motion="true"] .press-soft:active {
+  scale: 1;
+  opacity: 0.75;
+}
+[data-reduced-motion="true"] .marquee-track,
+[data-reduced-motion="true"] .cube-inner {
+  animation: none;
 }
 
 .print-sheet {

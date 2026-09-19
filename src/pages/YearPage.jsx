@@ -13,6 +13,8 @@ import { motion } from "framer-motion";
 import { getYearAccent, rgba } from "@/lib/yearTheme";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PrintTermListButton } from "@/components/PrintTermListButton";
+import { SPRING } from "@/lib/motion";
+import { useScrolled } from "@/hooks/useScrolled";
 
 const SCOPE_EXPLAINERS = {
   term: "\u201cBy term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
@@ -155,6 +157,8 @@ export default function YearPage() {
     }
   }, [scope, term, count]);
 
+  const scrolled = useScrolled();
+
   const currentWeek = progress.currentWeek || 1;
   const setCurrentWeek = (week) => {
     setProgress((prev) => {
@@ -204,7 +208,7 @@ export default function YearPage() {
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
       <link rel="canonical" href={`https://spell-stars.pages.dev/${yearSlug}`} />
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/75 backdrop-blur-xl">
+      <header className="material-bar fixed inset-x-0 top-0 z-50" data-scrolled={scrolled}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
           <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-foreground">
             SPELL<span className="text-primary">//</span><span className="text-primary">ST<Star className="inline-block h-[0.85em] w-[0.85em] text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" style={{ verticalAlign: "-0.12em" }} aria-hidden="true" />RS</span>
@@ -223,7 +227,7 @@ export default function YearPage() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent, boxShadow: `0 0 12px ${rgba(accent, 0.8)}` }} aria-hidden="true" />
-            <h1 className="font-display text-3xl font-extrabold text-foreground" data-testid="year-page-title">
+            <h1 className="type-section font-display text-3xl font-extrabold text-foreground" data-testid="year-page-title">
               {yearMeta.label}
             </h1>
           </div>
@@ -257,7 +261,7 @@ export default function YearPage() {
         <div className="border-b border-foreground/10 bg-foreground/[0.03] px-6 py-4" data-testid="scope-explainer">
           <div className="mx-auto flex max-w-7xl flex-wrap items-start gap-3 sm:items-center">
             <Info className="mt-0.5 h-4 w-4 shrink-0 sm:mt-0" style={{ color: accent }} aria-hidden="true" />
-            <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{SCOPE_EXPLAINERS[scope]}</p>
+            <p className="type-body flex-1 text-sm text-muted-foreground">{SCOPE_EXPLAINERS[scope]}</p>
             <Button
               type="button"
               size="sm"
@@ -442,7 +446,7 @@ function PooledScopeView({
                     key={option}
                     type="button"
                     onClick={() => setCount(option)}
-                    className={`h-8 w-11 rounded-md border font-mono text-sm transition-colors duration-200 ${
+                    className={`hit-slop h-8 w-11 rounded-md border font-mono text-sm transition-colors duration-200 ${
                       count === option
                         ? "border-emerald-300 bg-emerald-300/15 text-success"
                         : "border-foreground/15 bg-foreground/5 text-muted-foreground hover:bg-foreground/10"
@@ -539,13 +543,13 @@ function TermCarousel({ termStructure, currentTerm, selectedTerm, onSelectTerm, 
             key={term}
             type="button"
             onClick={() => onSelectTerm(term)}
-            className={`min-w-[200px] flex-1 rounded-2xl border p-4 text-left transition-colors duration-200 ${active ? "" : "border-foreground/10 bg-foreground/[0.03] hover:border-foreground/20"}`}
+            className={`press-soft min-w-[200px] flex-1 rounded-2xl border p-4 text-left transition-colors duration-200 ${active ? "" : "border-foreground/10 bg-foreground/[0.03] hover:border-foreground/20"}`}
             style={active ? { borderColor: rgba(accent, 0.6), backgroundColor: rgba(accent, 0.34) } : undefined}
             data-testid={`term-option-${term}`}
             aria-pressed={active}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="font-display text-lg font-bold text-foreground">{TERM_LABELS[term]} term</span>
+              <span className="type-card font-display text-lg font-bold text-foreground">{TERM_LABELS[term]} term</span>
               {isCurrent && (
                 <span className="shrink-0 rounded-full border border-emerald-300/40 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-success" data-testid={`term-current-pill-${term}`}>
                   Current
@@ -636,7 +640,7 @@ function WordListPreview({ words, testIdPrefix, accent, phase = "idle" }) {
           title={entry.word}
           initial={phase === "in" ? { opacity: 0, y: 10, scale: 0.9 } : false}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={phase === "in" ? { duration: 0.4, delay: delays[i] ?? 0 } : { duration: 0 }}
+          transition={phase === "in" ? { ...SPRING.settle, delay: delays[i] ?? 0 } : { duration: 0 }}
         >
           {entry.word}
         </motion.div>
@@ -660,12 +664,12 @@ function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPract
         trigger={
           <button
             type="button"
-            className="w-full rounded-3xl border p-6 text-left transition duration-200 hover:brightness-125"
+            className="press-soft w-full rounded-3xl border p-6 text-left transition duration-200 hover:brightness-125"
             style={{ borderColor: rgba(accent, 0.3), backgroundColor: rgba(accent, 0.07) }}
             data-testid="scope-card-word-search"
           >
             <Grid2x2 className="h-6 w-6" style={{ color: accent }} />
-            <div className="mt-3 font-display text-lg font-bold text-foreground">Word search</div>
+            <div className="mt-3 type-card font-display text-lg font-bold text-foreground">Word search</div>
             <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
               Find all {words.length} words hidden in a grid.
             </p>
@@ -675,11 +679,11 @@ function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPract
       <button
         type="button"
         onClick={onStartPractice}
-        className="rounded-3xl border border-emerald-300/25 bg-emerald-400/5 p-6 text-left transition-colors duration-200 hover:border-emerald-300/50 hover:bg-emerald-400/10"
+        className="press-soft rounded-3xl border border-emerald-300/25 bg-emerald-400/5 p-6 text-left transition-colors duration-200 hover:border-emerald-300/50 hover:bg-emerald-400/10"
         data-testid="scope-card-spelling-test"
       >
         <Sparkles className="h-6 w-6 text-success" />
-        <div className="mt-3 font-display text-lg font-bold text-foreground">Spelling test</div>
+        <div className="mt-3 type-card font-display text-lg font-bold text-foreground">Spelling test</div>
         <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
           Type all {words.length} words — listen aloud, or guess from the meaning.
         </p>

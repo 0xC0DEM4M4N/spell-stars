@@ -5,20 +5,50 @@
 // {style, body} "section" internally so several can be combined into
 // one print job (one page per section) when more than one format is
 // picked at once.
+//
+// Visual language follows the SPELL// STARS print style guide: the dark
+// rounded header card with the logo lockup and the sheet's identifier in
+// cyan, Syne for headings, Plus Jakarta Sans for body copy, JetBrains
+// Mono for small tracked labels. Type is size-specific (tighter tracking
+// and leading as text grows), and every emphasis survives black-and-white
+// printing: bold + underline, never colour alone.
 
 import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
 
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap";
+
+// Lucide "star", inlined so the print tab needs no icon library.
+const STAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="star-glyph"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>`;
+
 const BASE_STYLES = `
+:root{--ink:#0b1220;--navy:#070a13;--primary:#09c4dc;--primary-deep:#067a8a;--amber:#fbbf24;--muted:#64748b;--line:#d8dee8;--dot:#9aa5b1}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Courier New',monospace;background:#fff;color:#111}
-.sheet-page{padding:36px 40px}
+@page{size:A4;margin:12mm 14mm 14mm}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
 .sheet-page + .sheet-page{break-before:page;page-break-before:always}
-.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#666;margin-bottom:4px}
-h1{font-size:26px;font-weight:900;letter-spacing:-.02em}
-.topic{font-size:13px;color:#333;margin-top:10px;border-left:3px solid #0ea5e9;padding-left:10px;line-height:1.5;font-weight:700}
-.meta{font-size:11px;color:#777;margin-top:6px;letter-spacing:.05em;text-transform:uppercase}
-.label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#777;margin-bottom:8px;margin-top:24px}
-footer{margin-top:28px;font-size:10px;color:#bbb}
+
+/* Header card */
+.site-header{background:var(--navy);border-radius:18px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden}
+.site-header::after{content:"";position:absolute;inset:0;background:radial-gradient(120px 80px at 92% 0%,rgba(9,196,220,.25),transparent 70%);pointer-events:none}
+.brand-block,.sheet-badge{position:relative}
+.logo{font-family:'Syne',system-ui,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;line-height:1;text-transform:uppercase;color:#f8fafc;display:inline-flex;align-items:center}
+.logo .accent{color:var(--primary)}
+.logo .star-glyph{width:.8em;height:.8em;color:var(--amber);vertical-align:-.08em;margin:0 -.02em}
+.tagline{margin-top:7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#94a3b8}
+.sheet-badge{text-align:right;flex-shrink:0}
+.badge-title{font-family:'Syne',system-ui,sans-serif;font-weight:800;font-size:20px;line-height:1.1;letter-spacing:-.015em;color:var(--primary);white-space:nowrap}
+.badge-kind{margin-top:4px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#94a3b8}
+
+/* Title block: focus reads first, then the small facts */
+.focus{margin-top:20px;font-family:'Syne',system-ui,sans-serif;font-weight:800;font-size:21px;line-height:1.15;letter-spacing:-.02em;text-wrap:balance;border-left:3px solid var(--primary);padding-left:12px}
+.meta{margin-top:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums}
+.label{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:24px}
+
+/* Footer */
+footer{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:22px;padding-top:10px;border-top:1px solid var(--line);font-size:9px;font-weight:500;color:var(--muted)}
+footer .credit{font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:.04em}
 `;
 
 function escapeHtml(value) {
@@ -36,27 +66,54 @@ function highlightWord(sentence, word) {
   return escapedSentence.replace(re, '<strong class="hl">$1</strong>');
 }
 
+// The sheet's identifier ("Week 04", "Autumn term") sits at the right of
+// the header card in cyan, with the sheet type as a small mono caption
+// beneath it; the week's focus/topic becomes the heading under the card.
 function printHeader({ eyebrow, title, topic, meta }) {
   return `
-<p class="eyebrow">SPELL// ST&#9733;RS &mdash; ${escapeHtml(eyebrow)}</p>
-<h1>${escapeHtml(title)}</h1>
-${topic ? `<p class="topic">${escapeHtml(topic)}</p>` : ""}
+<header class="site-header">
+  <div class="brand-block">
+    <div class="logo">SPELL<span class="accent">//</span><span class="accent">ST</span>${STAR_SVG}<span class="accent">RS</span></div>
+    <div class="tagline">Free UK primary spelling practice &middot; spell-stars.pages.dev</div>
+  </div>
+  <div class="sheet-badge">
+    <h1 class="badge-title">${escapeHtml(title)}</h1>
+    <div class="badge-kind">${escapeHtml(eyebrow)}</div>
+  </div>
+</header>
+${topic ? `<p class="focus">${escapeHtml(topic)}</p>` : ""}
 ${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : ""}`;
 }
 
+function printFooter(text) {
+  return `<footer><span>${escapeHtml(text)}</span><span class="credit">&copy; SPELL// ST&#9733;RS &mdash; free to print and share</span></footer>`;
+}
+
 function wrapDocument(docTitle, style, body) {
-  return `<!DOCTYPE html><html><head><title>${escapeHtml(docTitle)}</title><style>${BASE_STYLES}${style}</style></head><body>${body}</body></html>`;
+  return `<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><title>${escapeHtml(docTitle)}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="${FONTS_HREF}" rel="stylesheet"><style>${BASE_STYLES}${style}</style></head><body>${body}</body></html>`;
 }
 
 // Opens a new tab, writes the given HTML into it and triggers the print
-// dialog once it's rendered.
+// dialog once it's rendered. Waits for the page's web fonts so the sheet
+// never prints in a fallback face; gives up after 1.5s so a slow or
+// offline connection still prints (with the system-font fallbacks).
 export function openPrintWindow(html) {
   const win = window.open("", "_blank");
   if (!win) return;
   win.document.write(html);
   win.document.close();
-  win.focus();
-  window.setTimeout(() => win.print(), 300);
+
+  const start = () => {
+    const fontsReady = win.document.fonts?.ready ?? Promise.resolve();
+    const timeout = new Promise((resolve) => window.setTimeout(resolve, 1500));
+    Promise.race([fontsReady, timeout]).then(() => {
+      win.focus();
+      win.print();
+    });
+  };
+
+  if (win.document.readyState === "complete") start();
+  else win.addEventListener("load", start, { once: true });
 }
 
 // ── Section builders ────────────────────────────────────────────────────
@@ -77,16 +134,17 @@ function wordsOnlySection({ eyebrow = "Spelling list", title, topic, meta, words
     .join("");
 
   const style = `
-.word-list{list-style:none;margin-top:20px}
-.word-list li{padding:12px 0;border-bottom:1px solid #eee}
-.w{font-size:18px;font-weight:900;letter-spacing:.02em}
-.meaning{font-size:13px;color:#444;margin-top:4px}
-.sentence{font-size:13px;color:#555;margin-top:3px;line-height:1.5}
-.hl{font-weight:900;color:#0284c7;text-decoration:underline}
+.word-list{list-style:none;margin-top:14px;counter-reset:word}
+.word-list li{counter-increment:word;position:relative;padding:11px 0 11px 34px;border-bottom:1px solid var(--line);break-inside:avoid}
+.word-list li::before{content:counter(word,decimal-leading-zero);position:absolute;left:0;top:16px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:8.5px;letter-spacing:.1em;color:var(--muted)}
+.w{font-weight:800;font-size:18px;line-height:1.2;letter-spacing:.005em}
+.meaning{font-size:12.5px;color:#334155;margin-top:4px;line-height:1.5;letter-spacing:.005em}
+.sentence{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5;letter-spacing:.005em}
+.hl{font-weight:800;color:var(--primary-deep);text-decoration:underline;text-underline-offset:2px}
 `;
   const body = `${printHeader({ eyebrow, title, topic, meta })}
 <ol class="word-list">${items}</ol>
-<footer>${words.length} word${words.length === 1 ? "" : "s"}</footer>`;
+${printFooter(`${words.length} word${words.length === 1 ? "" : "s"}`)}`;
   return { style, body };
 }
 
@@ -102,18 +160,20 @@ function writingPracticeSection({ title, topic, meta, words }) {
     .join("");
 
   const style = `
-table{width:100%;border-collapse:collapse;margin-top:20px}
-thead th{text-align:left;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#888;padding-bottom:8px;border-bottom:2px solid #111}
-.word-cell{font-size:17px;font-weight:900;padding:16px 14px 16px 0;width:28%;border-bottom:1px solid #ddd;vertical-align:bottom}
-.blank-cell{border-bottom:1.5px solid #111;height:54px}
-.blank-cell + .blank-cell{border-left:1px dashed #ccc}
+table{width:100%;border-collapse:collapse;margin-top:16px;table-layout:fixed}
+thead th{text-align:left;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 8px 7px 0;border-bottom:2px solid var(--ink)}
+thead th:first-child{width:28%}
+tr{break-inside:avoid}
+.word-cell{font-weight:800;font-size:17px;line-height:1.2;letter-spacing:.005em;padding:14px 14px 10px 0;border-bottom:1px solid var(--line);vertical-align:bottom}
+.blank-cell{height:54px;border-bottom:1px dotted var(--dot)}
+.blank-cell + .blank-cell{border-left:1px dashed var(--line)}
 `;
   const body = `${printHeader({ eyebrow: "Writing practice", title, topic, meta })}
 <table>
   <thead><tr><th>Word</th><th>Write it</th><th>Write it again</th></tr></thead>
   <tbody>${rows}</tbody>
 </table>
-<footer>Practise writing each word twice.</footer>`;
+${printFooter("Practise writing each word twice.")}`;
   return { style, body };
 }
 
@@ -130,13 +190,13 @@ function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections
   const wordFont = gridLetterCase === "lowercase" ? 15 : 12;
 
   const style = `
-.layout{display:flex;gap:40px;margin-top:22px;align-items:flex-start}
+.layout{display:flex;gap:40px;margin-top:20px;align-items:flex-start}
 .grid{display:grid;grid-template-columns:repeat(${size},1fr);gap:2px;width:fit-content;flex-shrink:0}
-.cell{width:${cellPx}px;height:${cellPx}px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${cellFont}px;border:1px solid #ccc}
+.cell{width:${cellPx}px;height:${cellPx}px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:${cellFont}px;border:1px solid var(--line);border-radius:4px}
 .words-col{flex:1;min-width:120px}
 .words-col .label{margin-top:0}
 .words{list-style:none}
-.words li{font-size:${wordFont}px;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.1em;padding:6px 0;border-bottom:1px solid #eee}
+.words li{font-weight:600;font-size:${wordFont}px;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:${gridLetterCase === "lowercase" ? ".02em" : ".1em"};padding:6px 0;border-bottom:1px solid var(--line)}
 `;
   const body = `${printHeader({ eyebrow: "Word search", title, topic, meta })}
 <div class="layout">
@@ -146,7 +206,7 @@ function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections
     <ul class="words">${placed.map(({ word }) => `<li>${escapeHtml(word)}</li>`).join("")}</ul>
   </div>
 </div>
-<footer>Find all the words hidden in the grid.</footer>`;
+${printFooter("Find all the words hidden in the grid.")}`;
   return { style, body };
 }
 

@@ -8,6 +8,7 @@ import { PracticeQuiz } from "./PracticeQuiz";
 import { FindTheLetter } from "./FindTheLetter";
 import { PrintWeekMenu } from "./PrintWeekMenu";
 import { formatWeekCommencing } from "@/lib/weekDates";
+import { SPRING } from "@/lib/motion";
 
 // Renders sentence text with the spelling word highlighted in bold cyan
 function HighlightWord({ text, word }) {
@@ -86,14 +87,14 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
           ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
           : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)",
       }}
-      transition={{ type: "spring", stiffness: 260, damping: 24 }}
-      className={`holo-card h-full rounded-[1.75rem] p-6 sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
+      transition={SPRING.settle}
+      className={`holo-card h-full rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
-          <h3 className="mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
+          <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {current && (
@@ -210,14 +211,14 @@ function LetterWeekCard({ weekData, active, current, isDragging, onClick, onAtte
           ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
           : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)",
       }}
-      transition={{ type: "spring", stiffness: 260, damping: 24 }}
-      className={`holo-card h-full rounded-[1.75rem] p-6 sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
+      transition={SPRING.settle}
+      className={`holo-card h-full rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
-          <h3 className="mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
+          <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
         </div>
         {current && (
           <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
@@ -312,7 +313,7 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
             <button
               key={weekData.week}
               onClick={() => onSelectWeek(weekData.week)}
-              className={`group relative min-w-11 rounded-full border px-3 py-2 font-mono text-xs transition-colors duration-300 ${weekData.week === selectedWeek ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/50 hover:text-primary"}`}
+              className={`hit-slop group relative min-w-11 rounded-full border px-3 py-2 font-mono text-xs transition-colors duration-300 ${weekData.week === selectedWeek ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/50 hover:text-primary"}`}
               data-testid={`week-jump-${weekData.week}`}
             >
               {String(weekData.week).padStart(2, "0")}
