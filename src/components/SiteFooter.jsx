@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ExternalLink, Star, Wand2 } from "lucide-react";
 
 /**
@@ -23,10 +24,10 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
         <div>
           <div className="font-mono text-xs uppercase tracking-[0.24em] text-primary">Explore</div>
           <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-            <li><a href="/#years" className="transition-colors duration-300 hover:text-primary">Choose a year</a></li>
-            <li><a href="/#how-it-works" className="transition-colors duration-300 hover:text-primary">How it works</a></li>
-            <li><a href="/#for-educators" className="transition-colors duration-300 hover:text-primary">For educators &amp; parents</a></li>
-            <li><a href="/#faq" className="transition-colors duration-300 hover:text-primary">FAQs</a></li>
+            <li><Link to="/#years" className="transition-colors duration-300 hover:text-primary">Choose a year</Link></li>
+            <li><Link to="/how-it-works" className="transition-colors duration-300 hover:text-primary">How it works</Link></li>
+            <li><Link to="/for-educators" className="transition-colors duration-300 hover:text-primary">For educators &amp; parents</Link></li>
+            <li><Link to="/faq" className="transition-colors duration-300 hover:text-primary">FAQs</Link></li>
           </ul>
         </div>
 

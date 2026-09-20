@@ -1,30 +1,87 @@
 import { useEffect, useRef } from "react";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import Lenis from "lenis";
 import "@/App.css";
 import YearIndex from "@/pages/YearIndex";
 import YearPage from "@/pages/YearPage";
+import HowItWorks from "@/pages/HowItWorks";
+import ForEducators from "@/pages/ForEducators";
+import Faq from "@/pages/Faq";
 import { Toaster } from "@/components/ui/sonner";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 
+// Links from before the home page was split (/#faq, /#offline-routine...)
+// still work: they forward to the page that now holds that section.
+const LEGACY_HASHES = {
+  "how-it-works": "/how-it-works",
+  "how-a-session-works": "/how-it-works#how-a-session-works",
+  "beyond-spelling": "/how-it-works#beyond-spelling",
+  "offline-routine": "/for-educators#offline-routine",
+  "for-educators": "/for-educators",
+  faq: "/faq",
+};
+
+// Space to leave above a section the page scrolls to, so the fixed
+// header doesn't sit on top of its heading.
+const HEADER_OFFSET = -80;
+
 // react-router's client-side navigation keeps whatever scroll position
 // the previous page was at, so clicking a year card partway down the
 // landing page lands you partway down the year page too. This resets
-// the scroll to the top on every route change. It goes through the
+// the scroll to the top on every navigation, or, when the link has a
+// #hash, scrolls to that section once it has rendered (the target may
+// appear a moment late while page data loads). Both go through the
 // Lenis instance (rather than a plain window.scrollTo) so Lenis's own
 // idea of the scroll position stays in sync with the jump — otherwise
 // the next wheel/touch event can snap the page straight back to the
-// old spot.
+// old spot. Keyed on location.key so clicking a link to the page
+// you're already on (the logo on the home page) still scrolls.
 function ScrollToTop({ lenisRef }) {
-  const { pathname } = useLocation();
+  const { pathname, hash, key } = useLocation();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    lenisRef.current?.scrollTo(0, { immediate: true });
-    // lenisRef is a ref (stable identity) — the effect only actually
-    // needs to re-run when pathname changes.
+    const id = decodeURIComponent(hash.slice(1));
+
+    if (pathname === "/" && LEGACY_HASHES[id]) {
+      navigate(LEGACY_HASHES[id], { replace: true });
+      return undefined;
+    }
+
+    if (!id) {
+      lenisRef.current?.scrollTo(0, { immediate: true });
+      return undefined;
+    }
+
+    let frame;
+    let tries = 0;
+    const seek = () => {
+      const target = document.getElementById(id);
+      if (target) {
+        const lenis = lenisRef.current;
+        if (lenis) {
+          // Lenis measures the page when it's created and on resize
+          // events, so re-measure first: right after a route change its
+          // idea of the page height can still be the previous (shorter)
+          // page, which would clamp the scroll to 0.
+          lenis.resize();
+          lenis.scrollTo(target, { offset: HEADER_OFFSET });
+        } else {
+          window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY + HEADER_OFFSET });
+        }
+        return;
+      }
+      if (tries++ < 120) frame = requestAnimationFrame(seek);
+    };
+    seek();
+    return () => cancelAnimationFrame(frame);
+    // lenisRef is a ref (stable identity) — the effect only needs to
+    // re-run when the location changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, hash, key]);
+
   return null;
 }
 
@@ -62,6 +119,9 @@ function AppShell() {
           <ScrollToTop lenisRef={lenisRef} />
           <Routes>
             <Route path="/" element={<YearIndex />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/for-educators" element={<ForEducators />} />
+            <Route path="/faq" element={<Faq />} />
             <Route path="/:yearSlug" element={<YearPage />} />
           </Routes>
           <Toaster position="bottom-right" />

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useYearData, useYearsConfig } from "@/lib/yearData";
 import { resolveScopePool, buildWeeksForYear, SCOPES, SESSION_COUNT_OPTIONS, termForWeek } from "@/lib/scope";
 import { loadProgress, saveProgress, withCurrentWeek, recordAttempt, selectSessionWords, todayISO } from "@/lib/srs";
@@ -8,13 +8,13 @@ import { WeekCarousel } from "@/components/WeekCarousel";
 import { PracticeQuiz } from "@/components/PracticeQuiz";
 import { WordSearch } from "@/components/WordSearch";
 import { Button } from "@/components/ui/button";
-import { Star, Info, Grid2x2, Sparkles, Shuffle } from "lucide-react";
+import { Info, Grid2x2, Sparkles, Shuffle } from "lucide-react";
 import { motion } from "framer-motion";
 import { getYearAccent, rgba } from "@/lib/yearTheme";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PrintTermListButton } from "@/components/PrintTermListButton";
 import { SPRING } from "@/lib/motion";
-import { useScrolled } from "@/hooks/useScrolled";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const SCOPE_EXPLAINERS = {
   term: "\u201cBy term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
@@ -157,8 +157,6 @@ export default function YearPage() {
     }
   }, [scope, term, count]);
 
-  const scrolled = useScrolled();
-
   const currentWeek = progress.currentWeek || 1;
   const setCurrentWeek = (week) => {
     setProgress((prev) => {
@@ -208,20 +206,7 @@ export default function YearPage() {
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
       <link rel="canonical" href={`https://spell-stars.pages.dev/${yearSlug}`} />
-      <header className="material-bar fixed inset-x-0 top-0 z-50" data-scrolled={scrolled}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-          <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-foreground">
-            SPELL<span className="text-primary">//</span><span className="text-primary">ST<Star className="inline-block h-[0.85em] w-[0.85em] text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" style={{ verticalAlign: "-0.12em" }} aria-hidden="true" />RS</span>
-          </Link>
-          <nav className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex" aria-label="Primary">
-            <Link to="/#years" className="transition-colors duration-300 hover:text-primary">Years</Link>
-            <Link to="/#how-it-works" className="transition-colors duration-300 hover:text-primary">How it works</Link>
-            <Link to="/#offline-routine" className="transition-colors duration-300 hover:text-primary">Offline routine</Link>
-            <Link to="/#for-educators" className="transition-colors duration-300 hover:text-primary">Educators</Link>
-            <Link to="/#faq" className="transition-colors duration-300 hover:text-primary">FAQs</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <div className="border-b px-6 pb-6 pt-24" style={{ borderColor: rgba(accent, 0.35), backgroundImage: `linear-gradient(180deg, ${rgba(accent, 0.08)}, transparent)` }}>
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
