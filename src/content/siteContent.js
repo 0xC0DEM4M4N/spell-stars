@@ -137,16 +137,36 @@ export const FAQS = [
     a: "Yes. Word lists follow the DfE National Curriculum's English Appendix 1 statutory spelling lists for Years 1–6, and the Letters and Sounds phonics framework for Reception, structured across the same autumn, spring and summer terms as the school year.",
   },
   {
+    q: "Can I use the spellings my child's school sets?",
+    a: "Yes. Choose \"Make your own spelling list\" (in the footer, or the last card with the years on the home page), paste the words, and you get a practice quiz, a word search and print sheets for exactly those words. Where a word is in our year lists it also gets a meaning and a sentence. Lists stay on your device and are included when you save a backup.",
+  },
+  {
     q: "What is the spaced-repetition system (SRS-lite)?",
     a: "A simple six-box Leitner system. Every word starts in box one; get it right and it moves up a box with a longer gap before it's due again; get it wrong and it drops back down. Over time, practice naturally focuses on the words that still need it.",
   },
   {
+    q: "Do I need an account?",
+    a: "No. There's nothing to sign up for or log in to — open a year and start. Progress is kept in the browser on the device you practise on.",
+  },
+  {
     q: "Where is my child's progress saved?",
-    a: "Locally, in the browser on the device they're practising on — so progress carries over every time they come back on that device, though it doesn't yet sync across different devices.",
+    a: "In the browser on the device they're practising on, so it carries over every time they come back on that device. Browsers can clear a site's saved data if it isn't used for a while, or if you clear your history, so it's worth saving a backup from the \"Save or move progress\" page (linked in the footer and the settings menu).",
+  },
+  {
+    q: "How do I use it on another device, or back up progress?",
+    a: "Open \"Save or move progress\" and choose a backup file, a link or a QR code, then open it on the other device. Your own spelling lists come with it. You'll see what would change before anything is saved, and you can undo it for ten minutes afterwards. The link holds the progress itself rather than storing it on a server, so anyone who has the link can see which words have been practised — send it only to people you trust. Once there's a lot of progress it won't fit in a QR code, and for a whole year the backup file is the safest choice.",
+  },
+  {
+    q: "What happens if my child practises on two devices?",
+    a: "Each device keeps its own progress until you combine them. Restoring a backup can merge the two, keeping the more practised record of each word, or replace what's on the device with the backup. The current week is left alone unless you choose to copy it.",
+  },
+  {
+    q: "What should we do away from the screen?",
+    a: "There's a five-step weekly routine: word search, the practice game, a printed sheet, look-cover-write-check, and a spoken test at the end. The digital journey and offline journey pages set out both halves, and every word search has a print button.",
   },
   {
     q: "Do the words come with definitions and example sentences for every year?",
-    a: "That's the goal for every year group — Reception and Year 1 are fully there today, with the rest of the word lists being filled in.",
+    a: "Reception, Year 1 and Year 2 have them for every word today. Years 3 to 6 are being filled in.",
   },
 ];
 

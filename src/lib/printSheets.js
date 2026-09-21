@@ -203,7 +203,7 @@ function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections
   <div class="grid">${letters.flat().map((l) => `<div class="cell">${l}</div>`).join("")}</div>
   <div class="words-col">
     <p class="label">Find these words</p>
-    <ul class="words">${placed.map(({ word }) => `<li>${escapeHtml(word)}</li>`).join("")}</ul>
+    <ul class="words">${placed.filter((p) => !p.failed).map(({ word }) => `<li>${escapeHtml(word)}</li>`).join("")}</ul>
   </div>
 </div>
 ${printFooter("Find all the words hidden in the grid.")}`;

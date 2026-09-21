@@ -9,6 +9,7 @@
 // away and back) never re-fetches.
 
 import { useEffect, useState } from "react";
+import { withWordKeys } from "./wordKey";
 
 let configPromise = null;
 
@@ -46,7 +47,7 @@ export function getYearWords(slug, wordListPath) {
         throw new Error("Failed to load " + wordListPath + " (" + res.status + ")");
       }
       return res.json();
-    });
+    }).then((entries) => withWordKeys(slug, entries)); // adds `wordKey` (see wordKey.js)
     wordListPromises.set(slug, promise);
   }
   return wordListPromises.get(slug);

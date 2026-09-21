@@ -8,6 +8,11 @@ import YearPage from "@/pages/YearPage";
 import HowItWorks from "@/pages/HowItWorks";
 import ForEducators from "@/pages/ForEducators";
 import Faq from "@/pages/Faq";
+import SyncPage from "@/pages/SyncPage";
+import CustomListsPage from "@/pages/CustomListsPage";
+import CustomListPage from "@/pages/CustomListPage";
+import DigitalJourney from "@/pages/DigitalJourney";
+import OfflineJourney from "@/pages/OfflineJourney";
 import { Toaster } from "@/components/ui/sonner";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
@@ -18,7 +23,7 @@ const LEGACY_HASHES = {
   "how-it-works": "/how-it-works",
   "how-a-session-works": "/how-it-works#how-a-session-works",
   "beyond-spelling": "/how-it-works#beyond-spelling",
-  "offline-routine": "/for-educators#offline-routine",
+  "offline-routine": "/offline-journey",
   "for-educators": "/for-educators",
   faq: "/faq",
 };
@@ -43,6 +48,13 @@ function ScrollToTop({ lenisRef }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // On /sync the hash can hold a whole saved-progress payload, not a
+    // section id. Never look it up (or decode it): just start at the top.
+    if (pathname === "/sync") {
+      lenisRef.current?.scrollTo(0, { immediate: true });
+      return undefined;
+    }
+
     const id = decodeURIComponent(hash.slice(1));
 
     if (pathname === "/" && LEGACY_HASHES[id]) {
@@ -122,6 +134,11 @@ function AppShell() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/for-educators" element={<ForEducators />} />
             <Route path="/faq" element={<Faq />} />
+            <Route path="/digital-journey" element={<DigitalJourney />} />
+            <Route path="/offline-journey" element={<OfflineJourney />} />
+            <Route path="/sync" element={<SyncPage />} />
+            <Route path="/custom" element={<CustomListsPage />} />
+            <Route path="/custom/:listId" element={<CustomListPage />} />
             <Route path="/:yearSlug" element={<YearPage />} />
           </Routes>
           <Toaster position="bottom-right" />

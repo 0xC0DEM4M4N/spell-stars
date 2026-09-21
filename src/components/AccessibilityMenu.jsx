@@ -5,7 +5,8 @@
 // used by children with reading/attention differences, the accessibility
 // controls should be as easy to find as the practice button itself.
 import { useState } from "react";
-import { Accessibility, Check, Contrast, Moon, SpellCheck2, Sun } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Accessibility, Check, Contrast, Moon, Save, SpellCheck2, Sun } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -175,6 +176,20 @@ export function AccessibilityMenu() {
             >
               <span className="h-5 w-5 rounded-full bg-white shadow" aria-hidden="true" />
             </button>
+          </section>
+
+          <section className="rounded-xl border border-border bg-muted/40 p-3">
+            <p className="text-sm font-semibold text-foreground">Progress</p>
+            <p className="text-xs text-muted-foreground">Saved on this device only. Make a backup, or move it to another device.</p>
+            <Link
+              to="/sync"
+              onClick={() => setOpen(false)}
+              data-testid="accessibility-sync-link"
+              className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Save className="h-4 w-4" aria-hidden="true" />
+              Save or move progress
+            </Link>
           </section>
         </div>
       </DialogContent>

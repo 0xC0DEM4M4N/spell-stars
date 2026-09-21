@@ -1,7 +1,7 @@
-import { Repeat2 } from "lucide-react";
-import { InfoPage } from "@/components/InfoPage";
+import { InfoPage, TeaserLink } from "@/components/InfoPage";
 import { CardGrid, Section, StepRow } from "@/components/InfoBlocks";
-import { FEATURES, SESSION_STEPS, VOCAB_CARDS } from "@/content/siteContent";
+import { SESSION_STEPS, VOCAB_CARDS } from "@/content/siteContent";
+import { JOURNEY_LEDE } from "@/content/journeys";
 
 export default function HowItWorks() {
   return (
@@ -13,12 +13,17 @@ export default function HowItWorks() {
       heading="One app, every year, no forks."
       intro="Practise a week's words, hear them read aloud, and let spaced repetition bring back the ones that are still shaky. Everything follows the year group you pick."
     >
-      <Section id="how-it-works" testId="how-it-works-section" eyebrow="What you get" title="Four ways to practise." className="py-10">
-        <CardGrid items={FEATURES} cols={4} />
-        <div className="mt-6 flex items-center gap-3 border border-amber-300/20 bg-amber-400/5 p-4 text-sm text-warning">
-          <Repeat2 className="h-4 w-4 shrink-0" />
-          Practice adapts to each year automatically — input style, reading speed, word-search
-          difficulty and daily pacing all follow the year you're in, from one shared template.
+      <Section
+        id="how-it-works"
+        testId="how-it-works-section"
+        eyebrow="Two journeys"
+        title="Practise on screen, then off it."
+        intro={JOURNEY_LEDE}
+        className="py-10"
+      >
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <TeaserLink to="/digital-journey" label="The digital journey" blurb="Four daily ways to practise on screen." index={0} />
+          <TeaserLink to="/offline-journey" label="The offline journey" blurb="Five steps, spread across the week, on paper and out loud." index={1} />
         </div>
       </Section>
 

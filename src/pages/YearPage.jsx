@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useYearData, useYearsConfig } from "@/lib/yearData";
 import { resolveScopePool, buildWeeksForYear, SCOPES, SESSION_COUNT_OPTIONS, termForWeek } from "@/lib/scope";
-import { loadProgress, saveProgress, withCurrentWeek, recordAttempt, selectSessionWords, todayISO } from "@/lib/srs";
+import { loadProgress, saveProgress, withCurrentWeek, recordAttempt, selectSessionWords, todayISO, migrateProgress } from "@/lib/srs";
 import { isScopeExplainerDismissed, dismissScopeExplainer } from "@/lib/scopePrefs";
 import { WeekCarousel } from "@/components/WeekCarousel";
 import { PracticeQuiz } from "@/components/PracticeQuiz";
@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { PrintTermListButton } from "@/components/PrintTermListButton";
 import { SPRING } from "@/lib/motion";
 import { SiteHeader } from "@/components/SiteHeader";
+import { BackupReminder } from "@/components/BackupReminder";
 
 const SCOPE_EXPLAINERS = {
   term: "\u201cBy term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
@@ -64,6 +65,11 @@ export default function YearPage() {
   const yearState = useYearData(yearSlug);
 
   const [progress, setProgress] = useState(() => loadProgress(yearSlug));
+  // Which year's saved progress has been through migrateProgress() (word
+  // ids -> word keys). The page waits for this before showing anything
+  // that picks words from progress, so a returning child's first session
+  // is chosen from their real history, not from an empty one.
+  const [progressReadyFor, setProgressReadyFor] = useState(null);
   // Scope (day/term/all) is mirrored in the ?scope= query param so
   // refreshing the page — or sharing the link — comes back to the same
   // tab. Read it once on first mount; the sync effect below keeps it
@@ -166,6 +172,8 @@ export default function YearPage() {
     });
   };
 
+  // `wordId` is the entry's progress key (its wordKey, or its id for
+  // letters) — see progressKey() in lib/wordKey.js.
   const handleAttempt = (wordId, correct) => {
     setProgress((prev) => {
       const next = recordAttempt(prev, wordId, correct, todayISO());
@@ -173,6 +181,18 @@ export default function YearPage() {
       return next;
     });
   };
+
+  // One-time conversion of saved progress from slot ids to word keys, run
+  // as soon as this year's word data is available. A no-op after the first
+  // time (and for anyone with no saved progress).
+  useEffect(() => {
+    // Right after a route change yearState can still hold the previous
+    // year's words for one render, so check they are this year's.
+    if (yearState.status !== "ready" || yearState.yearMeta?.slug !== yearSlug) return;
+    const migrated = migrateProgress(yearSlug, yearState.words);
+    if (migrated) setProgress(migrated);
+    setProgressReadyFor(yearSlug);
+  }, [yearSlug, yearState.status, yearState.words]);
 
   if (configState.status === "loading" || yearState.status === "loading") {
     return <Centered>Loading…</Centered>;
@@ -189,6 +209,10 @@ export default function YearPage() {
         </Button>
       </Centered>
     );
+  }
+
+  if (progressReadyFor !== yearSlug) {
+    return <Centered>Loading…</Centered>;
   }
 
   const { yearMeta, words } = yearState;
@@ -292,6 +316,8 @@ export default function YearPage() {
           </div>
         )}
       </main>
+
+      <BackupReminder />
 
       <SiteFooter />
     </div>

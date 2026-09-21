@@ -9,6 +9,7 @@ import { FindTheLetter } from "./FindTheLetter";
 import { PrintWeekMenu } from "./PrintWeekMenu";
 import { formatWeekCommencing } from "@/lib/weekDates";
 import { SPRING } from "@/lib/motion";
+import { progressKey } from "@/lib/wordKey";
 
 // Renders sentence text with the spelling word highlighted in bold cyan
 function HighlightWord({ text, word }) {
@@ -305,7 +306,7 @@ const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current,
             <div className="font-display text-7xl font-extrabold text-primary" data-testid="letter-of-the-day">
               {dayEntry.prompt}
             </div>
-            <FindTheLetter prompt={dayEntry.prompt} entryId={dayEntry.id} onAttempt={onAttempt} ttsRate={capabilities?.ttsRate} />
+            <FindTheLetter prompt={dayEntry.prompt} entryId={progressKey(dayEntry)} onAttempt={onAttempt} ttsRate={capabilities?.ttsRate} />
           </div>
         </div>
       </div>

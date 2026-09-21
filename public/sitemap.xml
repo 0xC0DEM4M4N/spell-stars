@@ -6,6 +6,11 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://spell-stars.pages.dev/custom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://spell-stars.pages.dev/reception</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -42,6 +47,16 @@
   </url>
   <url>
     <loc>https://spell-stars.pages.dev/how-it-works</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://spell-stars.pages.dev/digital-journey</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://spell-stars.pages.dev/offline-journey</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

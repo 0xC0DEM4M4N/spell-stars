@@ -8,6 +8,8 @@ import { SPRING, revealOnScroll } from "@/lib/motion";
 
 export const INFO_PAGES = [
   { to: "/how-it-works", label: "How it works", blurb: "Practice, word searches and how a week runs." },
+  { to: "/digital-journey", label: "The digital journey", blurb: "Four daily ways to practise on screen." },
+  { to: "/offline-journey", label: "The offline journey", blurb: "Five steps that take the list onto paper and out loud." },
   { to: "/for-educators", label: "For educators & parents", blurb: "Pacing, differentiation and an offline routine." },
   { to: "/faq", label: "FAQs", blurb: "Year groups, practice time, progress and more." },
 ];

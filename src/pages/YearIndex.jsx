@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowDown, ClipboardCheck, MessageCircleQuestion, Sparkles, Star } from "lucide-react";
+import { ArrowDown, ClipboardCheck, MessageCircleQuestion, Plus, Sparkles, Star } from "lucide-react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TeaserLink } from "@/components/InfoPage";
 import { useYearsConfig } from "@/lib/yearData";
+import { loadLists } from "@/lib/customLists";
 import { useTheme } from "@/context/ThemeContext";
 import { getYearAccent, getYearDepth, getYearInk, rgba } from "@/lib/yearTheme";
 import { PRESS, SPRING, revealOnScroll } from "@/lib/motion";
@@ -36,9 +38,19 @@ const HERO_BG_WORDS = [
   { text: "ea", top: "96%", left: "88%", rotate: 8, size: "text-4xl", tone: "text-white/[0.14]" },
 ];
 
+// The lists this browser has saved; none if storage isn't available.
+function readCustomLists() {
+  try {
+    return loadLists(window.localStorage);
+  } catch (err) {
+    return [];
+  }
+}
+
 export default function YearIndex() {
   const { status, yearsConfig, error } = useYearsConfig();
   const { theme } = useTheme();
+  const [customLists] = useState(readCustomLists);
 
   if (status === "loading") {
     return <Centered>Loading…</Centered>;
@@ -179,6 +191,47 @@ export default function YearIndex() {
                 </motion.div>
               );
             })}
+
+            {/* The visitor's own lists sit with the years, then a way to add one. */}
+            {customLists.map((list, index) => {
+              const accent = list.yearHint ? getYearAccent(list.yearHint) : getYearAccent("year2");
+              return (
+                <motion.div
+                  key={list.id}
+                  {...revealOnScroll(yearsConfig.years.length + index)}
+                  whileHover={{ y: -4, transition: SPRING.settle }}
+                  whileTap={{ ...PRESS, transition: SPRING.snappy }}
+                >
+                  <Link
+                    to={`/custom/${list.id}`}
+                    className="group relative block h-full overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
+                    style={{ backgroundColor: rgba(accent, 0.1), borderColor: rgba(accent, 0.38) }}
+                    data-testid={`custom-list-link-${list.id}`}
+                  >
+                    <span className="absolute inset-x-0 top-0 h-[3px]" style={{ backgroundColor: accent }} aria-hidden="true" />
+                    <div className="type-card break-words font-display text-xl font-bold text-foreground">{list.name}</div>
+                    <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      Your list · {list.words.length} {list.words.length === 1 ? "word" : "words"}
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+            <motion.div
+              {...revealOnScroll(yearsConfig.years.length + customLists.length)}
+              whileHover={{ y: -4, transition: SPRING.settle }}
+              whileTap={{ ...PRESS, transition: SPRING.snappy }}
+            >
+              <Link
+                to="/custom"
+                className="group flex h-full flex-col items-center justify-center rounded-2xl border border-dashed border-foreground/25 p-5 text-center transition-colors duration-300 hover:border-primary/60 hover:bg-primary/5"
+                data-testid="add-custom-list-card"
+              >
+                <Plus className="h-5 w-5 text-primary" aria-hidden="true" />
+                <div className="mt-1 type-card font-display text-xl font-bold text-foreground">Add your own list</div>
+                <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Paste any words</div>
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>

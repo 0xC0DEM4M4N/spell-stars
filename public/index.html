@@ -135,7 +135,9 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-PNJLH4KESR');
+        // page_location is set without the "#..." part: the /sync page can carry
+        // a person's saved progress there, and it must not be sent to Google.
+        gtag('config', 'G-PNJLH4KESR', { page_location: location.origin + location.pathname + location.search });
         </script>
     </body>
 </html>

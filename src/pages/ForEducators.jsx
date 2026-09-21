@@ -1,6 +1,7 @@
-import { InfoPage } from "@/components/InfoPage";
-import { CardGrid, Section, StepRow } from "@/components/InfoBlocks";
-import { EDUCATOR_NOTES, WEEKLY_ROUTINE } from "@/content/siteContent";
+import { InfoPage, TeaserLink } from "@/components/InfoPage";
+import { CardGrid, Section } from "@/components/InfoBlocks";
+import { EDUCATOR_NOTES } from "@/content/siteContent";
+import { HANDOFF_TITLE, HANDOFF_COPY } from "@/content/journeys";
 
 export default function ForEducators() {
   return (
@@ -29,14 +30,12 @@ export default function ForEducators() {
             id="offline-routine"
             testId="offline-routine-section"
             eyebrow="Beyond the screen"
-            title="Screen practice, then paper and voice."
-            intro="Typing a word correctly isn't quite the same skill as writing it, and spelling tests are still mostly said aloud and written by hand. A weekly routine that moves from recognising a word, to recalling it on screen, to writing it from memory, to producing it with nothing in front of you at all, covers a lot more ground than any one of those on its own."
+            title={HANDOFF_TITLE}
+            intro={HANDOFF_COPY}
           >
-            <StepRow items={WEEKLY_ROUTINE} />
-            <p className="mt-6 max-w-2xl font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              Best spread across the week, not done in one sitting — e.g. word search early on, look/cover/write/check
-              mid-week, verbal test at the end — so it lines up with SRS-lite's own spacing instead of cramming.
-            </p>
+            <div className="mt-8 max-w-md">
+              <TeaserLink to="/offline-journey" label="The offline journey" blurb="Five steps, spread across the week: word search, practice game, printed sheet, look-cover-write-check and a verbal test." />
+            </div>
           </Section>
         </>
       )}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ExternalLink, Star, Wand2 } from "lucide-react";
+import { ExternalLink, ListPlus, Save, Star, Wand2 } from "lucide-react";
 
 /**
  * Shared site footer — brand block, link columns, copyright bar. Used on
@@ -26,6 +26,8 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
           <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             <li><Link to="/#years" className="transition-colors duration-300 hover:text-primary">Choose a year</Link></li>
             <li><Link to="/how-it-works" className="transition-colors duration-300 hover:text-primary">How it works</Link></li>
+            <li><Link to="/digital-journey" className="transition-colors duration-300 hover:text-primary">The digital journey</Link></li>
+            <li><Link to="/offline-journey" className="transition-colors duration-300 hover:text-primary">The offline journey</Link></li>
             <li><Link to="/for-educators" className="transition-colors duration-300 hover:text-primary">For educators &amp; parents</Link></li>
             <li><Link to="/faq" className="transition-colors duration-300 hover:text-primary">FAQs</Link></li>
           </ul>
@@ -48,6 +50,18 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
                   <ExternalLink className="ml-1 inline-block h-3 w-3 -translate-y-px opacity-60 transition-opacity group-hover:opacity-100" />
                 </span>
               </a>
+            </li>
+            <li>
+              <Link to="/custom" className="group inline-flex items-start gap-1.5 transition-colors duration-300 hover:text-primary" data-testid="footer-custom-link">
+                <ListPlus className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>Make your own spelling list</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/sync" className="group inline-flex items-start gap-1.5 transition-colors duration-300 hover:text-primary" data-testid="footer-sync-link">
+                <Save className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>Save or move progress</span>
+              </Link>
             </li>
           </ul>
         </div>

@@ -29,7 +29,9 @@ export function buildDirections(directions) {
 export function buildGrid(words, size, dirs, letterCase) {
   const toGridCase = (w) => (letterCase === "lowercase" ? w.toLowerCase() : w.toUpperCase());
   const alphabet = letterCase === "lowercase" ? ALPHA_LOWER : ALPHA;
-  const clean = words.map(w => toGridCase(w).replace(/['']/g, ""));
+  // Only letters go in the grid: apostrophes, hyphens and spaces ("don't",
+  // "well-known", "ice cream") are left out, whatever the list contains.
+  const clean = words.map(w => toGridCase(w).replace(/[^\p{L}]/gu, ""));
   const grid = Array.from({ length: size }, () =>
     Array.from({ length: size }, () => ({ letter: "", wis: [] }))
   );

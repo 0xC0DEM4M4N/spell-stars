@@ -35,14 +35,20 @@ const PRINT_OPTIONS = [
  * Continue). Everything picked is combined into a single print job, one
  * format per page, rather than a separate print dialog per format.
  */
-export const PrintWeekMenu = ({ weekData, capabilities }) => {
+export const PrintWeekMenu = ({ weekData, capabilities, sheet, gridSettings, triggerClassName, triggerLabel = "Print" }) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState([]);
   const caps = capabilities || {};
 
-  const title = `Week ${String(weekData.week).padStart(2, "0")}`;
-  const topic = weekData.focus;
-  const meta = `${capitalize(weekData.term)} term · ${formatWeekCommencing(weekData.week)}`;
+  // A week card passes `weekData`. Anything else that prints the same three
+  // formats (a custom list) passes `sheet` = { title, topic, meta, words }
+  // instead, and `gridSettings` = { size, directions, letterCase } to size
+  // the word search for its own words.
+  const title = sheet ? sheet.title : `Week ${String(weekData.week).padStart(2, "0")}`;
+  const topic = sheet ? sheet.topic : weekData.focus;
+  const meta = sheet ? sheet.meta : `${capitalize(weekData.term)} term · ${formatWeekCommencing(weekData.week)}`;
+  const printWords = sheet ? sheet.words : weekData.words;
+  const grid = gridSettings || caps.wordSearchGrid || {};
 
   const toggleOption = (value) => {
     setSelected((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
@@ -62,10 +68,10 @@ export const PrintWeekMenu = ({ weekData, capabilities }) => {
         title,
         topic,
         meta,
-        words: weekData.words,
-        gridSize: caps.wordSearchGrid?.size,
-        gridDirections: caps.wordSearchGrid?.directions,
-        gridLetterCase: loadLetterCasePref() || caps.wordSearchGrid?.letterCase,
+        words: printWords,
+        gridSize: grid.size,
+        gridDirections: grid.directions,
+        gridLetterCase: loadLetterCasePref() || grid.letterCase,
       }),
     );
     setOpen(false);
@@ -76,10 +82,10 @@ export const PrintWeekMenu = ({ weekData, capabilities }) => {
       <DialogTrigger asChild>
         <button
           onClick={(e) => e.stopPropagation()}
-          className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
+          className={triggerClassName || "flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"}
           data-testid="print-week-button"
         >
-          <Printer className="h-3.5 w-3.5" /> Print
+          <Printer className="h-3.5 w-3.5" /> {triggerLabel}
         </button>
       </DialogTrigger>
 

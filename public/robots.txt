@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /sync
+Disallow: /custom/
 
 Sitemap: https://spell-stars.pages.dev/sitemap.xml

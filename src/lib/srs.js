@@ -10,8 +10,19 @@
 // Progress is namespaced per year in localStorage as
 // `spellstars.<yearSlug>.progress`, per the routing plan (switching years
 // must never clobber another year's saved progress).
+//
+// Storage format versions (the `v` field):
+//   (none)  words are keyed by slot id, e.g. "year3-w01-01"
+//   2       words are keyed by wordKey, e.g. "year3:badge" (see wordKey.js).
+//           migrateProgress() converts a year's saved progress from the
+//           first format to this one the first time that year's word data
+//           is loaded.
+
+import { progressKey } from "./wordKey";
 
 const STORAGE_PREFIX = "spellstars";
+
+export const PROGRESS_VERSION = 2;
 
 // Days until a word is due again, indexed by box (0-5).
 export const LEITNER_INTERVAL_DAYS = [0, 1, 3, 7, 14, 30];
@@ -31,7 +42,7 @@ function storageKey(yearSlug) {
 }
 
 function defaultProgress() {
-  return { currentWeek: 1, words: {} };
+  return { v: PROGRESS_VERSION, currentWeek: 1, words: {} };
 }
 
 /** Reads a year's progress from localStorage. Never throws — falls back
@@ -43,7 +54,9 @@ export function loadProgress(yearSlug) {
     if (!raw) return defaultProgress();
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || !parsed.words) return defaultProgress();
-    return { currentWeek: parsed.currentWeek || 1, words: parsed.words };
+    // `v` is carried through untouched: it stays undefined for progress
+    // saved before word keys existed, so migrateProgress() can tell.
+    return { v: parsed.v, currentWeek: parsed.currentWeek || 1, words: parsed.words };
   } catch (err) {
     return defaultProgress();
   }
@@ -127,7 +140,7 @@ function byDifficultyThenRandom(words) {
 export function pickReviewWords(pool, progress, todayISOStr, limit) {
   const today = todayISOStr || todayISO();
   const due = pool
-    .map((w) => ({ w, state: getWordState(progress, w.id) }))
+    .map((w) => ({ w, state: getWordState(progress, progressKey(w)) }))
     .filter(({ state }) => state && isDue(state, today))
     .sort((a, b) => {
       if (a.state.dueDate !== b.state.dueDate) return a.state.dueDate < b.state.dueDate ? -1 : 1;
@@ -140,7 +153,7 @@ export function pickReviewWords(pool, progress, todayISOStr, limit) {
 /** Words from `pool` never attempted before, ordered by difficultyRank
  * ascending then random. Capped at `limit`. */
 export function pickNewWords(pool, progress, limit) {
-  const unseen = pool.filter((w) => !getWordState(progress, w.id));
+  const unseen = pool.filter((w) => !getWordState(progress, progressKey(w)));
   const ordered = byDifficultyThenRandom(unseen);
   return limit == null ? ordered : ordered.slice(0, limit);
 }
@@ -160,13 +173,24 @@ export function pickNewWords(pool, progress, limit) {
 export function selectSessionWords(pool, { progress, sessionCaps, requestedCount, todayISOStr }) {
   const today = todayISOStr || todayISO();
   const caps = sessionCaps || {};
+  // Revision cycling puts the same word in several slots. Everything below
+  // works on one entry per word, so a session never asks for a word twice.
+  const seenKeys = new Set();
+  const uniquePool = pool.filter((w) => {
+    const key = progressKey(w);
+    if (seenKeys.has(key)) return false;
+    seenKeys.add(key);
+    return true;
+  });
+  pool = uniquePool;
+
   const reviews = pickReviewWords(pool, progress, today, caps.reviewsPerDay);
-  const chosenIds = new Set(reviews.map((w) => w.id));
+  const chosenIds = new Set(reviews.map((w) => progressKey(w)));
   const remainingNewLimit = caps.newItemsPerDay != null
     ? Math.max(caps.newItemsPerDay - 0, 0)
     : undefined;
-  const newWords = pickNewWords(pool, progress, remainingNewLimit).filter((w) => !chosenIds.has(w.id));
-  newWords.forEach((w) => chosenIds.add(w.id));
+  const newWords = pickNewWords(pool, progress, remainingNewLimit).filter((w) => !chosenIds.has(progressKey(w)));
+  newWords.forEach((w) => chosenIds.add(progressKey(w)));
 
   let session = reviews.concat(newWords);
 
@@ -174,15 +198,108 @@ export function selectSessionWords(pool, { progress, sessionCaps, requestedCount
     // Top up from the rest of the pool (already-mastered words not yet
     // due, or anything not caught above) so the user gets the session
     // size they asked for.
-    const fillers = byDifficultyThenRandom(pool.filter((w) => !chosenIds.has(w.id)));
+    const fillers = byDifficultyThenRandom(pool.filter((w) => !chosenIds.has(progressKey(w))));
     for (const w of fillers) {
       if (session.length >= requestedCount) break;
       session.push(w);
-      chosenIds.add(w.id);
+      chosenIds.add(progressKey(w));
     }
   } else if (requestedCount != null && session.length > requestedCount) {
     session = session.slice(0, requestedCount);
   }
 
   return session;
+}
+
+// ── Migration: slot-id keys -> word keys ───────────────────────────────
+
+/** Combines two saved records for the same word (they came from different
+ * slots of that word). Counts add up, because each record is a separate
+ * run of practice; box, due date and last result come from whichever was
+ * seen most recently. */
+function mergeWordStates(a, b) {
+  const aSeen = a.lastSeen || "";
+  const bSeen = b.lastSeen || "";
+  let latest = a;
+  if (bSeen > aSeen) latest = b;
+  else if (bSeen === aSeen && (b.box || 0) > (a.box || 0)) latest = b;
+  return {
+    ...latest,
+    attempts: (a.attempts || 0) + (b.attempts || 0),
+    correctCount: (a.correctCount || 0) + (b.correctCount || 0),
+  };
+}
+
+/**
+ * Converts one year's saved progress from slot-id keys to word keys. Call
+ * it once that year's word data (decorated with wordKey by yearData.js) is
+ * available.
+ *
+ * Returns the migrated progress object when it changed something, or null
+ * when there was nothing to do (no saved progress, or already migrated).
+ * Safe to call repeatedly.
+ *
+ * - The old saved value is kept, once, under
+ *   `spellstars.<yearSlug>.progress.v1` as a fallback.
+ * - Records under a key that is neither a known slot id nor already a word
+ *   key (for example a word since removed from the data) are kept as they
+ *   are rather than dropped.
+ * - When one word had records in several slots, they are combined.
+ */
+export function migrateProgress(yearSlug, words) {
+  let raw;
+  try {
+    raw = window.localStorage.getItem(storageKey(yearSlug));
+  } catch (err) {
+    return null;
+  }
+  if (!raw) return null;
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (err) {
+    return null;
+  }
+  if (!parsed || typeof parsed !== "object" || !parsed.words) return null;
+  if (parsed.v === PROGRESS_VERSION) return null;
+  if (!Array.isArray(words) || words.length === 0) return null;
+
+  const keyForId = new Map();
+  for (const entry of words) {
+    if (entry && entry.id) keyForId.set(entry.id, progressKey(entry));
+  }
+
+  // Safety check: if none of the saved keys match this word data at all
+  // (for example the wrong year's words were passed in), leave the saved
+  // progress alone rather than stamping it as migrated.
+  const savedKeys = Object.keys(parsed.words);
+  const recognised = savedKeys.filter((k) => keyForId.has(k) || k.startsWith(yearSlug + ":"));
+  if (savedKeys.length > 0 && recognised.length === 0) return null;
+
+  const migratedWords = {};
+  for (const [oldKey, state] of Object.entries(parsed.words)) {
+    const newKey = keyForId.get(oldKey) || oldKey;
+    migratedWords[newKey] = migratedWords[newKey]
+      ? mergeWordStates(migratedWords[newKey], state)
+      : state;
+  }
+
+  const migrated = {
+    v: PROGRESS_VERSION,
+    currentWeek: parsed.currentWeek || 1,
+    words: migratedWords,
+  };
+
+  try {
+    const backupKey = storageKey(yearSlug) + ".v1";
+    if (window.localStorage.getItem(backupKey) === null) {
+      window.localStorage.setItem(backupKey, raw);
+    }
+    window.localStorage.setItem(storageKey(yearSlug), JSON.stringify(migrated));
+  } catch (err) {
+    // Storage full or unavailable: the app still works this session with
+    // the migrated object in memory. The next visit simply migrates again.
+  }
+  return migrated;
 }

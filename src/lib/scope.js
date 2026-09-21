@@ -7,6 +7,8 @@
 // uses only this file; "By term"/"By all" feed this file's output into
 // srs.selectSessionWords.
 
+import { dedupeByProgressKey } from "./wordKey";
+
 export const SCOPES = [
   { value: "week", label: "By week" },
   { value: "term", label: "By term" },
@@ -42,6 +44,10 @@ export function termForWeek(weekOfYear, termStructure) {
  *   up; a term the student isn't currently in returns its full word
  *   list, since there's no "current week" within it to cap against.
  * - "all": every word up to and including the current week, any term.
+ *
+ * "term" and "all" list each word once: revision cycling repeats the same
+ * word in later weeks, and the first appearance is the one kept. "day" is
+ * one week's fixed slots and is returned as it is.
  */
 export function resolveScopePool(words, { scope, currentWeek, termStructure, term }) {
   if (scope === "day") {
@@ -50,10 +56,12 @@ export function resolveScopePool(words, { scope, currentWeek, termStructure, ter
   if (scope === "term") {
     const activeTerm = term || termForWeek(currentWeek, termStructure);
     const isCurrentTerm = activeTerm === termForWeek(currentWeek, termStructure);
-    return words.filter((w) => w.term === activeTerm && (!isCurrentTerm || w.weekOfYear <= currentWeek));
+    return dedupeByProgressKey(
+      words.filter((w) => w.term === activeTerm && (!isCurrentTerm || w.weekOfYear <= currentWeek)),
+    );
   }
   // "all"
-  return words.filter((w) => w.weekOfYear <= currentWeek);
+  return dedupeByProgressKey(words.filter((w) => w.weekOfYear <= currentWeek));
 }
 
 

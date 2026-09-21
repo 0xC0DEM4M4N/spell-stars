@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
 import { ConfettiBurst } from "@/components/ConfettiBurst";
 import { SpeakButton } from "@/components/SpeakButton";
+import { progressKey } from "@/lib/wordKey";
 
 const normalize = (value) => value.trim().toLowerCase().replace(/['']/g, "'");
 
@@ -153,6 +154,10 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
   const inputRef = useRef(null);
 
   const currentWord = sessionWords[index];
+  // "Guess from the meaning" needs something to show. A list someone typed in
+  // may have no meanings at all, so the mode is only offered when at least
+  // one word has a meaning or a sentence.
+  const hasMeanings = words.some((w) => w.definition || w.exampleSentence);
   const progress = finished ? 100 : (index / sessionWords.length) * 100;
 
   const resetAll = () => {
@@ -225,7 +230,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
   const checkAnswer = () => {
     if (!answer.trim() || status === "correct") return;
     const correct = normalize(answer) === normalize(currentWord.word);
-    onAttempt?.(currentWord.id, correct);
+    onAttempt?.(progressKey(currentWord), correct);
     if (correct) {
       setStatus("correct"); setBurstKey(Date.now());
       if (wordAttempts === 0) setFirstTryScore((v) => v + 1);
@@ -283,7 +288,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
           </DialogHeader>
 
           {!mode ? (
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="quiz-mode-picker">
+            <div className={`mt-8 grid grid-cols-1 gap-4 ${hasMeanings ? "sm:grid-cols-2" : ""}`} data-testid="quiz-mode-picker">
               <button
                 type="button"
                 onClick={() => setMode("listen")}
@@ -296,18 +301,20 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                   Hear each word read aloud, then type it. A letter hint gets you started.
                 </p>
               </button>
-              <button
-                type="button"
-                onClick={() => setMode("meaning")}
-                className="group rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-6 text-left transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/5"
-                data-testid="quiz-mode-meaning"
-              >
-                <Puzzle className="h-6 w-6 text-accent2" />
-                <div className="mt-3 font-display text-lg font-bold text-foreground">Guess from the meaning</div>
-                <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
-                  No audio — read the definition (a bit like a crossword clue) and spell it.
-                </p>
-              </button>
+              {hasMeanings && (
+                <button
+                  type="button"
+                  onClick={() => setMode("meaning")}
+                  className="group rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-6 text-left transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/5"
+                  data-testid="quiz-mode-meaning"
+                >
+                  <Puzzle className="h-6 w-6 text-accent2" />
+                  <div className="mt-3 font-display text-lg font-bold text-foreground">Guess from the meaning</div>
+                  <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
+                    No audio — read the definition (a bit like a crossword clue) and spell it.
+                  </p>
+                </button>
+              )}
             </div>
           ) : !finished ? (
             <div className="mt-8">
