@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, Sparkles, Target } from "lucide-react";
@@ -271,13 +271,68 @@ function LetterWeekCard({ weekData, active, current, isDragging, onClick, onAtte
  * "true" current week to keep separate from it.
  */
 export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, onAttempt, capabilities }) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", watchDrag: true, dragFree: false });
+  // The card track runs the full width of the page, while the week strip,
+  // summary banner and arrows stay in the centred content column. The
+  // column wrapper is measured so the active card always rests exactly on
+  // the column's left edge (aligned with the rest of the page), with the
+  // neighbouring cards bleeding off toward the screen edges.
+  const columnRef = useRef(null);
+  const viewportRef = useRef(null);
+
+  const emblaOptions = useMemo(
+    () => ({
+      // Distance from the viewport's left edge to where the active card
+      // (its content, past the slide's own gutter) should rest.
+      align: () => {
+        const column = columnRef.current;
+        const viewport = viewportRef.current;
+        if (!column || !viewport) return 0;
+        const gutter = parseFloat(getComputedStyle(column).paddingLeft) || 0;
+        return column.getBoundingClientRect().left + gutter - viewport.getBoundingClientRect().left;
+      },
+      containScroll: false, // the first/last card can rest on the column edge too
+      dragFree: false, // always settle exactly on a card...
+      skipSnaps: false, // ...and never fly past more than one per drag
+      duration: 20, // a decisive settle rather than a long glide
+      watchDrag: true,
+    }),
+    [],
+  );
+  const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions);
+  const setViewport = useCallback(
+    (node) => {
+      viewportRef.current = node;
+      emblaRef(node);
+    },
+    [emblaRef],
+  );
   const [isDragging, setIsDragging] = useState(false);
 
+  // Snap-to-card on release. Embla settles on the nearest card, which
+  // makes a short, deliberate drag fall back to where it started. A drag
+  // of more than DRAG_COMMIT_PX in either direction commits to the next
+  // (or previous) card instead, so swiping always lands on a card and
+  // never rests between two.
   useEffect(() => {
     if (!emblaApi) return;
-    const onDown = () => setIsDragging(true);
-    const onUp = () => setIsDragging(false);
+    const DRAG_COMMIT_PX = 70;
+    let startLocation = 0;
+    let startIndex = 0;
+    // Embla doesn't hand its pointer events to listeners, so read how far
+    // the track has actually travelled from its own position instead.
+    const trackPosition = () => emblaApi.internalEngine().location.get();
+    const onDown = () => {
+      setIsDragging(true);
+      startLocation = trackPosition();
+      startIndex = emblaApi.selectedScrollSnap();
+    };
+    const onUp = () => {
+      setIsDragging(false);
+      const dx = trackPosition() - startLocation;
+      if (Math.abs(dx) < DRAG_COMMIT_PX) return;
+      const target = Math.max(0, Math.min(emblaApi.scrollSnapList().length - 1, startIndex + (dx < 0 ? 1 : -1)));
+      emblaApi.scrollTo(target);
+    };
     emblaApi.on("pointerDown", onDown);
     emblaApi.on("pointerUp", onUp);
     return () => { emblaApi.off("pointerDown", onDown); emblaApi.off("pointerUp", onUp); };
@@ -308,7 +363,8 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
 
   return (
     <section id="weekly-carousel" className="relative pb-6" data-testid="weekly-carousel-section">
-       <div className="slim-scrollbar mt-5 flex gap-2 overflow-x-auto overflow-y-visible pb-3 pt-8" data-testid="week-jump-strip" aria-label="Jump to week">
+      <div ref={columnRef} className="mx-auto max-w-7xl px-6">
+        <div className="slim-scrollbar mt-5 flex gap-2 overflow-x-auto overflow-y-visible pb-3 pt-8" data-testid="week-jump-strip" aria-label="Jump to week">
           {weeks.map((weekData) => (
             <button
               key={weekData.week}
@@ -323,44 +379,47 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
             </button>
           ))}
         </div>
-        <div className="mx-auto max-w-7xl">
-         {activeWeek && (
+        {activeWeek && (
           <div className="mt-6 flex flex-wrap items-center gap-3 border-l-4 border-cyan-400 bg-foreground/[0.04] p-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="active-week-summary">
             <span>Active selection:</span>
             <span className="rounded-full bg-cyan-400 px-2.5 py-1 font-bold text-slate-950">Week {String(activeWeek.week).padStart(2, "0")}</span>
             <span>// {activeWeek.focus}</span>
           </div>
         )}
-        <div className={`-mb-10 overflow-hidden pb-10 pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} ref={emblaRef} data-testid="week-carousel-viewport">
-          <div className="-ml-4 flex">
-            {weeks.map((weekData) => (
-              <div className="min-w-0 flex-[0_0_92%] pl-4 sm:flex-[0_0_68%] lg:flex-[0_0_52%] xl:flex-[0_0_46%]" key={weekData.week}>
-                {weekData.kind === "letters" ? (
-                  <LetterWeekCard
-                    weekData={weekData}
-                    active={weekData.week === selectedWeek}
-                    current={weekData.week === currentWeek}
-                    isDragging={isDragging}
-                    onClick={() => onSelectWeek(weekData.week)}
-                    onAttempt={onAttempt}
-                    capabilities={capabilities}
-                  />
-                ) : (
-                  <WeekCard
-                    weekData={weekData}
-                    active={weekData.week === selectedWeek}
-                    current={weekData.week === currentWeek}
-                    isDragging={isDragging}
-                    onClick={() => onSelectWeek(weekData.week)}
-                    onAttempt={onAttempt}
-                    capabilities={capabilities}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+      </div>
 
+      {/* Full-bleed track: spans the whole page width, edge to edge. */}
+      <div className={`-mb-10 overflow-hidden pb-10 pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} ref={setViewport} data-testid="week-carousel-viewport">
+        <div className="-ml-4 flex">
+          {weeks.map((weekData) => (
+            <div className="min-w-0 flex-[0_0_min(calc(100%_-_3rem),37rem)] pl-4" key={weekData.week}>
+              {weekData.kind === "letters" ? (
+                <LetterWeekCard
+                  weekData={weekData}
+                  active={weekData.week === selectedWeek}
+                  current={weekData.week === currentWeek}
+                  isDragging={isDragging}
+                  onClick={() => onSelectWeek(weekData.week)}
+                  onAttempt={onAttempt}
+                  capabilities={capabilities}
+                />
+              ) : (
+                <WeekCard
+                  weekData={weekData}
+                  active={weekData.week === selectedWeek}
+                  current={weekData.week === currentWeek}
+                  isDragging={isDragging}
+                  onClick={() => onSelectWeek(weekData.week)}
+                  onAttempt={onAttempt}
+                  capabilities={capabilities}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-6">
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button variant="outline" size="icon" onClick={scrollPrev} className="rounded-full border-foreground/15 bg-foreground/5 text-foreground hover:bg-cyan-300 hover:text-slate-950" data-testid="carousel-prev-button" aria-label="Previous week">
             <ChevronLeft className="h-5 w-5" />
@@ -369,8 +428,6 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
-
-       
       </div>
     </section>
   );

@@ -26,9 +26,9 @@
     ]
   },
   "typography": {
-    "heading_font": "Outfit / Space Mono / Syne (Display / Geometric Mono with ultra kinetic tracking)",
-    "body_font": "Plus Jakarta Sans / DM Sans (Clean, highly legible geometric sans)",
-    "mono_font": "JetBrains Mono / Fira Code (For phonics rules, weekly codes, and status telemetry)",
+    "heading_font": "Lexend (800 weight, tight tracking at display sizes; Caveat kept only for decorative handwritten hero words)",
+    "body_font": "Lexend (400–500 weight, 1.7 line-height for reading comfort)",
+    "mono_font": "Lexend with tabular numerals (small tracked uppercase labels, weekly codes, status telemetry)",
     "hierarchy": {
       "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none uppercase",
       "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",

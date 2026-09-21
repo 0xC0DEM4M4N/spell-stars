@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Lexend:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Lexend:wght@300;400;500;600;700;800&display=swap");
 
 /* OpenDyslexic (SIL Open Font License) -- a selectable alternative body
    font within the dyslexia theme (theme-accessibility-spec.md section 4),
@@ -61,8 +61,8 @@
     --color-accent2: 330 81% 60%;
     --color-warning: 43 96% 56%;
     --color-focus-ring: 187 92% 45%;
-    --font-family-body: "Plus Jakarta Sans", sans-serif;
-    --font-family-heading: "Syne", sans-serif;
+    --font-family-body: "Lexend", system-ui, sans-serif;
+    --font-family-heading: "Lexend", system-ui, sans-serif;
     --letter-spacing-base: normal;
     --word-spacing-base: normal;
     --line-height-base: 1.5;
@@ -97,8 +97,8 @@
     --color-accent2: 330 75% 38%;
     --color-warning: 40 90% 30%;
     --color-focus-ring: 187 85% 24%;
-    --font-family-body: "Plus Jakarta Sans", sans-serif;
-    --font-family-heading: "Syne", sans-serif;
+    --font-family-body: "Lexend", system-ui, sans-serif;
+    --font-family-heading: "Lexend", system-ui, sans-serif;
     --letter-spacing-base: normal;
     --word-spacing-base: normal;
     --line-height-base: 1.5;
@@ -145,10 +145,10 @@
     --motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
   }
   [data-theme="dyslexia"][data-dyslexia-font="lexend"] {
-    --font-family-body: "Lexend", sans-serif;
+    --font-family-body: "Lexend", system-ui, sans-serif;
   }
   [data-theme="dyslexia"][data-dyslexia-font="opendyslexic"] {
-    --font-family-body: "OpenDyslexic", "Lexend", sans-serif;
+    --font-family-body: "OpenDyslexic", "Lexend", system-ui, sans-serif;
   }
 
   /* High contrast: WCAG AAA (pure black/white gives 21:1, comfortably
@@ -182,8 +182,8 @@
     --color-accent2: 330 100% 65%;
     --color-warning: 43 100% 60%;
     --color-focus-ring: 54 100% 50%;
-    --font-family-body: "Plus Jakarta Sans", sans-serif;
-    --font-family-heading: "Syne", sans-serif;
+    --font-family-body: "Lexend", system-ui, sans-serif;
+    --font-family-heading: "Lexend", system-ui, sans-serif;
     --letter-spacing-base: normal;
     --word-spacing-base: normal;
     --line-height-base: 1.6;
@@ -310,12 +310,18 @@
 }
 
 @layer utilities {
+  /* One family throughout: Lexend, via the theme variables so the
+     dyslexia theme's font choice (Lexend or OpenDyslexic) still applies
+     to headings and labels as well as body copy. */
   .font-display {
-    font-family: "Syne", sans-serif;
+    font-family: var(--font-family-heading);
   }
 
+  /* Small tracked uppercase labels and figures. Tabular numerals keep
+     "01 02 03" columns and counters aligned in a proportional face. */
   .font-mono {
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-family-body);
+    font-variant-numeric: tabular-nums;
   }
 
   .font-handwritten {
@@ -326,23 +332,23 @@
      shrinks, and leading shrinks as size grows. One fixed value is wrong
      somewhere on the scale, so each role gets its own pair. */
   .type-display {
-    letter-spacing: -0.045em;
-    line-height: 0.9;
+    letter-spacing: -0.035em;
+    line-height: 0.95;
     font-optical-sizing: auto;
     text-wrap: balance;
   }
   .type-section {
-    letter-spacing: -0.02em;
-    line-height: 1.08;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
     text-wrap: balance;
   }
   .type-card {
-    letter-spacing: -0.01em;
-    line-height: 1.2;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
   }
   .type-body {
-    letter-spacing: 0.005em;
-    line-height: 1.65;
+    letter-spacing: 0;
+    line-height: 1.7;
     text-wrap: pretty;
   }
 
@@ -569,7 +575,7 @@ button:not(:disabled):active,
     overflow: visible;
     background: white;
     color: #0f172a;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: "Lexend", system-ui, sans-serif;
     padding: 32px;
     box-sizing: border-box;
   }

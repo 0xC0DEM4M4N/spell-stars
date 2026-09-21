@@ -8,15 +8,15 @@
 //
 // Visual language follows the SPELL// STARS print style guide: the dark
 // rounded header card with the logo lockup and the sheet's identifier in
-// cyan, Syne for headings, Plus Jakarta Sans for body copy, JetBrains
-// Mono for small tracked labels. Type is size-specific (tighter tracking
+// cyan, set entirely in Lexend: heavy weights for headings, regular for
+// body copy, small tracked uppercase for labels. Type is size-specific (tighter tracking
 // and leading as text grows), and every emphasis survives black-and-white
 // printing: bold + underline, never colour alone.
 
 import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
 
 const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap";
+  "https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap";
 
 // Lucide "star", inlined so the print tab needs no icon library.
 const STAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="star-glyph"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>`;
@@ -26,32 +26,32 @@ const BASE_STYLES = `
 *{box-sizing:border-box;margin:0;padding:0}
 @page{size:A4;margin:12mm 14mm 14mm}
 html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+body{font-family:'Lexend',system-ui,-apple-system,'Segoe UI',sans-serif;background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
 .sheet-page + .sheet-page{break-before:page;page-break-before:always}
 
 /* Header card */
 .site-header{background:var(--navy);border-radius:18px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden}
 .site-header::after{content:"";position:absolute;inset:0;background:radial-gradient(120px 80px at 92% 0%,rgba(9,196,220,.25),transparent 70%);pointer-events:none}
 .brand-block,.sheet-badge{position:relative}
-.logo{font-family:'Syne',system-ui,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;line-height:1;text-transform:uppercase;color:#f8fafc;display:inline-flex;align-items:center}
+.logo{font-family:'Lexend',system-ui,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;line-height:1;text-transform:uppercase;color:#f8fafc;display:inline-flex;align-items:center}
 .logo .accent{color:var(--primary)}
 .logo .star-glyph{width:.8em;height:.8em;color:var(--amber);vertical-align:-.08em;margin:0 -.02em}
-.tagline{margin-top:7px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#94a3b8}
+.tagline{margin-top:7px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:500;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:#94a3b8}
 .sheet-badge{text-align:right;flex-shrink:0}
-.badge-title{font-family:'Syne',system-ui,sans-serif;font-weight:800;font-size:20px;line-height:1.1;letter-spacing:-.015em;color:var(--primary);white-space:nowrap}
-.badge-kind{margin-top:4px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#94a3b8}
+.badge-title{font-family:'Lexend',system-ui,sans-serif;font-weight:800;font-size:20px;line-height:1.1;letter-spacing:-.015em;color:var(--primary);white-space:nowrap}
+.badge-kind{margin-top:4px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:500;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#94a3b8}
 
 /* Title block: focus reads first, then the small facts */
-.focus{margin-top:20px;font-family:'Syne',system-ui,sans-serif;font-weight:800;font-size:21px;line-height:1.15;letter-spacing:-.02em;text-wrap:balance;border-left:3px solid var(--primary);padding-left:12px}
-.meta{margin-top:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums}
-.label{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:24px}
+.focus{margin-top:20px;font-family:'Lexend',system-ui,sans-serif;font-weight:800;font-size:21px;line-height:1.15;letter-spacing:-.02em;text-wrap:balance;border-left:3px solid var(--primary);padding-left:12px}
+.meta{margin-top:8px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:500;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums}
+.label{font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:24px}
 
 /* Footer */
 footer{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:22px;padding-top:10px;border-top:1px solid var(--line);font-size:9px;font-weight:500;color:var(--muted)}
-footer .credit{font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:.04em}
+footer .credit{font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.04em}
 `;
 
-function escapeHtml(value) {
+export function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -69,7 +69,7 @@ function highlightWord(sentence, word) {
 // The sheet's identifier ("Week 04", "Autumn term") sits at the right of
 // the header card in cyan, with the sheet type as a small mono caption
 // beneath it; the week's focus/topic becomes the heading under the card.
-function printHeader({ eyebrow, title, topic, meta }) {
+export function printHeader({ eyebrow, title, topic, meta }) {
   return `
 <header class="site-header">
   <div class="brand-block">
@@ -85,11 +85,11 @@ ${topic ? `<p class="focus">${escapeHtml(topic)}</p>` : ""}
 ${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : ""}`;
 }
 
-function printFooter(text) {
+export function printFooter(text) {
   return `<footer><span>${escapeHtml(text)}</span><span class="credit">&copy; SPELL// ST&#9733;RS &mdash; free to print and share</span></footer>`;
 }
 
-function wrapDocument(docTitle, style, body) {
+export function wrapDocument(docTitle, style, body) {
   return `<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><title>${escapeHtml(docTitle)}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="${FONTS_HREF}" rel="stylesheet"><style>${BASE_STYLES}${style}</style></head><body>${body}</body></html>`;
 }
 
@@ -136,7 +136,7 @@ function wordsOnlySection({ eyebrow = "Spelling list", title, topic, meta, words
   const style = `
 .word-list{list-style:none;margin-top:14px;counter-reset:word}
 .word-list li{counter-increment:word;position:relative;padding:11px 0 11px 34px;border-bottom:1px solid var(--line);break-inside:avoid}
-.word-list li::before{content:counter(word,decimal-leading-zero);position:absolute;left:0;top:16px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:8.5px;letter-spacing:.1em;color:var(--muted)}
+.word-list li::before{content:counter(word,decimal-leading-zero);position:absolute;left:0;top:16px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:500;font-size:8.5px;letter-spacing:.1em;color:var(--muted)}
 .w{font-weight:800;font-size:18px;line-height:1.2;letter-spacing:.005em}
 .meaning{font-size:12.5px;color:#334155;margin-top:4px;line-height:1.5;letter-spacing:.005em}
 .sentence{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5;letter-spacing:.005em}
@@ -161,7 +161,7 @@ function writingPracticeSection({ title, topic, meta, words }) {
 
   const style = `
 table{width:100%;border-collapse:collapse;margin-top:16px;table-layout:fixed}
-thead th{text-align:left;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 8px 7px 0;border-bottom:2px solid var(--ink)}
+thead th{text-align:left;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 8px 7px 0;border-bottom:2px solid var(--ink)}
 thead th:first-child{width:28%}
 tr{break-inside:avoid}
 .word-cell{font-weight:800;font-size:17px;line-height:1.2;letter-spacing:.005em;padding:14px 14px 10px 0;border-bottom:1px solid var(--line);vertical-align:bottom}
@@ -192,7 +192,7 @@ function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections
   const style = `
 .layout{display:flex;gap:40px;margin-top:20px;align-items:flex-start}
 .grid{display:grid;grid-template-columns:repeat(${size},1fr);gap:2px;width:fit-content;flex-shrink:0}
-.cell{width:${cellPx}px;height:${cellPx}px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:${cellFont}px;border:1px solid var(--line);border-radius:4px}
+.cell{width:${cellPx}px;height:${cellPx}px;display:flex;align-items:center;justify-content:center;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:${cellFont}px;border:1px solid var(--line);border-radius:4px}
 .words-col{flex:1;min-width:120px}
 .words-col .label{margin-top:0}
 .words{list-style:none}

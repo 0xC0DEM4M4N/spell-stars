@@ -260,7 +260,7 @@ export default function YearPage() {
         </div>
       )}
 
-      <main className="mx-auto max-w-7xl space-y-6 px-6 py-8 pt-0">
+      <main className="space-y-6 py-8 pt-0">
         {scope === "day" ? (
           <DayScopeView
             words={words}
@@ -271,23 +271,25 @@ export default function YearPage() {
             capabilities={capabilities}
           />
         ) : (
-          <PooledScopeView
-            words={words}
-            scope={scope}
-            currentWeek={currentWeek}
-            count={count}
-            setCount={setCount}
-            selectedTerm={term}
-            setSelectedTerm={setTerm}
-            termStructure={termStructure}
-            capabilities={capabilities}
-            progress={progress}
-            yearLabel={yearMeta.label}
-            quizOpen={quizOpen}
-            setQuizOpen={setQuizOpen}
-            onAttempt={handleAttempt}
-            accent={accent}
-          />
+          <div className="mx-auto max-w-7xl px-6">
+            <PooledScopeView
+              words={words}
+              scope={scope}
+              currentWeek={currentWeek}
+              count={count}
+              setCount={setCount}
+              selectedTerm={term}
+              setSelectedTerm={setTerm}
+              termStructure={termStructure}
+              capabilities={capabilities}
+              progress={progress}
+              yearLabel={yearMeta.label}
+              quizOpen={quizOpen}
+              setQuizOpen={setQuizOpen}
+              onAttempt={handleAttempt}
+              accent={accent}
+            />
+          </div>
         )}
       </main>
 
@@ -300,9 +302,11 @@ function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt,
   const weeks = buildWeeksForYear(words, totalWeeks);
   if (!weeks.length) {
     return (
-      <div className="border border-amber-300/20 bg-amber-400/5 p-5 text-sm text-warning" data-testid="letter-only-empty-state">
-        This year is about letter sounds, not full words yet — word practice and word search unlock
-        once this year's words begin. (Letter-tile practice mode isn't built yet.)
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="border border-amber-300/20 bg-amber-400/5 p-5 text-sm text-warning" data-testid="letter-only-empty-state">
+          This year is about letter sounds, not full words yet — word practice and word search unlock
+          once this year's words begin. (Letter-tile practice mode isn't built yet.)
+        </div>
       </div>
     );
   }

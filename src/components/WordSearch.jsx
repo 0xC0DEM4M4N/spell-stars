@@ -10,6 +10,7 @@ import {
 import { loadTimerPrefs, saveTimerPrefs } from "@/lib/timerPrefs";
 import { loadLetterCasePref, saveLetterCasePref } from "@/lib/letterCasePrefs";
 import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
+import { escapeHtml, openPrintWindow, printFooter, printHeader, wrapDocument } from "@/lib/printSheets";
 
 const COLORS = [
   "bg-cyan-400/40 text-white border-cyan-400",
@@ -250,46 +251,31 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
       .map(({ word }) => {
         const obj = wordObjMap[word.toLowerCase()];
         return `<tr>
-          <td class="w-cell">${word}</td>
-          <td class="s-cell">${obj.definition}</td>
+          <td class="w-cell">${escapeHtml(word)}</td>
+          <td class="s-cell">${escapeHtml(obj.definition)}</td>
         </tr>`;
       })
       .join("");
 
-    const html = `<!DOCTYPE html><html><head>
-<title>Word Search – ${title}</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Courier New',monospace;padding:36px 40px;background:#fff;color:#111}
-.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#666;margin-bottom:4px}
-h1{font-size:26px;font-weight:900;letter-spacing:-.02em}
-.lp{font-size:12px;color:#444;margin-top:10px;border-left:3px solid #0ea5e9;padding-left:10px;line-height:1.5}
-.grid{display:grid;grid-template-columns:repeat(${size},1fr);gap:2px;margin:22px 0;width:fit-content}
-.cell{${letterCase === "lowercase" ? "width:38px;height:38px" : "width:30px;height:30px"};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${letterCase === "lowercase" ? 20 : 13}px;border:1px solid #ccc}
-.label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#777;margin-bottom:8px;margin-top:20px}
-.words{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
-.word{border:1px solid #aaa;padding:3px 11px;border-radius:20px;font-size:${letterCase === "lowercase" ? 15 : 11}px;${letterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.1em}
-table{width:100%;border-collapse:collapse;margin-top:4px}
-.w-cell{font-size:${letterCase === "lowercase" ? 15 : 11}px;font-weight:700;${letterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:.08em;padding:5px 10px 5px 0;vertical-align:top;white-space:nowrap;color:#333;width:100px;border-bottom:1px solid #eee}
-.s-cell{font-size:12px;color:#444;line-height:1.6;padding:5px 0;border-bottom:1px solid #eee}
-.hl{font-weight:900;color:#0284c7;text-decoration:underline}
-footer{margin-top:24px;font-size:10px;color:#bbb}
-</style></head><body>
-<p class="eyebrow">SPELL// ST&#9733;RS &mdash; Word Search</p>
-<h1>${title}</h1>
-<p class="lp">${focus}</p>
+    const lower = letterCase === "lowercase";
+    const cellPx = lower ? 34 : 28;
+    const style = `
+.grid{display:grid;grid-template-columns:repeat(${size},1fr);gap:2px;margin:22px 0 0;width:fit-content}
+.cell{width:${cellPx}px;height:${cellPx}px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:${lower ? 18 : 13}px;font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:4px}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.word{border:1px solid var(--dot);padding:3px 11px;border-radius:20px;font-weight:600;font-size:${lower ? 14 : 11}px;${lower ? "" : "text-transform:uppercase;"}letter-spacing:${lower ? ".02em" : ".1em"}}
+table{width:100%;border-collapse:collapse}
+.w-cell{font-size:${lower ? 14 : 11}px;font-weight:700;${lower ? "" : "text-transform:uppercase;"}letter-spacing:${lower ? ".02em" : ".08em"};padding:6px 12px 6px 0;vertical-align:top;white-space:nowrap;width:110px;border-bottom:1px solid var(--line)}
+.s-cell{font-size:12px;color:#334155;line-height:1.5;padding:6px 0;border-bottom:1px solid var(--line)}
+tr{break-inside:avoid}
+`;
+    const body = `${printHeader({ eyebrow: "Word search", title, topic: focus })}
 <div class="grid">${letters.flat().map(l => `<div class="cell">${l}</div>`).join("")}</div>
 <p class="label">Find these words</p>
-<div class="words">${game.placed.map(({ word }) => `<div class="word">${word}</div>`).join("")}</div>
+<div class="words">${game.placed.map(({ word }) => `<div class="word">${escapeHtml(word)}</div>`).join("")}</div>
 ${meaningRows ? `<p class="label">What they mean</p><table>${meaningRows}</table>` : ""}
-<footer>Find all the words hidden in the grid above.</footer>
-</body></html>`;
-    const win = window.open("", "_blank");
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(() => win.print(), 300);
+${printFooter("Find all the words hidden in the grid above.")}`;
+    openPrintWindow(wrapDocument(`Word search – ${title}`, style, body));
   };
 
   return (
