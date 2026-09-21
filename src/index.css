@@ -580,3 +580,13 @@ button:not(:disabled):active,
     box-sizing: border-box;
   }
 }
+
+/* The carousel's open card widens (and its neighbours' positions follow)
+   with the same decelerating, no-overshoot curve as the rest of the UI.
+   Reduced motion zeroes every transition duration globally. */
+.week-slot {
+  transition: flex-basis 520ms var(--ease-fluid);
+}
+.week-viewport {
+  transition: height 520ms var(--ease-fluid);
+}

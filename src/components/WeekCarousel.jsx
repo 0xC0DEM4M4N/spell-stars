@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, Sparkles, Target } from "lucide-react";
@@ -24,9 +24,25 @@ function HighlightWord({ text, word }) {
 
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-const WordChip = ({ entry, index, week, active, pinned, onHover, onLeave, onSelect }) => (
+// The card at rest opens up into a wide, two-column layout, but only once
+// it has been still for this long: flicking through the weeks never
+// triggers (or interrupts) the animation.
+const WIDE_DELAY_MS = 500;
+// Card sizes in px. Every card is at most NARROW_CARD_PX wide; the open one
+// may grow to the page's content column (max-w-7xl minus its px-6 = 77rem).
+const NARROW_CARD_PX = 576;
+const WIDE_CARD_PX = 1232;
+const SLIDE_GUTTER_PX = 16; // the pl-4 between slides
+const PAGE_MARGIN_PX = 48; // room left for the neighbouring cards to peek in
+const CARD_PADDING_PX = 32; // sm:p-8
+// Below this card width there isn't room for two columns; stay stacked.
+const MIN_WIDE_CARD_PX = 880;
+
+const WordChip = ({ entry, index, week, active, pinned, wide, onHover, onLeave, onSelect }) => (
   <div
-    className={`flex cursor-pointer items-center justify-between border px-4 py-3 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
+    className={`flex cursor-pointer items-center justify-between border px-4 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
+      wide ? "px-5 py-4" : "py-3"
+    } ${
       pinned
         ? "border-cyan-300/60 bg-cyan-300/15"
         : active
@@ -45,7 +61,7 @@ const WordChip = ({ entry, index, week, active, pinned, onHover, onLeave, onSele
     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(e); } }}
     data-testid={`word-chip-week-${week}-${index + 1}`}
   >
-    <span className="font-display text-lg font-bold tracking-wide text-foreground">{entry.word}</span>
+    <span className={`font-display font-bold tracking-wide text-foreground ${wide ? "text-2xl" : "text-lg"}`}>{entry.word}</span>
     <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
       {String(index + 1).padStart(2, "0")}
       {(entry.exampleSentence || entry.definition) && (
@@ -55,7 +71,42 @@ const WordChip = ({ entry, index, week, active, pinned, onHover, onLeave, onSele
   </div>
 );
 
-function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, capabilities }) {
+// Shared card chrome for both card kinds: the glow, hover lift and fade for
+// inactive cards. `overflow-hidden` + a fixed-width inner wrapper let the
+// card's frame widen and narrow like a window opening on content that has
+// already been laid out at its final size, so nothing reflows mid-animation.
+const cardShadow = (active, hover) => {
+  if (hover) {
+    return active
+      ? "0 0 0 2px rgba(34,211,238,0.95), 0 0 0 8px rgba(34,211,238,0.25), 0 14px 60px rgba(34,211,238,0.32), 0 24px 80px rgba(0,0,0,0.5)"
+      : "0 0 0 1px rgba(148,163,184,0.14), 0 0 0 1px rgba(148,163,184,0.08), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)";
+  }
+  return active
+    ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
+    : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)";
+};
+
+// Reports a card's natural content height (what it needs at its current
+// layout, padding included) up to the carousel, which sizes the track to fit
+// the resting card. Measured on an un-stretched wrapper so it is the height
+// the content wants, not the height it has been given.
+function useReportHeight(ref, onMeasure, week, wide) {
+  const wideRef = useRef(wide);
+  wideRef.current = wide;
+  useLayoutEffect(() => {
+    const node = ref.current;
+    if (!node || !onMeasure) return undefined;
+    const report = () => onMeasure(week, node.offsetHeight + CARD_PADDING_PX * 2, wideRef.current);
+    report();
+    const observer = new ResizeObserver(report);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [ref, onMeasure, week, wide]);
+}
+
+const WeekCard = memo(function WeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onMeasure, capabilities }) {
+  const measureRef = useRef(null);
+  useReportHeight(measureRef, onMeasure, weekData.week, wide);
   const [pinnedWord, setPinnedWord] = useState(null);
   const [hoveredWord, setHoveredWord] = useState(null);
   const [quizOpen, setQuizOpen] = useState(false);
@@ -68,197 +119,199 @@ function WeekCard({ weekData, active, current, isDragging, onClick, onAttempt, c
     setPinnedWord((prev) => (prev?.id === entry.id ? null : entry));
   };
 
-  const handleCardClick = (e) => {
+  const handleCardClick = () => {
     setPinnedWord(null);
-    onClick && onClick(e);
+    onSelectWeek && onSelectWeek(weekData.week);
   };
 
   return (
     <motion.article
       onClick={handleCardClick}
-      whileHover={isDragging ? {} : {
-        y: -6,
-        boxShadow: active
-          ? "0 0 0 2px rgba(34,211,238,0.95), 0 0 0 8px rgba(34,211,238,0.25), 0 14px 60px rgba(34,211,238,0.32), 0 24px 80px rgba(0,0,0,0.5)"
-          : "0 0 0 1px rgba(148,163,184,0.14), 0 0 0 1px rgba(148,163,184,0.08), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)",
-      }}
-      style={{
-        boxShadow: active
-          ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
-          : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)",
-      }}
+      whileHover={isDragging ? {} : { y: -6, boxShadow: cardShadow(active, true) }}
+      style={{ boxShadow: cardShadow(active, false) }}
       transition={SPRING.settle}
-      className={`holo-card h-full rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
+      className={`holo-card h-full overflow-hidden rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
+      data-wide={wide ? "true" : "false"}
     >
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
-          <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {current && (
-            <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
-              Current
+      <div style={innerWidth ? { width: innerWidth } : undefined}>
+        <div ref={measureRef} className={wide ? "grid grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10" : ""}>
+          <div className="flex min-w-0 flex-col">
+            <div className={wide ? "flex flex-col items-start gap-5" : "flex flex-wrap items-start justify-between gap-4"}>
+              <div>
+                <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
+                <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {current && (
+                  <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
+                    Current
+                  </div>
+                )}
+                <WordSearch
+                  words={weekData.words}
+                  gridSize={caps.wordSearchGrid?.size}
+                  gridDirections={caps.wordSearchGrid?.directions}
+                  gridLetterCase={caps.wordSearchGrid?.letterCase}
+                  title={`Week ${String(weekData.week).padStart(2, "0")}`}
+                  focus={weekData.focus}
+                />
+                <button
+                  onClick={e => { e.stopPropagation(); setQuizOpen(true); }}
+                  className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/10 hover:text-accent2"
+                  data-testid="practice-button"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> Practice
+                </button>
+                <PrintWeekMenu weekData={weekData} capabilities={capabilities} />
+              </div>
             </div>
-          )}
-          <WordSearch
-            words={weekData.words}
-            gridSize={caps.wordSearchGrid?.size}
-            gridDirections={caps.wordSearchGrid?.directions}
-            gridLetterCase={caps.wordSearchGrid?.letterCase}
-            title={`Week ${String(weekData.week).padStart(2, "0")}`}
-            focus={weekData.focus}
-          />
-          <button
-            onClick={e => { e.stopPropagation(); setQuizOpen(true); }}
-            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/10 hover:text-accent2"
-            data-testid="practice-button"
+
+            <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Week {weekData.weekOfTerm} of term
+            </div>
+
+            {/* Fixed-height info panel — prevents card from jumping */}
+            <div className={`mt-7 overflow-hidden border-l-2 border-cyan-300 pl-5 ${wide ? "h-[9.5rem]" : "h-[6.25rem]"}`}>
+              <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+                <Target className="h-4 w-4" />
+                {activeWordInfo ? activeWordInfo.word : "Learning point"}
+                {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-primary">pinned</span>}
+              </div>
+              <AnimatePresence mode="wait">
+                {activeWordInfo ? (
+                  <motion.div
+                    key={activeWordInfo.id}
+                    initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.12 }}
+                  >
+                    {activeWordInfo.exampleSentence && (
+                      <p className="text-sm leading-snug text-foreground">
+                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-primary">eg</span>
+                        <HighlightWord text={activeWordInfo.exampleSentence} word={activeWordInfo.word} />
+                      </p>
+                    )}
+                    {activeWordInfo.definition && (
+                      <p className="mt-1 text-sm leading-snug text-muted-foreground">
+                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">means</span>
+                        {activeWordInfo.definition}
+                      </p>
+                    )}
+                    {!activeWordInfo.exampleSentence && !activeWordInfo.definition && (
+                      <p className="text-sm italic text-muted-foreground">Definition coming soon.</p>
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.p
+                    key="lp"
+                    initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.12 }}
+                    className={`font-semibold leading-snug text-foreground ${wide ? "text-lg" : "text-base"}`}
+                    data-testid={`learning-point-week-${weekData.week}`}
+                  >
+                    {weekData.focus}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div
+            className={`grid min-w-0 grid-cols-1 content-start gap-3 sm:grid-cols-2 ${wide ? "" : "mt-8"}`}
+            data-testid={`word-list-week-${weekData.week}`}
           >
-            <Sparkles className="h-3.5 w-3.5" /> Practice
-          </button>
-          <PrintWeekMenu weekData={weekData} capabilities={capabilities} />
+            {weekData.words.map((entry, index) => (
+              <WordChip
+                key={entry.id}
+                entry={entry}
+                index={index}
+                week={weekData.week}
+                wide={wide}
+                active={activeWordInfo?.id === entry.id}
+                pinned={pinnedWord?.id === entry.id}
+                onHover={() => setHoveredWord(entry)}
+                onLeave={() => setHoveredWord(null)}
+                onSelect={(e) => handleSelect(entry, e)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Week {weekData.weekOfTerm} of term
-      </div>
-
-      {/* Fixed-height info panel — prevents card from jumping */}
-      <div className="mt-7 h-[6.25rem] overflow-hidden border-l-2 border-cyan-300 pl-5">
-        <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
-          <Target className="h-4 w-4" />
-          {activeWordInfo ? activeWordInfo.word : "Learning point"}
-          {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-primary">pinned</span>}
-        </div>
-        <AnimatePresence mode="wait">
-          {activeWordInfo ? (
-            <motion.div
-              key={activeWordInfo.id}
-              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.12 }}
-            >
-              {activeWordInfo.exampleSentence && (
-                <p className="text-sm leading-snug text-foreground">
-                  <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-primary">eg</span>
-                  <HighlightWord text={activeWordInfo.exampleSentence} word={activeWordInfo.word} />
-                </p>
-              )}
-              {activeWordInfo.definition && (
-                <p className="mt-1 text-sm leading-snug text-muted-foreground">
-                  <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">means</span>
-                  {activeWordInfo.definition}
-                </p>
-              )}
-              {!activeWordInfo.exampleSentence && !activeWordInfo.definition && (
-                <p className="text-sm italic text-muted-foreground">Definition coming soon.</p>
-              )}
-            </motion.div>
-          ) : (
-            <motion.p
-              key="lp"
-              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.12 }}
-              className="text-base font-semibold leading-snug text-foreground"
-              data-testid={`learning-point-week-${weekData.week}`}
-            >
-              {weekData.focus}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2" data-testid={`word-list-week-${weekData.week}`}>
-        {weekData.words.map((entry, index) => (
-          <WordChip
-            key={entry.id}
-            entry={entry}
-            index={index}
-            week={weekData.week}
-            active={activeWordInfo?.id === entry.id}
-            pinned={pinnedWord?.id === entry.id}
-            onHover={() => setHoveredWord(entry)}
-            onLeave={() => setHoveredWord(null)}
-            onSelect={(e) => handleSelect(entry, e)}
-          />
-        ))}
       </div>
       <PracticeQuiz words={weekData.words} onAttempt={onAttempt} ttsRate={caps.ttsRate} open={quizOpen} onOpenChange={setQuizOpen} />
     </motion.article>
   );
-}
+});
 
-function LetterWeekCard({ weekData, active, current, isDragging, onClick, onAttempt, capabilities }) {
+const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onMeasure, capabilities }) {
+  const measureRef = useRef(null);
+  useReportHeight(measureRef, onMeasure, weekData.week, wide);
   const [activeDay, setActiveDay] = useState(0);
   const dayEntry = weekData.letters[Math.min(activeDay, weekData.letters.length - 1)];
 
-  const handleCardClick = (e) => {
-    onClick && onClick(e);
+  const handleCardClick = () => {
+    onSelectWeek && onSelectWeek(weekData.week);
   };
 
   return (
     <motion.article
       onClick={handleCardClick}
-      whileHover={isDragging ? {} : {
-        y: -6,
-        boxShadow: active
-          ? "0 0 0 2px rgba(34,211,238,0.95), 0 0 0 8px rgba(34,211,238,0.25), 0 14px 60px rgba(34,211,238,0.32), 0 24px 80px rgba(0,0,0,0.5)"
-          : "0 0 0 1px rgba(148,163,184,0.14), 0 0 0 1px rgba(148,163,184,0.08), 0 12px 40px rgba(148,163,184,0.13), 0 24px 80px rgba(0,0,0,0.45)",
-      }}
-      style={{
-        boxShadow: active
-          ? "0 0 0 2px rgba(34,211,238,0.85), 0 0 0 8px rgba(34,211,238,0.18), 0 10px 50px rgba(34,211,238,0.22), 0 24px 80px rgba(0,0,0,0.4)"
-          : "0 0 0 1px rgba(148,163,184,0.1), 0 0 0 1px rgba(148,163,184,0.05), 0 12px 40px rgba(148,163,184,0.08), 0 24px 80px rgba(0,0,0,0.35)",
-      }}
+      whileHover={isDragging ? {} : { y: -6, boxShadow: cardShadow(active, true) }}
+      style={{ boxShadow: cardShadow(active, false) }}
       transition={SPRING.settle}
-      className={`holo-card h-full rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
+      className={`holo-card h-full overflow-hidden rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
+      data-wide={wide ? "true" : "false"}
     >
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
-          <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
-        </div>
-        {current && (
-          <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
-            Current
+      <div style={innerWidth ? { width: innerWidth } : undefined}>
+        <div ref={measureRef} className={wide ? "grid grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10" : ""}>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
+                <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
+              </div>
+              {current && (
+                <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
+                  Current
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              Letter of the day — one new sound each school day
+            </div>
+
+            <div className="mt-7 flex flex-wrap gap-2" data-testid="letter-day-pills">
+              {weekData.letters.map((entry, index) => (
+                <button
+                  key={entry.id}
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setActiveDay(index); }}
+                  className={`rounded-full border px-3 py-2 font-mono text-xs tracking-[0.14em] transition-colors duration-200 ${
+                    index === activeDay
+                      ? "border-cyan-300 bg-cyan-300/15 text-primary"
+                      : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/40 hover:text-primary"
+                  }`}
+                  data-testid={`letter-day-${index}`}
+                >
+                  <span className="uppercase">Day {index + 1}</span> · {entry.prompt}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
-      </div>
 
-      <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Letter of the day — one new sound each school day
-      </div>
-
-      <div className="mt-7 flex flex-wrap gap-2" data-testid="letter-day-pills">
-        {weekData.letters.map((entry, index) => (
-          <button
-            key={entry.id}
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setActiveDay(index); }}
-            className={`rounded-full border px-3 py-2 font-mono text-xs tracking-[0.14em] transition-colors duration-200 ${
-              index === activeDay
-                ? "border-cyan-300 bg-cyan-300/15 text-primary"
-                : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/40 hover:text-primary"
-            }`}
-            data-testid={`letter-day-${index}`}
-          >
-            <span className="uppercase">Day {index + 1}</span> · {entry.prompt}
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-6 flex flex-col items-center gap-4 rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 text-center">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{dayEntry.focus}</div>
-        <div className="font-display text-7xl font-extrabold text-primary" data-testid="letter-of-the-day">
-          {dayEntry.prompt}
+          <div className={`flex min-w-0 flex-col items-center justify-center gap-4 rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 text-center ${wide ? "" : "mt-6"}`}>
+            <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{dayEntry.focus}</div>
+            <div className="font-display text-7xl font-extrabold text-primary" data-testid="letter-of-the-day">
+              {dayEntry.prompt}
+            </div>
+            <FindTheLetter prompt={dayEntry.prompt} entryId={dayEntry.id} onAttempt={onAttempt} ttsRate={capabilities?.ttsRate} />
+          </div>
         </div>
-        <FindTheLetter prompt={dayEntry.prompt} entryId={dayEntry.id} onAttempt={onAttempt} ttsRate={capabilities?.ttsRate} />
       </div>
     </motion.article>
   );
-}
+});
 
 /**
  * Swipeable, week-by-week curriculum browser — one card per week (from
@@ -355,6 +408,75 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
     if (targetIndex >= 0 && emblaApi.selectedScrollSnap() !== targetIndex) emblaApi.scrollTo(targetIndex);
   }, [emblaApi, selectedWeek, weeks]);
 
+  // ── Wide "open" card ────────────────────────────────────────────────────
+  const [viewportWidth, setViewportWidth] = useState(0);
+  const hasWeeks = weeks.length > 0;
+  useEffect(() => {
+    const node = viewportRef.current;
+    if (!node) return undefined;
+    const update = () => setViewportWidth(node.clientWidth);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasWeeks]);
+
+  const narrowCardPx = viewportWidth ? Math.min(viewportWidth - PAGE_MARGIN_PX, NARROW_CARD_PX) : 0;
+  const wideCardPx = viewportWidth ? Math.min(viewportWidth - PAGE_MARGIN_PX, WIDE_CARD_PX) : 0;
+  const canWide = wideCardPx >= MIN_WIDE_CARD_PX;
+
+  // Natural content heights reported by the cards, per layout. The track is
+  // sized to the tallest narrow card normally, and to the open card's own
+  // (shorter) height while one is open, so no dead space is left beneath it.
+  const measuresRef = useRef(new Map());
+  const [, setMeasureVersion] = useState(0);
+  const handleMeasure = useCallback((week, height, isWide) => {
+    const entry = measuresRef.current.get(week) || {};
+    const key = isWide ? "wide" : "narrow";
+    if (entry[key] === height) return;
+    measuresRef.current.set(week, { ...entry, [key]: height });
+    setMeasureVersion((v) => v + 1);
+  }, []);
+
+  // Which week's card is currently open. It only ever changes once the
+  // carousel has been still for WIDE_DELAY_MS: any drag or scroll cancels
+  // the pending change, so paging through the weeks just moves the (narrow)
+  // cards and the open card catches up when you stop.
+  const [wideWeek, setWideWeek] = useState(null);
+  const weeksRef = useRef(weeks);
+  weeksRef.current = weeks;
+  useEffect(() => {
+    if (!emblaApi) return undefined;
+    if (!canWide) {
+      setWideWeek(null);
+      return undefined;
+    }
+    let timer = null;
+    const cancel = () => window.clearTimeout(timer);
+    const arm = () => {
+      cancel();
+      timer = window.setTimeout(() => {
+        const week = weeksRef.current[emblaApi.selectedScrollSnap()]?.week;
+        if (week != null) setWideWeek(week);
+      }, WIDE_DELAY_MS);
+    };
+    emblaApi.on("pointerDown", cancel).on("scroll", cancel).on("pointerUp", arm).on("settle", arm);
+    arm();
+    return () => {
+      cancel();
+      emblaApi.off("pointerDown", cancel).off("scroll", cancel).off("pointerUp", arm).off("settle", arm);
+    };
+  }, [emblaApi, canWide]);
+
+  let narrowMax = 0;
+  measuresRef.current.forEach((entry) => { if (entry.narrow > narrowMax) narrowMax = entry.narrow; });
+  // Follow the *selected* card, not the open one: while paging through the
+  // weeks the open card may be several cards back, and the cards in view
+  // must not be cut short by its (shorter) height.
+  const selectedIsOpen = canWide && selectedWeek === wideWeek;
+  const openHeight = selectedIsOpen ? measuresRef.current.get(wideWeek)?.wide : undefined;
+  const fitHeight = canWide ? openHeight || narrowMax || 0 : 0;
+
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
   const activeWeek = weeks.find((w) => w.week === selectedWeek) || weeks[0];
@@ -389,33 +511,40 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
       </div>
 
       {/* Full-bleed track: spans the whole page width, edge to edge. */}
-      <div className={`-mb-10 overflow-hidden pb-10 pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} ref={setViewport} data-testid="week-carousel-viewport">
-        <div className="-ml-4 flex">
-          {weeks.map((weekData) => (
-            <div className="min-w-0 flex-[0_0_min(calc(100%_-_3rem),37rem)] pl-4" key={weekData.week}>
-              {weekData.kind === "letters" ? (
-                <LetterWeekCard
-                  weekData={weekData}
-                  active={weekData.week === selectedWeek}
-                  current={weekData.week === currentWeek}
-                  isDragging={isDragging}
-                  onClick={() => onSelectWeek(weekData.week)}
-                  onAttempt={onAttempt}
-                  capabilities={capabilities}
-                />
-              ) : (
-                <WeekCard
-                  weekData={weekData}
-                  active={weekData.week === selectedWeek}
-                  current={weekData.week === currentWeek}
-                  isDragging={isDragging}
-                  onClick={() => onSelectWeek(weekData.week)}
-                  onAttempt={onAttempt}
-                  capabilities={capabilities}
-                />
-              )}
-            </div>
-          ))}
+      <div
+        className={`week-viewport -mb-10 overflow-hidden pb-10 pt-6 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+        style={fitHeight ? { height: fitHeight + 64 } : undefined}
+        ref={setViewport}
+        data-testid="week-carousel-viewport"
+      >
+        <div className="-ml-4 flex h-full">
+          {weeks.map((weekData) => {
+            const wide = canWide && weekData.week === wideWeek;
+            const cardPx = wide ? wideCardPx : narrowCardPx;
+            const cardProps = {
+              weekData,
+              active: weekData.week === selectedWeek,
+              current: weekData.week === currentWeek,
+              wide,
+              // Content is laid out at the size the card is heading for, so
+              // the frame reveals it instead of squeezing it mid-animation.
+              innerWidth: canWide ? cardPx - CARD_PADDING_PX * 2 : undefined,
+              isDragging,
+              onSelectWeek,
+              onAttempt,
+              onMeasure: handleMeasure,
+              capabilities,
+            };
+            return (
+              <div
+                className={`min-w-0 flex-[0_0_min(calc(100%_-_3rem),37rem)] pl-4 ${viewportWidth ? "week-slot" : ""}`}
+                style={viewportWidth ? { flexBasis: cardPx + SLIDE_GUTTER_PX } : undefined}
+                key={weekData.week}
+              >
+                {weekData.kind === "letters" ? <LetterWeekCard {...cardProps} /> : <WeekCard {...cardProps} />}
+              </div>
+            );
+          })}
         </div>
       </div>
 
