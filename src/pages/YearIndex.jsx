@@ -5,6 +5,7 @@ import { ArrowDown, ClipboardCheck, MessageCircleQuestion, Plus, Sparkles, Star 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TeaserLink } from "@/components/InfoPage";
+import { KeyFeatures } from "@/components/KeyFeatures";
 import { useYearsConfig } from "@/lib/yearData";
 import { loadLists } from "@/lib/customLists";
 import { useTheme } from "@/context/ThemeContext";
@@ -125,6 +126,15 @@ export default function YearIndex() {
               >
                 Jump to your year <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
               </motion.a>
+              <motion.a
+                href="#features"
+                whileHover={{ y: -3, transition: SPRING.settle }}
+                whileTap={{ ...PRESS, transition: SPRING.snappy }}
+                className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-6 py-3 font-semibold text-cyan-200 transition-colors duration-300 hover:bg-cyan-300/10"
+                data-testid="hero-features-link"
+              >
+                What's included
+              </motion.a>
             </motion.div>
             <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING.reveal, delay: 0.45 }} className="mt-5 max-w-2xl border-l border-cyan-300/30 pl-5 font-mono text-sm text-slate-400">
               Progressive spelling practice for keen beans — from first letter sounds in
@@ -156,6 +166,9 @@ export default function YearIndex() {
           ))}
         </div>
       </section>
+
+      {/* Why use it: right under the hero and stats, before the year picker. */}
+      <KeyFeatures totalWords={totalWords} />
 
       {/* Year grid */}
       <section id="years" className="px-5 py-16 sm:px-8" data-testid="year-grid-section">

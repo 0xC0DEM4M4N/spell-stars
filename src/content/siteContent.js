@@ -1,19 +1,117 @@
 import {
+  Accessibility,
+  BadgeCheck,
   BookOpen,
+  Brain,
   CalendarDays,
   ClipboardCheck,
+  GraduationCap,
   Grid2x2,
   Landmark,
+  ListPlus,
   MessageCircleQuestion,
   NotebookText,
   Printer,
+  QrCode,
+  Save,
   ScrollText,
   SlidersHorizontal,
   Sparkles,
+  SpellCheck2,
+  Volume2,
 } from "lucide-react";
 
 // Long-form copy that used to live on the home page. Each page under
 // /how-it-works, /for-educators and /faq renders its own slice of this.
+
+// The "why use it" tiles on the home page (components/KeyFeatures.jsx). Only
+// say here what the site does today: each line is checked against the code.
+// `big` tiles lead the grid. `body` may be a function of { totalWords }.
+export const KEY_FEATURES_HEADING = ["All the spelling practice.", "None of the sign-up."]; // one line each
+export const KEY_FEATURES_LEDE =
+  "Free for Reception to Year 6. It remembers where each child got to, works with any word list, and is built to be easy to read for everyone.";
+
+export const KEY_FEATURES = [
+  {
+    id: "progress",
+    big: true,
+    icon: Save,
+    title: "Progress saves itself",
+    body: "Every word you practise is remembered on this device. Close the tab, come back tomorrow, and the words that need another go are waiting. No login.",
+    to: "/how-it-works",
+    cta: "See how a session works",
+  },
+  {
+    id: "sync",
+    big: true,
+    icon: QrCode,
+    title: "Take it to another device",
+    body: "Save a backup as a file, a link or a QR code and open it on any other device. See what will change first, and undo it for ten minutes. Still no account.",
+    to: "/sync",
+    cta: "Save or move progress",
+  },
+  {
+    id: "custom",
+    big: true,
+    icon: ListPlus,
+    title: "Your words, your list",
+    body: "Paste this week's school spellings and get a quiz, a word search and print sheets for exactly those words. Lists stay on your device and travel with your backup.",
+    to: "/custom",
+    cta: "Make a list",
+  },
+  {
+    id: "years",
+    icon: GraduationCap,
+    title: "Ready-made for every year",
+    body: ({ totalWords }) =>
+      (totalWords ? totalWords.toLocaleString("en-GB") + " words" : "Word lists") +
+      " from Reception to Year 6, matched to the National Curriculum and laid out week by week. Reception starts with letter sounds.",
+  },
+  {
+    id: "adaptive",
+    icon: Brain,
+    title: "Practice that adapts",
+    body: "A six-box spaced-repetition system brings back the words you got wrong sooner, and lets the ones you know drop away.",
+  },
+  {
+    id: "listen",
+    icon: Volume2,
+    title: "Hear it, then spell it",
+    body: "Each word is read aloud by your device's voice, set to British English and slower for Reception. Or try \"Guess from the meaning\": a crossword-style clue, no audio.",
+  },
+  {
+    id: "wordsearch",
+    icon: Grid2x2,
+    title: "Word searches that fit the year",
+    body: "Small and upright for the youngest children, bigger with diagonal and backwards words for older ones. Play against the clock, or print one.",
+  },
+  {
+    id: "paper",
+    icon: Printer,
+    title: "On screen or on paper",
+    body: "Print the word list, a handwriting sheet or a word search, and follow the look, cover, write, check routine away from the screen.",
+    to: "/offline-journey",
+    cta: "See the paper routine",
+  },
+  {
+    id: "dyslexia",
+    icon: SpellCheck2,
+    title: "Dyslexia-friendly",
+    body: "A theme with a cream background, soft grey text and extra spacing, and a choice of Lexend or OpenDyslexic lettering.",
+  },
+  {
+    id: "accessible",
+    icon: Accessibility,
+    title: "Easy to see and use",
+    body: "A high-contrast theme, three text sizes, a reduce-motion switch that also follows your device, and clear outlines for keyboard use. The settings button is on every page.",
+  },
+  {
+    id: "free",
+    icon: BadgeCheck,
+    title: "Free, with no sign-up",
+    body: "Nothing to pay for and nothing to log in to. Open a year and start.",
+  },
+];
 
 export const FEATURES = [
   {
@@ -145,6 +243,22 @@ export const FAQS = [
     a: "A simple six-box Leitner system. Every word starts in box one; get it right and it moves up a box with a longer gap before it's due again; get it wrong and it drops back down. Over time, practice naturally focuses on the words that still need it.",
   },
   {
+    q: "What does SPELL// STARS include?",
+    a: "Ready-made weekly lists for Reception to Year 6, and your own lists from any words you paste in. For each list there's a practice quiz (listen and spell, or guess from the meaning), a word search and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
+  },
+  {
+    q: "Is it dyslexia-friendly and accessible?",
+    a: "There's a dyslexia-friendly theme with a cream background, soft grey text and extra spacing, and you can choose Lexend or OpenDyslexic lettering. There's also a high-contrast theme, three text sizes and a reduce-motion switch, which starts from your device's own setting. Open the round settings button at the bottom left of any page; your choices are remembered on that device.",
+  },
+  {
+    q: "Can it read the words aloud?",
+    a: "Yes. Practice reads each word using your device's built-in voice, set to British English, and slower for Reception. You can replay it as often as you like. If a browser has no speech support the button says so, and \"Guess from the meaning\" works without sound for words that have a definition.",
+  },
+  {
+    q: "Is it free?",
+    a: "Yes. There's nothing to pay for and nothing to sign up to.",
+  },
+  {
     q: "Do I need an account?",
     a: "No. There's nothing to sign up for or log in to — open a year and start. Progress is kept in the browser on the device you practise on.",
   },
@@ -162,7 +276,7 @@ export const FAQS = [
   },
   {
     q: "What should we do away from the screen?",
-    a: "There's a five-step weekly routine: word search, the practice game, a printed sheet, look-cover-write-check, and a spoken test at the end. The digital journey and offline journey pages set out both halves, and every word search has a print button.",
+    a: "There's a five-step weekly routine: word search, the practice game, a printed sheet, look-cover-write-check, and a spoken test at the end. The digital journey and offline journey pages set out both halves, and every word search has a print button. The site needs an internet connection to load, so print the week's sheets first if you'll be offline.",
   },
   {
     q: "Do the words come with definitions and example sentences for every year?",

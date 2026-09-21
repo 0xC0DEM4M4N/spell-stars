@@ -8,10 +8,10 @@ export default function Faq() {
     <InfoPage
       path="/faq"
       title="Spelling practice FAQs"
-      description="Answers about SPELL// STARS: year groups covered, how much practice is enough, curriculum alignment, spaced repetition, where progress is saved and how to back it up or move it to another device."
+      description="Answers about SPELL// STARS: what's included, year groups covered, dyslexia-friendly and accessibility options, read-aloud, custom lists, curriculum alignment, spaced repetition, where progress is saved and how to move it to another device."
       eyebrow="FAQs"
       heading="Good to know."
-      intro="Quick answers about year groups, practice time, the curriculum, and how progress is saved, backed up and moved between devices."
+      intro="Quick answers about what's included, accessibility, year groups, practice time, the curriculum, and how progress is saved, backed up and moved between devices."
     >
       <section id="faq" className="px-5 py-10 sm:px-8" data-testid="faq-section">
         <div className="mx-auto max-w-4xl">

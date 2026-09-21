@@ -6,6 +6,7 @@ import { useScrolled } from "@/hooks/useScrolled";
 // the long-form content lives on its own pages.
 const NAV = [
   { label: "Years", to: "/#years" },
+  { label: "Features", to: "/#features" },
   { label: "How it works", to: "/how-it-works" },
   { label: "For educators", to: "/for-educators" },
   { label: "FAQs", to: "/faq" },
