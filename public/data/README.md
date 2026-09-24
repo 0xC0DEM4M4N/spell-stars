@@ -34,28 +34,21 @@ year6/words.json       -- 570 entries
   pair); all years also draw on the document's non-statutory rule/example
   words.
 
-## What's fully content-complete vs. what needs a review pass
+## Definitions and examples
 
-| Year | Words | Definitions/examples |
-|---|---|---|
-| Reception | 190 | ✅ Fully written, original |
-| Year 1 | 380 | ✅ Fully written, original |
-| Year 2 | 456 | ⚠️ `null`, `needsContentReview: true` |
-| Year 3 | 570 | ⚠️ `null`, `needsContentReview: true` |
-| Year 4 | 570 | ⚠️ `null`, `needsContentReview: true` |
-| Year 5 | 570 | ⚠️ `null`, `needsContentReview: true` |
-| Year 6 | 570 | ⚠️ `null`, `needsContentReview: true` |
+Every word in every year now has a definition and an example sentence, and
+`needsContentReview` is `false` throughout.
 
-Reception and Year 1 were prioritised as the foundational years and the ones
-most affected by the input-mode/content-type changes, so they got a full
-hand-written definition/example pass. Years 2–6 have accurate, correctly
-tagged, correctly distributed curriculum words (real statutory and
-non-statutory NC content, not placeholders) — but writing ~1,600 more
-original one-line definitions and example sentences is a distinct content
-task worth doing (or generating and then reviewing) deliberately, not folded
-into a structural data build. Any UI reading this data should treat
-`needsContentReview: true` as "don't ship this word's definition/example to
-a user yet."
+| Year | Definition style |
+|---|---|
+| Reception – Year 4 | Plain, concrete definitions in child-friendly language |
+| Year 5 – Year 6 | Etymological: where the word comes from, then what it means |
+
+Years 3–6 were completed in September 2026 (455 distinct words; the rest were
+repeats of words already written). The wording is original, but the word
+origins are worth a spot check against a reliable dictionary before the next
+release. A word that appears in more than one year has the same wording each
+time.
 
 ## Revision cycling
 

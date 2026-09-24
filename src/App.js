@@ -13,6 +13,7 @@ import SyncPage from "@/pages/SyncPage";
 import CustomListsPage from "@/pages/CustomListsPage";
 import CustomListPage from "@/pages/CustomListPage";
 import SharedListPage from "@/pages/SharedListPage";
+import WordOriginsPage from "@/pages/WordOriginsPage";
 import DigitalJourney from "@/pages/DigitalJourney";
 import OfflineJourney from "@/pages/OfflineJourney";
 import { Toaster } from "@/components/ui/sonner";
@@ -143,6 +144,8 @@ function AppShell() {
             <Route path="/custom" element={<CustomListsPage />} />
             <Route path="/custom/:listId" element={<CustomListPage />} />
             <Route path="/shared" element={<SharedListPage />} />
+            {/* Hidden reference page: no link anywhere, not in the sitemap. */}
+            <Route path="/word-origins" element={<WordOriginsPage />} />
             <Route path="/:yearSlug" element={<YearPage />} />
           </Routes>
           <Toaster position="bottom-right" />
