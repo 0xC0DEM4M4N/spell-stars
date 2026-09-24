@@ -16,7 +16,7 @@ export const Hero = ({ programme, activeWeek }) => (
           </span>
           <span className="hero-mask-line">
             <motion.span className="block text-primary pb-8" initial={{ y: "112%" }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}>
-              ST<Star className="inline-block h-[0.72em] w-[0.72em] fill-amber-400 text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)]" style={{ verticalAlign: "-0.1em" }} aria-hidden="true" />RS
+              ST<Star className="inline-block mx-[0.03em] h-[0.9em] w-[0.9em] fill-amber-400 text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)]" style={{ verticalAlign: "-0.115em" }} aria-hidden="true" />RS
             </motion.span>
           </span>
         </h1>
