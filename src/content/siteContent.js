@@ -306,3 +306,22 @@ export const EDUCATOR_NOTES = [
     body: "Every word search has a print button for an offline worksheet, and the practice timer can switch to countdown mode for a bit of gentle pressure once a list is well known.",
   },
 ];
+
+// /about: the story behind the site. Three things it stands for.
+export const ABOUT_PILLARS = [
+  {
+    icon: BookOpen,
+    title: "Know the word",
+    body: "Where a word comes from and what it means is part of spelling it. Every word comes with its meaning and an example sentence, so it sticks.",
+  },
+  {
+    icon: Printer,
+    title: "Paper and pen still count",
+    body: "Learning is moving online, and sometimes that's right. But writing by hand matters too, so everything can be printed and the site works offline as well as online.",
+  },
+  {
+    icon: Accessibility,
+    title: "Open to everyone",
+    body: "Free, no sign-up, and built to be easy to read and use whatever your needs, with options for text size, colour, dyslexia-friendly type and reduced motion.",
+  },
+];

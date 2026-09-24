@@ -10,6 +10,7 @@ const NAV = [
   { label: 'How it works', to: '/how-it-works' },
   { label: 'For educators', to: '/for-educators' },
   { label: 'FAQs', to: '/faq' },
+  { label: 'About', to: '/about' },
 ];
 
 export const SiteHeader = () => {

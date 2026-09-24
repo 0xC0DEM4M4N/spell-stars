@@ -88,6 +88,14 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
                 FAQs
               </Link>
             </li>
+            <li>
+              <Link
+                to="/about"
+                className="transition-colors duration-300 hover:text-primary"
+              >
+                About
+              </Link>
+            </li>
           </ul>
         </div>
 

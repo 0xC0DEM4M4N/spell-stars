@@ -12,6 +12,7 @@ export const INFO_PAGES = [
   { to: "/offline-journey", label: "The offline journey", blurb: "Five steps that take the list onto paper and out loud." },
   { to: "/for-educators", label: "For educators & parents", blurb: "Pacing, differentiation and an offline routine." },
   { to: "/faq", label: "FAQs", blurb: "Year groups, practice time, progress and more." },
+  { to: "/about", label: "About", blurb: "Why spelling still matters, and who made this." },
 ];
 
 /**

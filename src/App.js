@@ -8,6 +8,7 @@ import YearPage from "@/pages/YearPage";
 import HowItWorks from "@/pages/HowItWorks";
 import ForEducators from "@/pages/ForEducators";
 import Faq from "@/pages/Faq";
+import About from "@/pages/About";
 import SyncPage from "@/pages/SyncPage";
 import CustomListsPage from "@/pages/CustomListsPage";
 import CustomListPage from "@/pages/CustomListPage";
@@ -134,6 +135,7 @@ function AppShell() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/for-educators" element={<ForEducators />} />
             <Route path="/faq" element={<Faq />} />
+            <Route path="/about" element={<About />} />
             <Route path="/digital-journey" element={<DigitalJourney />} />
             <Route path="/offline-journey" element={<OfflineJourney />} />
             <Route path="/sync" element={<SyncPage />} />
