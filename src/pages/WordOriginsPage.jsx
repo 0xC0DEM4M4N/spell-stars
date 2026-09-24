@@ -1,7 +1,8 @@
 // /word-origins — a hidden reference page (not in the menu, footer or
-// sitemap, and marked noindex). Lists every word whose definition explains
-// where the word comes from, so the origins can be checked against a
-// dictionary. Ticks are kept in this browser only.
+// sitemap, and marked noindex). Lists every word in every year in one place,
+// with the origin filled in where the definition explains where the word
+// comes from, so the origins can be checked against a dictionary. Ticks are
+// kept in this browser only.
 import { useEffect, useMemo, useState } from "react";
 import { Check } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -31,6 +32,7 @@ export default function WordOriginsPage() {
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("all");
   const [year, setYear] = useState("all");
+  const [show, setShow] = useState("all"); // all | with | without
   const [hideChecked, setHideChecked] = useState(false);
   const [checked, setChecked] = useState(readChecked);
 
@@ -69,7 +71,7 @@ export default function WordOriginsPage() {
 
   const languages = useMemo(() => {
     const counts = new Map();
-    (rows || []).forEach((r) => counts.set(r.language, (counts.get(r.language) || 0) + 1));
+    (rows || []).forEach((r) => r.language && counts.set(r.language, (counts.get(r.language) || 0) + 1));
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   }, [rows]);
 
@@ -78,13 +80,16 @@ export default function WordOriginsPage() {
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return (rows || []).filter((r) => {
+      if (show === "with" && !r.language) return false;
+      if (show === "without" && r.language) return false;
       if (language !== "all" && r.language !== language) return false;
       if (year !== "all" && !r.years.includes(year)) return false;
       if (hideChecked && checked.has(r.word.toLowerCase())) return false;
       if (!q) return true;
       return (r.word + " " + r.origin + " " + r.meaning).toLowerCase().includes(q);
     });
-  }, [rows, query, language, year, hideChecked, checked]);
+  }, [rows, query, language, year, show, hideChecked, checked]);
+  const withOrigin = useMemo(() => (rows || []).filter((r) => r.language).length, [rows]);
 
   return (
     <div className="bg-grid-squares min-h-screen bg-background text-foreground">
@@ -96,9 +101,9 @@ export default function WordOriginsPage() {
         <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Reference</div>
         <h1 className="mt-3 type-section font-display text-3xl font-extrabold sm:text-4xl">Word origins</h1>
         <p className="mt-3 max-w-3xl type-body text-sm text-muted-foreground">
-          Every word that has an origin in its definition, one row per word. The origins were written from general
-          knowledge and have not yet been checked against a dictionary, so tick each row as you confirm it. Ticks are
-          saved in this browser only.
+          Every word in every year, one row per word. Where a definition explains the word's origin, it is filled in
+          here; the other rows are left blank for now. The origins were written from general knowledge and have not yet
+          been checked against a dictionary, so tick each row as you confirm it. Ticks are saved in this browser only.
         </p>
 
         <div className="mt-6 flex flex-wrap items-end gap-3">
@@ -123,6 +128,14 @@ export default function WordOriginsPage() {
             </select>
           </label>
           <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+            Show
+            <select value={show} onChange={(e) => setShow(e.target.value)} className={FIELD} data-testid="origins-show">
+              <option value="all">All words</option>
+              <option value="with">With an origin</option>
+              <option value="without">Without an origin</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground">
             Year
             <select value={year} onChange={(e) => setYear(e.target.value)} className={FIELD}>
               <option value="all">All years</option>
@@ -139,7 +152,7 @@ export default function WordOriginsPage() {
 
         <p className="mt-4 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground" role="status" data-testid="origins-count">
           {rows
-            ? shown.length + " of " + rows.length + " words · " + checked.size + " checked"
+            ? shown.length + " of " + rows.length + " words · " + withOrigin + " with an origin · " + checked.size + " checked"
             : failed
               ? ""
               : "Loading…"}
