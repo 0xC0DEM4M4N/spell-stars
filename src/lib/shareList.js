@@ -56,6 +56,21 @@ export function buildShareUrl(list, origin) {
   return { url: base + pack(list, false), sentencesDropped: true };
 }
 
+/**
+ * A link short enough to scan easily as a QR code (dense codes are hard for
+ * a phone camera to read). Tries the full link, then without example
+ * sentences. Returns null if even the words alone are too much.
+ */
+export function buildQrUrl(list, origin, maxLength = 1100) {
+  const base = origin + SHARE_PATH + "#";
+  const hasSentences = list.words.some((w) => w.exampleSentence);
+  const full = base + pack(list, true);
+  if (full.length <= maxLength) return { url: full, sentencesDropped: false };
+  const wordsOnly = base + pack(list, false);
+  if (wordsOnly.length <= maxLength) return { url: wordsOnly, sentencesDropped: hasSentences };
+  return null;
+}
+
 export function shareMessage(list) {
   const n = list.words.length;
   return (

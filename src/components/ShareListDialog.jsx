@@ -3,9 +3,9 @@
 // sheet where the browser has one. The link opens /shared, where the
 // receiver can add the words to their own lists.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Copy, Mail, MessageCircle, Share2 } from "lucide-react";
+import { Check, Copy, Download, Mail, MessageCircle, QrCode, Share2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { buildShareUrl, shareMessage } from "@/lib/shareList";
+import { buildQrUrl, buildShareUrl, shareMessage } from "@/lib/shareList";
 
 const OPTION =
   "press-soft inline-flex items-center justify-center gap-2 rounded-xl border border-foreground/15 bg-foreground/5 px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10";
@@ -20,13 +20,35 @@ export function ShareListDialog({ list, triggerClassName }) {
     () => buildShareUrl(list, window.location.origin),
     [list],
   );
+  const qrSource = useMemo(() => buildQrUrl(list, window.location.origin), [list]);
+  const [qr, setQr] = useState(null); // { status: "loading" | "ready" | "error", src }
   const message = shareMessage(list);
   const canNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   useEffect(() => () => clearTimeout(timer.current), []);
   useEffect(() => {
-    if (!open) setCopied(false);
+    if (!open) {
+      setCopied(false);
+      setQr(null);
+    }
   }, [open]);
+  useEffect(() => {
+    setQr(null);
+  }, [url]);
+
+  const showQr = async () => {
+    if (!qrSource) return;
+    setQr({ status: "loading" });
+    try {
+      // Loaded only when asked for, so it doesn't add to the page's weight.
+      const mod = await import("qrcode");
+      const QRCode = mod.default || mod;
+      const src = await QRCode.toDataURL(qrSource.url, { errorCorrectionLevel: "L", margin: 2, width: 560 });
+      setQr({ status: "ready", src });
+    } catch (err) {
+      setQr({ status: "error" });
+    }
+  };
 
   const copyLink = async () => {
     let ok = false;
@@ -95,14 +117,55 @@ export function ShareListDialog({ list, triggerClassName }) {
           </div>
           <p className="sr-only" role="status" aria-live="polite">{copied ? "Link copied to clipboard" : ""}</p>
 
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className={OPTION} data-testid="share-whatsapp">
               <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp
             </a>
             <a href={emailHref} className={OPTION} data-testid="share-email">
               <Mail className="h-4 w-4" aria-hidden="true" /> Email
             </a>
+            <button
+              type="button"
+              onClick={showQr}
+              disabled={!qrSource || (qr && qr.status !== "error")}
+              aria-expanded={Boolean(qr)}
+              className={OPTION + " disabled:opacity-60"}
+              data-testid="share-qr-button"
+            >
+              <QrCode className="h-4 w-4" aria-hidden="true" /> QR code
+            </button>
           </div>
+
+          {!qrSource && (
+            <p className="text-xs text-muted-foreground" data-testid="share-qr-too-big">
+              This list has too many words to fit in a QR code that scans easily. Use the link instead.
+            </p>
+          )}
+          {qr && qr.status === "loading" && <p className="text-sm text-muted-foreground">Making the QR code…</p>}
+          {qr && qr.status === "error" && (
+            <p className="text-sm text-destructive" role="alert">Couldn't make a QR code. Use the link instead.</p>
+          )}
+          {qr && qr.status === "ready" && (
+            <div className="flex flex-col items-center gap-3" data-testid="share-qr">
+              <img
+                src={qr.src}
+                alt={"QR code for the " + list.name + " spelling challenge. Scan it with a phone camera and open the link it shows."}
+                className="h-auto w-full max-w-[16rem] rounded-xl bg-white p-2"
+              />
+              <p className="text-center text-xs text-muted-foreground">
+                Point a phone camera at this and open the link it shows.
+                {qrSource.sentencesDropped && " Example sentences are left out so the code stays easy to scan."}
+              </p>
+              <a
+                href={qr.src}
+                download={"spell-stars-" + list.id + "-qr.png"}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                data-testid="share-qr-download"
+              >
+                <Download className="h-3.5 w-3.5" aria-hidden="true" /> Save the image
+              </a>
+            </div>
+          )}
 
           {canNativeShare && (
             <button type="button" onClick={nativeShare} className={OPTION + " w-full"} data-testid="share-native">
