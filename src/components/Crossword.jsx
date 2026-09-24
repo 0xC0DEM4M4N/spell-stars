@@ -389,11 +389,11 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
                               onClick={() => { if (isActiveCell && here.across && here.down) setActive({ r, c, dir: OTHER[active.dir] }); }}
                               aria-label={`Row ${r + 1}, column ${c + 1}, ${spoken}${isWrong ? ", incorrect" : ""}`}
                               autoComplete="off"
-                              autoCapitalize="characters"
+                              autoCapitalize="none"
                               autoCorrect="off"
                               spellCheck={false}
                               inputMode="text"
-                              className={`h-full w-full rounded bg-transparent text-center font-mono font-bold uppercase caret-transparent outline-none ${large ? "text-sm" : "text-base sm:text-lg"} ${isWrong ? "text-destructive" : "text-foreground"}`}
+                              className={`h-full w-full rounded bg-transparent text-center font-mono font-bold lowercase caret-transparent outline-none ${large ? "text-sm" : "text-base sm:text-lg"} ${isWrong ? "text-destructive" : "text-foreground"}`}
                               data-testid={`crossword-cell-${r}-${c}`}
                             />
                           </div>

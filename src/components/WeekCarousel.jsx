@@ -19,7 +19,7 @@ function HighlightWord({ text, word }) {
   const parts = text.split(new RegExp(`(${escaped})`, "gi"));
   return parts.map((part, i) =>
     part.toLowerCase() === word.toLowerCase()
-      ? <strong key={i} className="font-bold text-primary underline decoration-cyan-300">{part}</strong>
+      ? <strong key={i} className="rounded bg-primary/15 px-1 font-extrabold text-foreground underline decoration-primary decoration-2 underline-offset-4">{part}</strong>
       : part
   );
 }
@@ -179,10 +179,14 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
             </div>
 
             {/* Fixed-height info panel — prevents card from jumping */}
-            <div className={`mt-7 overflow-hidden border-l-2 border-cyan-300 pl-5 ${wide ? "h-[9.5rem]" : "h-[6.25rem]"}`}>
+            <div className={`mt-7 overflow-hidden border-l-2 border-cyan-300 pl-5 ${wide ? "h-[12rem]" : "h-[9rem]"}`}>
               <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
                 <Target className="h-4 w-4" />
-                {activeWordInfo ? activeWordInfo.word : "Learning point"}
+                {activeWordInfo ? (
+                  <span className="font-display text-2xl font-extrabold normal-case tracking-normal text-foreground">{activeWordInfo.word}</span>
+                ) : (
+                  "Learning point"
+                )}
                 {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-primary">pinned</span>}
               </div>
               <AnimatePresence mode="wait">
@@ -193,14 +197,14 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                     transition={{ duration: 0.12 }}
                   >
                     {activeWordInfo.exampleSentence && (
-                      <p className="text-sm leading-snug text-foreground">
-                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-primary">eg</span>
+                      <p className="text-base leading-snug text-foreground">
+                        <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">eg</span>
                         <HighlightWord text={activeWordInfo.exampleSentence} word={activeWordInfo.word} />
                       </p>
                     )}
                     {activeWordInfo.definition && (
-                      <p className="mt-1 text-sm leading-snug text-muted-foreground">
-                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">means</span>
+                      <p className="mt-1.5 text-base leading-snug text-muted-foreground">
+                        <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">means</span>
                         {activeWordInfo.definition}
                       </p>
                     )}
