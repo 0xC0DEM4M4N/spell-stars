@@ -10,7 +10,7 @@
 import { dedupeByProgressKey } from "./wordKey";
 
 export const SCOPES = [
-  { value: "week", label: "By week" },
+  { value: "day", label: "By week" },
   { value: "term", label: "By term" },
   { value: "all", label: "By all up to now" },
 ];
