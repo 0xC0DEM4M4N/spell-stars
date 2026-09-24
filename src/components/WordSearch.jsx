@@ -13,16 +13,16 @@ import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
 import { escapeHtml, openPrintWindow, printFooter, printHeader, wrapDocument } from "@/lib/printSheets";
 
 const COLORS = [
-  "bg-cyan-400/40 text-white border-cyan-400",
-  "bg-emerald-400/40 text-white border-emerald-400",
-  "bg-pink-400/40 text-white border-pink-400",
-  "bg-amber-400/40 text-white border-amber-400",
-  "bg-violet-400/40 text-white border-violet-400",
-  "bg-sky-400/40 text-white border-sky-400",
-  "bg-rose-400/40 text-white border-rose-400",
-  "bg-teal-400/40 text-white border-teal-400",
-  "bg-orange-400/40 text-white border-orange-400",
-  "bg-lime-400/40 text-white border-lime-400",
+  "ws-found ws-h0 bg-cyan-400/40 text-white border-cyan-400",
+  "ws-found ws-h1 bg-emerald-400/40 text-white border-emerald-400",
+  "ws-found ws-h2 bg-pink-400/40 text-white border-pink-400",
+  "ws-found ws-h3 bg-amber-400/40 text-white border-amber-400",
+  "ws-found ws-h4 bg-violet-400/40 text-white border-violet-400",
+  "ws-found ws-h5 bg-sky-400/40 text-white border-sky-400",
+  "ws-found ws-h6 bg-rose-400/40 text-white border-rose-400",
+  "ws-found ws-h7 bg-teal-400/40 text-white border-teal-400",
+  "ws-found ws-h8 bg-orange-400/40 text-white border-orange-400",
+  "ws-found ws-h9 bg-lime-400/40 text-white border-lime-400",
 ];
 const DEFAULT_SECS = 180;
 const DEFAULT_SIZE = 10;
@@ -232,8 +232,8 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     const { wis } = game.grid[r][c];
     const foundWi = wis.find(wi => found.has(wi));
     if (foundWi !== undefined) return COLORS[foundWi % COLORS.length];
-    if (inSel(r, c)) return "bg-cyan-300/50 text-white border-cyan-300 ring-1 ring-inset ring-cyan-200/60 scale-105";
-    if (revealed && wis.length > 0) return "bg-foreground/12 text-muted-foreground border-foreground/25";
+    if (inSel(r, c)) return "ws-sel bg-cyan-300/50 text-white border-cyan-300 ring-1 ring-inset ring-cyan-200/60 scale-105";
+    if (revealed && wis.length > 0) return "ws-revealed bg-foreground/12 text-muted-foreground border-foreground/25";
     return "bg-foreground/[0.04] text-muted-foreground border-foreground/10 hover:bg-cyan-300/10 hover:text-foreground hover:border-cyan-300/30";
   };
 

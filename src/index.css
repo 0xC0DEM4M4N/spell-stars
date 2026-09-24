@@ -590,3 +590,58 @@ button:not(:disabled):active,
 .week-viewport {
   transition: height 520ms var(--ease-fluid);
 }
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   Light-theme legibility (light + dyslexia are both light surfaces)
+   The dark-theme values (translucent tints with white text) collapse on a
+   pale page, so these themes get their own solid tiles and a firmer bar.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Header: nearly opaque so page content can't show through behind the
+   links, stronger link colour, and a visible bottom edge. */
+[data-theme="light"] .material-bar,
+[data-theme="dyslexia"] .material-bar {
+  background-color: hsl(var(--background) / 0.94);
+  box-shadow: inset 0 -1px 0 hsl(var(--foreground) / 0.14);
+}
+[data-theme="light"] .material-bar[data-scrolled="true"],
+[data-theme="dyslexia"] .material-bar[data-scrolled="true"] {
+  background-color: hsl(var(--background) / 0.97);
+  box-shadow: inset 0 -1px 0 hsl(var(--foreground) / 0.14), 0 6px 20px rgb(15 23 42 / 0.1);
+}
+[data-theme="light"] .material-bar nav,
+[data-theme="dyslexia"] .material-bar nav {
+  color: hsl(var(--foreground) / 0.85);
+}
+
+/* Word search tiles: pastel solid fill, dark text, firm border. */
+[data-theme="light"] .ws-found,
+[data-theme="dyslexia"] .ws-found {
+  background-color: hsl(var(--ws-h) 80% 84%);
+  color: hsl(var(--ws-h) 85% 15%);
+  border-color: hsl(var(--ws-h) 65% 36%);
+}
+.ws-h0 { --ws-h: 187; } .ws-h1 { --ws-h: 160; } .ws-h2 { --ws-h: 330; }
+.ws-h3 { --ws-h: 40; }  .ws-h4 { --ws-h: 262; } .ws-h5 { --ws-h: 205; }
+.ws-h6 { --ws-h: 350; } .ws-h7 { --ws-h: 175; } .ws-h8 { --ws-h: 22; }
+.ws-h9 { --ws-h: 84; }
+
+/* Tile being dragged over: solid brand teal with white text so it never
+   reads as one of the pastel found-word colours. */
+[data-theme="light"] .ws-sel,
+[data-theme="dyslexia"] .ws-sel {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+  --tw-ring-color: hsl(var(--foreground) / 0.5);
+}
+
+/* Revealed (unfound) words: mid grey with full-strength text, clearly
+   stronger than an ordinary tile and unlike every found-word hue. */
+[data-theme="light"] .ws-revealed,
+[data-theme="dyslexia"] .ws-revealed {
+  background-color: hsl(215 20% 82%);
+  color: hsl(var(--foreground));
+  border-color: hsl(215 16% 42%);
+}
