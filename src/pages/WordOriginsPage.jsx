@@ -86,7 +86,7 @@ export default function WordOriginsPage() {
       if (year !== "all" && !r.years.includes(year)) return false;
       if (hideChecked && checked.has(r.word.toLowerCase())) return false;
       if (!q) return true;
-      return (r.word + " " + r.origin + " " + r.meaning).toLowerCase().includes(q);
+      return (r.word + " " + r.origin + " " + r.meaning + " " + r.sentence).toLowerCase().includes(q);
     });
   }, [rows, query, language, year, show, hideChecked, checked]);
   const withOrigin = useMemo(() => (rows || []).filter((r) => r.language).length, [rows]);
@@ -102,7 +102,7 @@ export default function WordOriginsPage() {
         <h1 className="mt-3 type-section font-display text-3xl font-extrabold sm:text-4xl">Word origins</h1>
         <p className="mt-3 max-w-3xl type-body text-sm text-muted-foreground">
           Every word in every year, one row per word. Where a definition explains the word's origin, it is filled in
-          here; the other rows are left blank for now. The origins were written from general knowledge and have not yet
+          here; the other rows show just the meaning. Each row also shows its example sentence. The origins were written from general knowledge and have not yet
           been checked against a dictionary, so tick each row as you confirm it. Ticks are saved in this browser only.
         </p>
 
@@ -113,7 +113,7 @@ export default function WordOriginsPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Word, root or meaning"
+              placeholder="Word, root, meaning or sentence"
               className={FIELD + " w-64"}
               data-testid="origins-search"
             />
@@ -161,7 +161,7 @@ export default function WordOriginsPage() {
 
         {rows && (
           <div className="mt-4 overflow-x-auto rounded-2xl border border-foreground/10">
-            <table className="w-full min-w-[46rem] border-collapse text-left text-sm" data-testid="origins-table">
+            <table className="w-full min-w-[60rem] border-collapse text-left text-sm" data-testid="origins-table">
               <caption className="sr-only">Words and where they come from</caption>
               <thead className="bg-foreground/5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
                 <tr>
@@ -169,7 +169,8 @@ export default function WordOriginsPage() {
                   <th scope="col" className="px-3 py-3">Word</th>
                   <th scope="col" className="px-3 py-3">Language</th>
                   <th scope="col" className="px-3 py-3">Origin</th>
-                  <th scope="col" className="px-3 py-3">Meaning today</th>
+                  <th scope="col" className="px-3 py-3">Meaning</th>
+                  <th scope="col" className="px-3 py-3">Example sentence</th>
                   <th scope="col" className="px-3 py-3">Years</th>
                 </tr>
               </thead>
@@ -197,13 +198,14 @@ export default function WordOriginsPage() {
                       <td className="whitespace-nowrap px-3 py-3 text-muted-foreground">{r.language}</td>
                       <td className="px-3 py-3 text-foreground">{r.origin}</td>
                       <td className="px-3 py-3 text-muted-foreground">{r.meaning}</td>
+                      <td className="px-3 py-3 text-muted-foreground">{r.sentence}</td>
                       <td className="whitespace-nowrap px-3 py-3 text-muted-foreground">{r.years.map(yearLabel).join(", ")}</td>
                     </tr>
                   );
                 })}
                 {shown.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-8 text-center text-muted-foreground">No words match.</td>
+                    <td colSpan={7} className="px-3 py-8 text-center text-muted-foreground">No words match.</td>
                   </tr>
                 )}
               </tbody>

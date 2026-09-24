@@ -49,8 +49,22 @@ export function collectOrigins(entriesByYear) {
         if (!row.years.includes(year)) row.years.push(year);
         // A word can be written up in one year and not another: keep the origin.
         if (parsed && !row.language) Object.assign(row, parsed);
+        if (!row.sentence && e.exampleSentence) row.sentence = e.exampleSentence;
+        // Plain (non-origin) definitions still give the meaning.
+        if (!row.meaning && !parsed && e.definition) row.meaning = String(e.definition).trim();
+        if (parsed && parsed.meaning) row.meaning = parsed.meaning;
       } else {
-        rows.set(key, { word: e.word, years: [year], language: "", origin: "", meaning: "", ...(parsed || {}) });
+        rows.set(key, {
+          word: e.word,
+          years: [year],
+          language: "",
+          origin: "",
+          meaning: "",
+          sentence: e.exampleSentence || "",
+          ...(parsed || {}),
+        });
+        // Years 1-4 definitions are plain meanings rather than origins.
+        if (!parsed && e.definition) rows.get(key).meaning = String(e.definition).trim();
       }
     }
   }

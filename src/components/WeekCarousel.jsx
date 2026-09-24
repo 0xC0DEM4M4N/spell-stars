@@ -11,6 +11,7 @@ import { PrintWeekMenu } from "./PrintWeekMenu";
 import { formatWeekCommencing } from "@/lib/weekDates";
 import { SPRING } from "@/lib/motion";
 import { progressKey } from "@/lib/wordKey";
+import { useTheme } from "@/context/ThemeContext";
 
 // Renders sentence text with the spelling word highlighted in bold cyan
 function HighlightWord({ text, word }) {
@@ -77,7 +78,16 @@ const WordChip = ({ entry, index, week, active, pinned, wide, onHover, onLeave, 
 // inactive cards. `overflow-hidden` + a fixed-width inner wrapper let the
 // card's frame widen and narrow like a window opening on content that has
 // already been laid out at its final size, so nothing reflows mid-animation.
-const cardShadow = (active, hover) => {
+const cardShadow = (active, hover, light) => {
+  if (light) {
+    // Tight, soft shadows so nothing is clipped by the carousel viewport.
+    if (hover) return active
+      ? "0 0 0 2px rgba(8,145,178,0.9), 0 0 0 6px rgba(8,145,178,0.18), 0 8px 26px rgba(8,145,178,0.22), 0 8px 24px rgba(15,23,42,0.12)"
+      : "0 0 0 1px rgba(100,116,139,0.3), 0 8px 26px rgba(15,23,42,0.14)";
+    return active
+      ? "0 0 0 2px rgba(8,145,178,0.85), 0 0 0 6px rgba(8,145,178,0.14), 0 6px 24px rgba(8,145,178,0.16), 0 6px 20px rgba(15,23,42,0.10)"
+      : "0 0 0 1px rgba(100,116,139,0.22), 0 6px 20px rgba(15,23,42,0.08)";
+  }
   if (hover) {
     return active
       ? "0 0 0 2px rgba(34,211,238,0.95), 0 0 0 8px rgba(34,211,238,0.25), 0 14px 60px rgba(34,211,238,0.32), 0 24px 80px rgba(0,0,0,0.5)"
@@ -126,11 +136,13 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
     onSelectWeek && onSelectWeek(weekData.week);
   };
 
+  const { theme } = useTheme();
+  const light = theme !== "dark" && theme !== "highContrast";
   return (
     <motion.article
       onClick={handleCardClick}
-      whileHover={isDragging ? {} : { y: -6, boxShadow: cardShadow(active, true) }}
-      style={{ boxShadow: cardShadow(active, false) }}
+      whileHover={isDragging ? {} : { y: -6, boxShadow: cardShadow(active, true, light) }}
+      style={{ boxShadow: cardShadow(active, false, light) }}
       transition={SPRING.settle}
       className={`holo-card h-full overflow-hidden rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}
@@ -263,11 +275,13 @@ const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current,
     onSelectWeek && onSelectWeek(weekData.week);
   };
 
+  const { theme } = useTheme();
+  const light = theme !== "dark" && theme !== "highContrast";
   return (
     <motion.article
       onClick={handleCardClick}
-      whileHover={isDragging ? {} : { y: -6, boxShadow: cardShadow(active, true) }}
-      style={{ boxShadow: cardShadow(active, false) }}
+      whileHover={isDragging ? {} : { y: -6, boxShadow: cardShadow(active, true, light) }}
+      style={{ boxShadow: cardShadow(active, false, light) }}
       transition={SPRING.settle}
       className={`holo-card h-full overflow-hidden rounded-[1.75rem] p-6 transition-opacity duration-300 ease-fluid sm:p-8 ${active ? "opacity-100" : "opacity-55 cursor-pointer"}`}
       data-testid={`week-card-${weekData.week}`}

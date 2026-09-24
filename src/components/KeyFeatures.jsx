@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 import { KEY_FEATURES, KEY_FEATURES_HEADING, KEY_FEATURES_LEDE } from "@/content/siteContent";
 import { PRESS, SPRING, revealOnScroll } from "@/lib/motion";
 
@@ -56,6 +58,141 @@ function FeatureTile({ feature, index, context }) {
   );
 }
 
+const ROTATE_MS = 5000;
+
+/** A card in the rotating strip: same look as the grid tiles, without the scroll-reveal. */
+function CarouselCard({ feature, context, focused }) {
+  const Icon = feature.icon;
+  const inner = (
+    <>
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground" aria-hidden="true">
+        <Icon className="h-5 w-5" />
+      </span>
+      <h3 className="mt-5 type-card font-display text-lg font-extrabold text-foreground">{feature.title}</h3>
+      <p className="mt-2 type-body text-sm text-muted-foreground">{resolveBody(feature, context)}</p>
+      {feature.to && (
+        <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-primary">
+          {feature.cta}
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </span>
+      )}
+    </>
+  );
+  const base = "relative flex h-full flex-col rounded-3xl border border-foreground/10 bg-card p-5 shadow-sm";
+  return feature.to ? (
+    <Link
+      to={feature.to}
+      tabIndex={focused ? 0 : -1}
+      className={`${base} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`}
+    >
+      {inner}
+    </Link>
+  ) : (
+    <div className={base}>{inner}</div>
+  );
+}
+
+/**
+ * The smaller feature cards as a slow, looping strip: the focused card grows a
+ * little, and one and a half cards on each side sit behind it, faded. It moves on by
+ * itself, pauses when hovered or focused (or with the pause button), and
+ * doesn't move at all if the person prefers reduced motion.
+ */
+function FeatureCarousel({ features, context }) {
+  const { reducedMotion } = useTheme();
+  const osReduced = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const still = Boolean(reducedMotion || osReduced);
+  const n = features.length;
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [hold, setHold] = useState(false); // hovered or keyboard focus inside
+
+  useEffect(() => {
+    if (still || paused || hold || n < 2) return undefined;
+    const id = setInterval(() => setActive((a) => (a + 1) % n), ROTATE_MS);
+    return () => clearInterval(id);
+  }, [still, paused, hold, n, active]);
+
+  const go = (delta) => setActive((a) => (a + delta + n) % n);
+  // Shortest way round the loop, so the strip wraps smoothly.
+  const offsetOf = (i) => {
+    let d = (i - active) % n;
+    if (d > n / 2) d -= n;
+    if (d < -n / 2) d += n;
+    return d;
+  };
+
+  return (
+    <div
+      className="relative left-1/2 mt-6 w-screen -translate-x-1/2"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="More features"
+      onMouseEnter={() => setHold(true)}
+      onMouseLeave={() => setHold(false)}
+      onFocus={() => setHold(true)}
+      onBlur={() => setHold(false)}
+      data-testid="key-features-carousel"
+    >
+      <div className="relative overflow-hidden py-6">
+        <ul className="grid" aria-live={still || paused || hold ? "polite" : "off"}>
+          {features.map((feature, i) => {
+            const off = offsetOf(i);
+            const isActive = off === 0;
+            const near = Math.abs(off) <= 2;
+            return (
+              <li
+                key={feature.id}
+                aria-hidden={!isActive}
+                aria-roledescription="slide"
+                aria-label={`${i + 1} of ${n}`}
+                onClick={!isActive && near ? () => setActive(i) : undefined}
+                className={`col-start-1 row-start-1 w-[70%] justify-self-center sm:w-[40%] lg:w-[23%] ${isActive ? "z-10" : near ? "cursor-pointer" : "pointer-events-none"}`}
+                style={{
+                  transform: `translateX(calc(${off} * (100% + 1.25rem))) scale(${isActive ? 1.06 : Math.abs(off) === 1 ? 0.94 : 0.9})`,
+                  opacity: isActive ? 1 : Math.abs(off) === 1 ? 0.5 : near ? 0.28 : 0,
+                  transition: still ? "none" : "transform 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 700ms ease",
+                }}
+                data-testid={`key-feature-${feature.id}`}
+              >
+                <div className={isActive || !near ? "" : "pointer-events-none"}>
+                  <CarouselCard feature={feature} context={context} focused={isActive} />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div className="mt-2 flex items-center justify-center gap-3">
+        <button type="button" onClick={() => go(-1)} aria-label="Previous feature" className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/20 text-foreground hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <div className="flex items-center gap-2" role="group" aria-label="Choose a feature">
+          {features.map((feature, i) => (
+            <button
+              key={feature.id}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`Show ${feature.title}`}
+              aria-current={i === active}
+              className={`h-2.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${i === active ? "w-6 bg-primary" : "w-2.5 bg-foreground/25 hover:bg-foreground/40"}`}
+            />
+          ))}
+        </div>
+        <button type="button" onClick={() => go(1)} aria-label="Next feature" className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/20 text-foreground hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+        </button>
+        {!still && (
+          <button type="button" onClick={() => setPaused((p) => !p)} aria-label={paused ? "Play automatic rotation" : "Pause automatic rotation"} className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/20 text-foreground hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            {paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /**
  * "Why use it": the reasons to choose SPELL// STARS, right under the hero.
  * The three things people ask about most (progress, moving between devices,
@@ -93,10 +230,9 @@ export function KeyFeatures({ totalWords }) {
           {big.map((feature, i) => (
             <FeatureTile key={feature.id} feature={feature} index={i} context={context} />
           ))}
-          {rest.map((feature, i) => (
-            <FeatureTile key={feature.id} feature={feature} index={big.length + i} context={context} />
-          ))}
         </ul>
+
+        <FeatureCarousel features={rest} context={context} />
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <a
