@@ -55,7 +55,7 @@ export const KEY_FEATURES = [
     big: true,
     icon: ListPlus,
     title: "Your words, your list",
-    body: "Paste this week's school spellings and get a quiz, a word search and print sheets for exactly those words. Lists stay on your device and travel with your backup.",
+    body: "Paste this week's school spellings and get a quiz, a word search, a crossword and print sheets for exactly those words. Lists stay on your device and travel with your backup.",
     to: "/custom",
     cta: "Make a list",
   },
@@ -82,14 +82,14 @@ export const KEY_FEATURES = [
   {
     id: "wordsearch",
     icon: Grid2x2,
-    title: "Word searches that fit the year",
-    body: "Small and upright for the youngest children, bigger with diagonal and backwards words for older ones. Play against the clock, or print one.",
+    title: "Word searches and crosswords",
+    body: "Word searches that fit the year, small and upright for the youngest children and bigger with diagonal and backwards words for older ones. Or solve a crossword made from the week's words, with clues from each word's sentence or meaning. Play on screen, or print one.",
   },
   {
     id: "paper",
     icon: Printer,
     title: "On screen or on paper",
-    body: "Print the word list, a handwriting sheet or a word search, and follow the look, cover, write, check routine away from the screen.",
+    body: "Print the word list, a handwriting sheet, a word search or a crossword (with its answers on a second page), and follow the look, cover, write, check routine away from the screen.",
     to: "/offline-journey",
     cta: "See the paper routine",
   },
@@ -121,8 +121,8 @@ export const FEATURES = [
   },
   {
     icon: Grid2x2,
-    title: "Word search",
-    body: "A wordsearch scaled to the year — small grids with no diagonals for the youngest years, bigger grids with backwards and diagonal placements once reading fluency catches up.",
+    title: "Word search and crossword",
+    body: "A wordsearch scaled to the year — small grids with no diagonals for the youngest years, bigger grids with backwards and diagonal placements once reading fluency catches up. Or a crossword built from the same words, with a clue for each one.",
   },
   {
     icon: BookOpen,
@@ -154,8 +154,8 @@ export const SESSION_STEPS = [
   },
   {
     step: "04",
-    title: "Reinforce with a word search",
-    body: "A wordsearch grid scaled to the year group — small and upright for the youngest years, bigger with backwards and diagonal words once reading fluency catches up. Print it, or play it on screen against the clock.",
+    title: "Reinforce with a word search or crossword",
+    body: "A wordsearch grid scaled to the year group — small and upright for the youngest years, bigger with backwards and diagonal words once reading fluency catches up. Or a crossword made from the week's words, where each clue is the word's example sentence with the word left blank, or its meaning. Print either one, or play it on screen.",
   },
   {
     step: "05",
@@ -181,7 +181,7 @@ export const WEEKLY_ROUTINE = [
     step: "02",
     icon: Sparkles,
     title: "Play the practice game",
-    body: "Type each word, hear it read aloud, get instant feedback. This is the first proper recall step — SRS-lite quietly tracks which words are shaky, so those are the ones that resurface soonest.",
+    body: "Type each word, hear it read aloud, get instant feedback. This is the first proper recall step — SRS-lite quietly tracks which words are shaky, so those are the ones that resurface soonest. Once the words feel familiar, the week's crossword is a good next step: it asks for each word from a clue, rather than from a list.",
   },
   {
     step: "03",
@@ -236,7 +236,7 @@ export const FAQS = [
   },
   {
     q: "Can I use the spellings my child's school sets?",
-    a: "Yes. Choose \"Make your own spelling list\" (in the footer, or the last card with the years on the home page), paste the words, and you get a practice quiz, a word search and print sheets for exactly those words. Where a word is in our year lists it also gets a meaning and a sentence. Lists stay on your device and are included when you save a backup.",
+    a: "Yes. Choose \"Make your own spelling list\" (in the footer, or the last card with the years on the home page), paste the words, and you get a practice quiz, a word search, a crossword and print sheets for exactly those words. Where a word is in our year lists it also gets a meaning and a sentence. Lists stay on your device and are included when you save a backup.",
   },
   {
     q: "What is the spaced-repetition system (SRS-lite)?",
@@ -244,7 +244,7 @@ export const FAQS = [
   },
   {
     q: "What does SPELL// STARS include?",
-    a: "Ready-made weekly lists for Reception to Year 6, and your own lists from any words you paste in. For each list there's a practice quiz (listen and spell, or guess from the meaning), a word search and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
+    a: "Ready-made weekly lists for Reception to Year 6, and your own lists from any words you paste in. For each list there's a practice quiz (listen and spell, or guess from the meaning), a word search, a crossword and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
   },
   {
     q: "Is it dyslexia-friendly and accessible?",
@@ -253,6 +253,10 @@ export const FAQS = [
   {
     q: "Can it read the words aloud?",
     a: "Yes. Practice reads each word using your device's built-in voice, set to British English, and slower for Reception. You can replay it as often as you like. If a browser has no speech support the button says so, and \"Guess from the meaning\" works without sound for words that have a definition.",
+  },
+  {
+    q: "How do the crosswords work?",
+    a: "Each week's words make a crossword, and so does any list of your own. Every word gets a clue: by default the word's example sentence with the word blanked out, or you can switch to its meaning. Type into the grid, use the arrow keys or tap a clue to move about, and use Check, Reveal word or Reveal all if you get stuck. Press New puzzle for a fresh layout. You can print it too, and the printout has a second page with the answers. Where a term or a whole year has more than 15 words, each puzzle uses a different selection of them.",
   },
   {
     q: "Is it free?",
@@ -303,7 +307,7 @@ export const EDUCATOR_NOTES = [
   {
     icon: Printer,
     title: "Worksheets, on demand",
-    body: "Every word search has a print button for an offline worksheet, and the practice timer can switch to countdown mode for a bit of gentle pressure once a list is well known.",
+    body: "Every word search and crossword has a print button for an offline worksheet (a crossword prints with an answers page for the grown-up), and the practice timer can switch to countdown mode for a bit of gentle pressure once a list is well known.",
   },
 ];
 

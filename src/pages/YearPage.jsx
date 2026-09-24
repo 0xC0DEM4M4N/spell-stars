@@ -7,8 +7,10 @@ import { isScopeExplainerDismissed, dismissScopeExplainer } from "@/lib/scopePre
 import { WeekCarousel } from "@/components/WeekCarousel";
 import { PracticeQuiz } from "@/components/PracticeQuiz";
 import { WordSearch } from "@/components/WordSearch";
+import { Crossword } from "@/components/Crossword";
+import { MAX_CROSSWORD_WORDS } from "@/lib/crossword";
 import { Button } from "@/components/ui/button";
-import { Info, Grid2x2, Sparkles, Shuffle } from "lucide-react";
+import { Info, Grid2x2, Puzzle, Sparkles, Shuffle } from "lucide-react";
 import { motion } from "framer-motion";
 import { getYearAccent, rgba } from "@/lib/yearTheme";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -221,7 +223,7 @@ export default function YearPage() {
   const accent = getYearAccent(yearSlug);
 
   const pageTitle = `${yearMeta.label} Spelling Practice | SPELL// STARS`;
-  const pageDescription = `Weekly ${yearMeta.label} spelling lists, quizzes and word searches matched to the UK National Curriculum — listen, practise and test yourself for free.`;
+  const pageDescription = `Weekly ${yearMeta.label} spelling lists, quizzes, word searches and crosswords matched to the UK National Curriculum — listen, practise and test yourself for free.`;
 
   return (
     <div className="bg-grid-squares min-h-screen bg-background text-foreground">
@@ -668,7 +670,7 @@ function WordListPreview({ words, testIdPrefix, accent, phase = "idle" }) {
 // word list: search for them in a grid, or get tested on spelling them.
 function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPractice }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="scope-action-cards">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="scope-action-cards">
       <WordSearch
         words={words}
         gridSize={capabilities.wordSearchGrid?.size}
@@ -687,6 +689,25 @@ function ScopeActionCards({ words, capabilities, yearLabel, accent, onStartPract
             <div className="mt-3 type-card font-display text-lg font-bold text-foreground">Word search</div>
             <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
               Find all {words.length} words hidden in a grid.
+            </p>
+          </button>
+        }
+      />
+      <Crossword
+        words={words}
+        title={yearLabel}
+        focus={words[0]?.focus || ""}
+        trigger={
+          <button
+            type="button"
+            className="press-soft w-full rounded-3xl border p-6 text-left transition duration-200 hover:brightness-125"
+            style={{ borderColor: rgba(accent, 0.3), backgroundColor: rgba(accent, 0.07) }}
+            data-testid="scope-card-crossword"
+          >
+            <Puzzle className="h-6 w-6" style={{ color: accent }} />
+            <div className="mt-3 type-card font-display text-lg font-bold text-foreground">Crossword</div>
+            <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
+              Solve clues to fill in {Math.min(words.length, MAX_CROSSWORD_WORDS)} of the words.
             </p>
           </button>
         }

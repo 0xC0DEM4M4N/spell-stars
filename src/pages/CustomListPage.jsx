@@ -6,12 +6,14 @@
 // as it is for a year, under the list's own id, so it travels in a backup.
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Grid2x2, Pencil, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Grid2x2, Pencil, Puzzle, Sparkles, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PracticeQuiz } from "@/components/PracticeQuiz";
 import { WordSearch } from "@/components/WordSearch";
+import { Crossword } from "@/components/Crossword";
+import { MAX_CROSSWORD_WORDS } from "@/lib/crossword";
 import { PrintWeekMenu } from "@/components/PrintWeekMenu";
 import { BackupReminder } from "@/components/BackupReminder";
 import { ShareListDialog } from "@/components/ShareListDialog";
@@ -182,7 +184,7 @@ export default function CustomListPage() {
           ))}
         </ul>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-testid="custom-action-cards">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="custom-action-cards">
           {searchable.length > 0 ? (
             <WordSearch
               words={searchable}
@@ -207,6 +209,25 @@ export default function CustomListPage() {
           ) : (
             <div className="rounded-3xl border border-foreground/10 p-6 text-sm text-muted-foreground">No words fit in a word search grid.</div>
           )}
+          <Crossword
+            words={entries}
+            title={list.name}
+            focus=""
+            trigger={
+              <button
+                type="button"
+                className="press-soft h-full w-full rounded-3xl border p-6 text-left transition duration-200 hover:brightness-125"
+                style={{ borderColor: rgba(accent, 0.3), backgroundColor: rgba(accent, 0.07) }}
+                data-testid="custom-card-crossword"
+              >
+                <Puzzle className="h-6 w-6" style={{ color: accent }} aria-hidden="true" />
+                <div className="mt-3 type-card font-display text-lg font-bold text-foreground">Crossword</div>
+                <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
+                  Solve clues to fill in {Math.min(list.words.length, MAX_CROSSWORD_WORDS)} of the words.
+                </p>
+              </button>
+            }
+          />
           <button
             type="button"
             onClick={() => setQuizOpen(true)}

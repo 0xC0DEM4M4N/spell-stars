@@ -21,8 +21,8 @@ export const JOURNEYS = {
       },
       {
         icon: "grid",
-        title: "Word search",
-        body: "Grids scaled to the year — small, with no diagonals, for the youngest years; bigger, with backwards and diagonal placements, once reading fluency catches up.",
+        title: "Word search and crossword",
+        body: "Grids scaled to the year — small, with no diagonals, for the youngest years; bigger, with backwards and diagonal placements, once reading fluency catches up. Or a crossword made from the same words, with a clue for each one.",
       },
       {
         icon: "book",
@@ -37,7 +37,7 @@ export const JOURNEYS = {
     ],
     note: {
       icon: "refresh",
-      text: "Practice adapts to each year automatically — input style, reading speed, word-search difficulty and daily pacing all follow the year a child is in, from one shared template.",
+      text: "Practice adapts to each year automatically — input style, reading speed, word-search and crossword difficulty and daily pacing all follow the year a child is in, from one shared template.",
     },
   },
   offline: {
@@ -46,7 +46,7 @@ export const JOURNEYS = {
       {
         icon: "grid",
         title: "Word search first",
-        body: "Start with this week's word search, on screen or printed. It only asks a child to recognise a word, not produce it from memory — a low-pressure way to get the shapes of the words familiar before anything harder.",
+        body: "Start with this week's word search, on screen or printed. It only asks a child to recognise a word, not produce it from memory — a low-pressure way to get the shapes of the words familiar before anything harder. The crossword is a step up, asking for each word from a clue, so it suits mid-week.",
       },
       {
         icon: "sparkle",
@@ -71,7 +71,7 @@ export const JOURNEYS = {
     ],
     note: {
       icon: "clock",
-      text: "Best spread across the week, not done in one sitting — word search early on, look/cover/write/check mid-week, verbal test at the end — so it lines up with SRS-lite's own spacing instead of cramming.",
+      text: "Best spread across the week, not done in one sitting — word search early on, the crossword and look/cover/write/check mid-week, verbal test at the end — so it lines up with SRS-lite's own spacing instead of cramming.",
     },
   },
 };

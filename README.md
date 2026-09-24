@@ -20,7 +20,15 @@ finishers. Week 1 is treated as starting 7 September 2026.
   A bonus "Challenge Round" quizzes the starred/extension words once the
   main list is complete.
 - **Print sheet** — a clean, print-only A4 layout of the current week's list
-  for handing out or sending home.
+  for handing out or sending home. The print menu also offers a handwriting
+  sheet, a word search and a crossword (with an answers page).
+- **Word search** — a grid scaled to the year group, played on screen or
+  printed.
+- **Crossword** — a puzzle built from a week's words (or a custom list). Each
+  clue is the word's example sentence with the word blanked out, or its
+  meaning. Layout and clues live in `src/lib/crossword.js`, the on-screen
+  puzzle in `src/components/Crossword.jsx`, and the print version in
+  `src/lib/printSheets.js`.
 - **Parent/teacher notes** — a panel explaining how the sequence was built,
   the suggested weekly test format, pacing, and differentiation ideas.
 

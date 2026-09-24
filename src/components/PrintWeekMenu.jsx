@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { BookOpenText, Check, Grid2x2, PenLine, Printer } from "lucide-react";
+import { BookOpenText, Check, Grid2x2, PenLine, Printer, Puzzle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { formatWeekCommencing } from "@/lib/weekDates";
 import { buildCombinedSheet, openPrintWindow } from "@/lib/printSheets";
 import { loadLetterCasePref } from "@/lib/letterCasePrefs";
+import { loadCrosswordClueMode } from "@/lib/crosswordPrefs";
 
 const capitalize = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
@@ -27,11 +28,17 @@ const PRINT_OPTIONS = [
     icon: Grid2x2,
     description: "A wordsearch grid with the words listed at the side.",
   },
+  {
+    value: "crossword",
+    label: "Crossword",
+    icon: Puzzle,
+    description: "A crossword with clues for each word, and a second page with the answers.",
+  },
 ];
 
 /**
  * "Print" trigger for a weekly card — opens a small modal offering the
- * three printable formats as a multi-select (pick one or more, then
+ * printable formats as a multi-select (pick one or more, then
  * Continue). Everything picked is combined into a single print job, one
  * format per page, rather than a separate print dialog per format.
  */
@@ -40,7 +47,7 @@ export const PrintWeekMenu = ({ weekData, capabilities, sheet, gridSettings, tri
   const [selected, setSelected] = useState([]);
   const caps = capabilities || {};
 
-  // A week card passes `weekData`. Anything else that prints the same three
+  // A week card passes `weekData`. Anything else that prints the same
   // formats (a custom list) passes `sheet` = { title, topic, meta, words }
   // instead, and `gridSettings` = { size, directions, letterCase } to size
   // the word search for its own words.
@@ -72,6 +79,7 @@ export const PrintWeekMenu = ({ weekData, capabilities, sheet, gridSettings, tri
         gridSize: grid.size,
         gridDirections: grid.directions,
         gridLetterCase: loadLetterCasePref() || grid.letterCase,
+        clueMode: loadCrosswordClueMode(),
       }),
     );
     setOpen(false);

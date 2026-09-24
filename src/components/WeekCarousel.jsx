@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WordSearch } from "./WordSearch";
+import { Crossword } from "./Crossword";
 import { PracticeQuiz } from "./PracticeQuiz";
 import { FindTheLetter } from "./FindTheLetter";
 import { PrintWeekMenu } from "./PrintWeekMenu";
@@ -154,6 +155,11 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                   gridSize={caps.wordSearchGrid?.size}
                   gridDirections={caps.wordSearchGrid?.directions}
                   gridLetterCase={caps.wordSearchGrid?.letterCase}
+                  title={`Week ${String(weekData.week).padStart(2, "0")}`}
+                  focus={weekData.focus}
+                />
+                <Crossword
+                  words={weekData.words}
                   title={`Week ${String(weekData.week).padStart(2, "0")}`}
                   focus={weekData.focus}
                 />

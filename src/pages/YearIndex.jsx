@@ -255,7 +255,7 @@ export default function YearIndex() {
       </title>
       <meta
         name="description"
-        content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches and phonics games matched to the National Curriculum, for Reception through to Year 6."
+        content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches, crosswords and phonics games matched to the National Curriculum, for Reception through to Year 6."
       />
       <link rel="canonical" href="https://spell-stars.pages.dev/" />
       <SiteHeader />

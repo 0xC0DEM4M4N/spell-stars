@@ -14,6 +14,7 @@
 // printing: bold + underline, never colour alone.
 
 import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
+import { buildCrossword } from "@/lib/crossword";
 
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap";
@@ -210,6 +211,78 @@ ${printFooter("Find all the words hidden in the grid.")}`;
   return { style, body };
 }
 
+// Crossword: the numbered grid with the clues underneath, then a second
+// page with the answers filled in. Pass `puzzle` to print one that is
+// already on screen; otherwise a new one is made from `words`. `clueMode`
+// is "sentence" (default) or "meaning".
+function crosswordGridHtml(puzzle, cell, showLetters) {
+  const squares = [];
+  for (let r = 0; r < puzzle.height; r++) {
+    for (let c = 0; c < puzzle.width; c++) {
+      const letter = puzzle.grid[r][c];
+      if (!letter) {
+        squares.push('<div class="xb"></div>');
+        continue;
+      }
+      const n = puzzle.numbers[r][c];
+      squares.push(
+        `<div class="xc">${n ? `<span class="xn">${n}</span>` : ""}${showLetters ? `<span class="xl">${escapeHtml(letter)}</span>` : ""}</div>`,
+      );
+    }
+  }
+  return `<div class="xgrid" style="grid-template-columns:repeat(${puzzle.width},${cell}px);grid-auto-rows:${cell}px">${squares.join("")}</div>`;
+}
+
+function crosswordSection({ title, topic, meta, words, puzzle: given, clueMode = "sentence" }) {
+  const puzzle = given || buildCrossword(words || [], { clueMode });
+  if (!puzzle) {
+    return {
+      style: "",
+      body: `${printHeader({ eyebrow: "Crossword", title, topic, meta })}<p class="meta" style="margin-top:24px">There are not enough words here to make a crossword.</p>${printFooter("Crossword")}`,
+    };
+  }
+  const size = Math.max(puzzle.width, puzzle.height);
+  const cell = Math.max(20, Math.min(34, Math.floor(600 / size)));
+  const answerCell = Math.max(16, Math.min(26, Math.floor(480 / size)));
+
+  const style = `
+.xgrid{display:grid;gap:0;width:fit-content;margin-top:18px}
+.xb{background:transparent}
+.xc{position:relative;outline:1px solid var(--ink);outline-offset:-1px;background:#fff}
+.xn{position:absolute;top:1px;left:2px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:${Math.max(7, Math.round(cell * 0.3))}px;line-height:1;color:var(--muted)}
+.xl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Lexend',system-ui,sans-serif;font-weight:700;font-size:${Math.round(answerCell * 0.58)}px;color:var(--ink)}
+.xclues{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+.xclues .label{margin-top:0}
+.xclues ol{list-style:none}
+.xclues li{display:flex;gap:8px;font-size:${size > 16 ? 10 : 11.5}px;line-height:1.4;padding:4px 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.xclues .cn{flex:0 0 auto;min-width:16px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:700;color:var(--primary-deep)}
+.xclues .len{color:var(--muted);white-space:nowrap}
+.xanswers{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:20px;font-size:11px}
+.xanswers b{font-variant-numeric:tabular-nums;color:var(--primary-deep)}
+`;
+  const clueList = (label, clues) => `<div>
+  <p class="label">${label}</p>
+  <ol>${clues
+    .map(
+      (c) =>
+        `<li><span class="cn">${c.number}</span><span>${escapeHtml(c.clue)} <span class="len">${escapeHtml(c.enumeration)}</span></span></li>`,
+    )
+    .join("")}</ol>
+</div>`;
+  const body = `${printHeader({ eyebrow: "Crossword", title, topic, meta })}
+${crosswordGridHtml(puzzle, cell, false)}
+<div class="xclues">${clueList("Across", puzzle.across)}${clueList("Down", puzzle.down)}</div>
+${printFooter("Fill in the grid using the clues. The answers are on the next page.")}`;
+
+  const answers = [...puzzle.across.map((c) => ({ ...c, label: "Across" })), ...puzzle.down.map((c) => ({ ...c, label: "Down" }))];
+  const answersPage = `${printHeader({ eyebrow: "Crossword answers", title, topic, meta })}
+${crosswordGridHtml(puzzle, answerCell, true)}
+<div class="xanswers">${answers.map((c) => `<span><b>${c.number} ${c.label}</b> ${escapeHtml(c.word)}</span>`).join("")}</div>
+${printFooter("Answers")}`;
+
+  return { style, body, extraPages: [answersPage] };
+}
+
 // ── Single-sheet documents ──────────────────────────────────────────────
 // Each wraps one section as a standalone print job — used where only
 // one format is ever printed at a time (the term's "full list" button).
@@ -229,6 +302,12 @@ export function buildWordSearchSheet(opts) {
   return wrapDocument(`Word search – ${opts.title}`, style, `<div class="sheet-page">${body}</div>`);
 }
 
+export function buildCrosswordSheet(opts) {
+  const { style, body, extraPages = [] } = crosswordSection(opts);
+  const pages = [body, ...extraPages].map((html) => `<div class="sheet-page">${html}</div>`).join("");
+  return wrapDocument(`Crossword – ${opts.title}`, style, pages);
+}
+
 // ── Combined multi-format document ──────────────────────────────────────
 // `types` is an ordered array drawn from "words" | "writing" |
 // "wordsearch"; each becomes its own page in one print job, so picking
@@ -238,11 +317,15 @@ const SECTION_BUILDERS = {
   words: wordsOnlySection,
   writing: writingPracticeSection,
   wordsearch: wordSearchSection,
+  crossword: crosswordSection,
 };
 
 export function buildCombinedSheet(docTitle, types, opts) {
   const sections = types.map((type) => SECTION_BUILDERS[type](opts));
   const style = sections.map((s) => s.style).join("\n");
-  const body = sections.map((s) => `<div class="sheet-page">${s.body}</div>`).join("");
+  // A section can add pages of its own after its first (a crossword's answers).
+  const body = sections
+    .map((s) => [s.body, ...(s.extraPages || [])].map((html) => `<div class="sheet-page">${html}</div>`).join(""))
+    .join("");
   return wrapDocument(docTitle, style, body);
 }
