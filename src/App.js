@@ -12,6 +12,7 @@ import About from "@/pages/About";
 import SyncPage from "@/pages/SyncPage";
 import CustomListsPage from "@/pages/CustomListsPage";
 import CustomListPage from "@/pages/CustomListPage";
+import SharedListPage from "@/pages/SharedListPage";
 import DigitalJourney from "@/pages/DigitalJourney";
 import OfflineJourney from "@/pages/OfflineJourney";
 import { Toaster } from "@/components/ui/sonner";
@@ -49,9 +50,9 @@ function ScrollToTop({ lenisRef }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // On /sync the hash can hold a whole saved-progress payload, not a
+    // On /sync and /shared the hash can hold a whole payload, not a
     // section id. Never look it up (or decode it): just start at the top.
-    if (pathname === "/sync") {
+    if (pathname === "/sync" || pathname === "/shared") {
       lenisRef.current?.scrollTo(0, { immediate: true });
       return undefined;
     }
@@ -141,6 +142,7 @@ function AppShell() {
             <Route path="/sync" element={<SyncPage />} />
             <Route path="/custom" element={<CustomListsPage />} />
             <Route path="/custom/:listId" element={<CustomListPage />} />
+            <Route path="/shared" element={<SharedListPage />} />
             <Route path="/:yearSlug" element={<YearPage />} />
           </Routes>
           <Toaster position="bottom-right" />

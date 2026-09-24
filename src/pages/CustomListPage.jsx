@@ -14,6 +14,7 @@ import { PracticeQuiz } from "@/components/PracticeQuiz";
 import { WordSearch } from "@/components/WordSearch";
 import { PrintWeekMenu } from "@/components/PrintWeekMenu";
 import { BackupReminder } from "@/components/BackupReminder";
+import { ShareListDialog } from "@/components/ShareListDialog";
 import { useYearsConfig } from "@/lib/yearData";
 import { CUSTOM_ID_RE, deleteList, getList, gridSettingsFor, listToEntries } from "@/lib/customLists";
 import { PROGRESS_VERSION, loadProgress, recordAttempt, saveProgress, todayISO } from "@/lib/srs";
@@ -142,6 +143,10 @@ export default function CustomListPage() {
                 sheet={sheet}
                 gridSettings={grid}
                 triggerLabel="Print"
+                triggerClassName="inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
+              />
+              <ShareListDialog
+                list={list}
                 triggerClassName="inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
               />
               <Link
