@@ -78,7 +78,11 @@ function CarouselCard({ feature, context, focused }) {
       )}
     </>
   );
-  const base = "relative flex h-full flex-col rounded-3xl border border-foreground/10 bg-card p-5 shadow-sm";
+  const base =
+    "relative flex h-full flex-col rounded-3xl border bg-card p-5 transition-[border-color,box-shadow] duration-700 " +
+    (focused
+      ? "border-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.6),0_0_0_6px_hsl(var(--primary)/0.14),0_12px_38px_hsl(var(--primary)/0.4)]"
+      : "border-foreground/10 shadow-sm");
   return feature.to ? (
     <Link
       to={feature.to}
