@@ -24,7 +24,7 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={SPRING.reveal}
-          className="mx-auto max-w-2xl space-y-5 type-body text-base text-muted-foreground"
+          className="holo-card relative mx-auto max-w-2xl space-y-5 rounded-2xl p-6 sm:p-8 type-body text-base text-muted-foreground"
         >
           <p>
             It's still important to spell. It's still important to know where
