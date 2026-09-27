@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lightbulb, Bug, MessageSquare, Loader2 } from "lucide-react";
+import { Lightbulb, Bug, MessageSquare, Loader2, Check } from "lucide-react";
 import { InfoPage } from "@/components/InfoPage";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,9 +8,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
 
 const CATEGORIES = [
-  { value: "feature", label: "Request a feature", icon: Lightbulb },
-  { value: "bug", label: "Report an error", icon: Bug },
-  { value: "feedback", label: "General feedback", icon: MessageSquare },
+  { value: "feature", label: "Request a feature", description: "Something you wish this site could do.", icon: Lightbulb },
+  { value: "bug", label: "Report an error", description: "Something that isn't working as it should.", icon: Bug },
+  { value: "feedback", label: "General feedback", description: "Anything else — praise, confusion, a thought.", icon: MessageSquare },
 ];
 
 export default function FeedbackPage() {
@@ -52,35 +52,49 @@ export default function FeedbackPage() {
         <div className="mx-auto max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-6">
             <div>
-              <span className="mb-3 block font-mono text-xs uppercase tracking-[0.2em] text-primary">What's this about?</span>
-              <RadioGroup value={category} onValueChange={setCategory} className="grid gap-3 sm:grid-cols-3" data-testid="feedback-category">
-                {CATEGORIES.map(({ value, label, icon: Icon }) => (
-                  <Label
-                    key={value}
-                    htmlFor={`feedback-${value}`}
-                    className={`flex cursor-pointer flex-col items-start gap-2 rounded-xl border p-3 text-sm transition-colors ${
-                      category === value ? "border-primary bg-primary/10 text-foreground" : "border-foreground/15 text-muted-foreground hover:border-foreground/30"
-                    }`}
-                  >
-                    <span className="flex w-full items-center justify-between">
-                      <Icon className="h-4 w-4 text-primary" aria-hidden="true" />
-                      <RadioGroupItem value={value} id={`feedback-${value}`} />
-                    </span>
-                    {label}
-                  </Label>
-                ))}
+              <span className="mb-3 block text-sm font-semibold text-foreground" id="feedback-category-label">What's this about?</span>
+              <RadioGroup
+                value={category}
+                onValueChange={setCategory}
+                className="grid gap-3 sm:grid-cols-3"
+                aria-labelledby="feedback-category-label"
+                data-testid="feedback-category"
+              >
+                {CATEGORIES.map(({ value, label, description, icon: Icon }) => {
+                  const selected = category === value;
+                  return (
+                    <Label
+                      key={value}
+                      htmlFor={`feedback-${value}`}
+                      className={`relative flex cursor-pointer flex-col items-start gap-1.5 rounded-xl border-2 p-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background ${
+                        selected ? "border-primary bg-primary/10 text-foreground" : "border-foreground/20 text-foreground/90 hover:border-primary/50 hover:bg-primary/5"
+                      }`}
+                    >
+                      <RadioGroupItem value={value} id={`feedback-${value}`} className="sr-only" />
+                      <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
+                      <span className="font-semibold text-foreground">{label}</span>
+                      <span className="text-xs leading-snug text-muted-foreground">{description}</span>
+                      {selected && (
+                        <Check className="absolute right-3 top-3 h-4 w-4 text-primary" aria-hidden="true" />
+                      )}
+                    </Label>
+                  );
+                })}
               </RadioGroup>
             </div>
 
             <div>
-              <Label htmlFor="feedback-message" className="mb-2 block font-mono text-xs uppercase tracking-[0.2em] text-primary">
+              <Label htmlFor="feedback-message" className="mb-2 block text-sm font-semibold text-foreground">
                 Your message
               </Label>
+              <p className="mb-3 text-sm text-foreground/80">
+                This is sent anonymously — nothing identifies you or your device. If you'd like a reply, leave an email or other way to reach you in the message itself.
+              </p>
               <Textarea
                 id="feedback-message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="The more detail the better — what happened, what you'd expect, or what you'd like to see."
+                placeholder="The more detail the better — what happened, what you'd expect, or what you'd like to see. Want a reply? Leave your email here too."
                 rows={6}
                 maxLength={4000}
                 required
