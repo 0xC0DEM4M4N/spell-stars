@@ -255,6 +255,10 @@ export const FAQS = [
     a: "Yes. Practice reads each word using your device's built-in voice, set to British English, and slower for Reception. You can replay it as often as you like. If a browser has no speech support the button says so, and \"Guess from the meaning\" works without sound for words that have a definition.",
   },
   {
+    q: "I can't hear the words in practice mode — what should I check?",
+    a: "First, the basics: your device isn't muted or on silent, its volume is turned up, and (on iPhone/iPad) the little side mute switch is off. If that's all fine, open the listening settings — the small ear icon next to \"Hear word\" in Listen mode — and check the volume slider there isn't turned down, and try \"Hear an example\" to test it directly. That panel also lets you change the speed and pick a different voice, in case the current one is too quiet or hard to hear. If it's still silent, your browser may not support text-to-speech at all; the \"Hear word\" button will say so, and \"Guess from the meaning\" mode works without any audio for words that have a definition.",
+  },
+  {
     q: "How do the crosswords work?",
     a: "Each week's words make a crossword, and so does any list of your own. Every word gets a clue: by default the word's example sentence with the word blanked out, or you can switch to its meaning. Type into the grid, use the arrow keys or tap a clue to move about, and use Check, Reveal word or Reveal all if you get stuck. Press New puzzle for a fresh layout. You can print it too, and the printout has a second page with the answers. Where a term or a whole year has more than 15 words, each puzzle uses a different selection of them.",
   },
