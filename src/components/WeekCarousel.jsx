@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Info, Sparkles, Target } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Signature, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WordSearch } from "./WordSearch";
 import { Crossword } from "./Crossword";
@@ -41,38 +41,50 @@ const CARD_PADDING_PX = 32; // sm:p-8
 // Below this card width there isn't room for two columns; stay stacked.
 const MIN_WIDE_CARD_PX = 880;
 
-const WordChip = ({ entry, index, week, active, pinned, wide, onHover, onLeave, onSelect }) => (
-  <div
-    className={`flex cursor-pointer items-center justify-between border px-4 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
-      wide ? "px-5 py-4" : "py-3"
-    } ${
-      pinned
-        ? "border-cyan-300/60 bg-cyan-300/15"
-        : active
-        ? "border-cyan-300/40 bg-cyan-300/8"
-        : "border-foreground/10 bg-foreground/[0.04] hover:border-cyan-300/30 hover:bg-cyan-300/5"
-    }`}
-    tabIndex={0}
-    role="button"
-    aria-pressed={pinned}
-    aria-label={entry.word}
-    onMouseEnter={onHover}
-    onMouseLeave={onLeave}
-    onFocus={onHover}
-    onBlur={onLeave}
-    onClick={onSelect}
-    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(e); } }}
-    data-testid={`word-chip-week-${week}-${index + 1}`}
-  >
-    <span className={`font-display font-bold tracking-wide text-foreground ${wide ? "text-2xl" : "text-lg"}`}>{entry.word}</span>
-    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-      {String(index + 1).padStart(2, "0")}
-      {(entry.exampleSentence || entry.definition) && (
-        <Info className={`h-3 w-3 transition-colors ${pinned ? "text-primary" : active ? "text-muted-foreground" : "text-slate-600"}`} aria-hidden="true" />
-      )}
-    </span>
-  </div>
-);
+// A mouse click causes a native focus event immediately before its click
+// event (mousedown -> focus -> mouseup -> click). If onFocus always pinned,
+// that focus would pin the word and then the click's own toggle -- seeing
+// it already pinned -- would immediately un-pin it again, so a click
+// looked like it needed pressing twice. clickingRef flags "a click is in
+// progress, let onClick handle pinning" so onFocus only pins for a focus
+// that arrived some other way (tabbing onto the chip with the keyboard).
+const WordChip = ({ entry, index, week, active, pinned, wide, onHover, onFocusPin, onSelect }) => {
+  const clickingRef = useRef(false);
+  return (
+    <div
+      className={`flex cursor-pointer items-center justify-between border px-4 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
+        wide ? "px-5 py-4" : "py-3"
+      } ${
+        pinned
+          ? "border-cyan-300/60 bg-cyan-300/15"
+          : active
+          ? "border-cyan-300/40 bg-cyan-300/8"
+          : "border-foreground/10 bg-foreground/[0.04] hover:border-cyan-300/30 hover:bg-cyan-300/5"
+      }`}
+      tabIndex={0}
+      role="button"
+      aria-pressed={pinned}
+      aria-label={entry.word}
+      onMouseEnter={onHover}
+      onMouseDown={() => { clickingRef.current = true; }}
+      onFocus={() => {
+        if (clickingRef.current) return;
+        onFocusPin();
+      }}
+      onClick={(e) => { clickingRef.current = false; onSelect(e); }}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(e); } }}
+      data-testid={`word-chip-week-${week}-${index + 1}`}
+    >
+      <span className={`font-display font-bold tracking-wide text-foreground ${wide ? "text-2xl" : "text-lg"}`}>{entry.word}</span>
+      <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        {String(index + 1).padStart(2, "0")}
+        {(entry.exampleSentence || entry.definition) && (
+          <Info className={`h-3 w-3 transition-colors ${pinned ? "text-primary" : active ? "text-muted-foreground" : "text-slate-600"}`} aria-hidden="true" />
+        )}
+      </span>
+    </div>
+  );
+};
 
 // Shared card chrome for both card kinds: the glow, hover lift and fade for
 // inactive cards. `overflow-hidden` + a fixed-width inner wrapper let the
@@ -119,6 +131,13 @@ function useReportHeight(ref, onMeasure, week, wide) {
 const WeekCard = memo(function WeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onMeasure, capabilities }) {
   const measureRef = useRef(null);
   useReportHeight(measureRef, onMeasure, weekData.week, wide);
+  // pinnedWord is the sticky choice (click, or tabbing onto a chip -- a
+  // keyboard user has no hover, so focus counts as pinning). hoveredWord
+  // is mouse-only and never touched by focus/blur, so a stray focus ring
+  // can't block a later mouse hover (or vice versa). It's set per word but
+  // only cleared for the word list as a whole (see its onMouseLeave below),
+  // so moving between chips keeps showing the last one hovered instead of
+  // flickering back to the pinned word/"Learning point" between them.
   const [pinnedWord, setPinnedWord] = useState(null);
   const [hoveredWord, setHoveredWord] = useState(null);
   const [quizOpen, setQuizOpen] = useState(false);
@@ -193,14 +212,21 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
             {/* Fixed-height info panel — prevents card from jumping */}
             <div className={`mt-7 overflow-hidden border-l-2 border-cyan-300 pl-5 ${wide ? "h-[12rem]" : "h-[9rem]"}`}>
               <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
-                <Target className="h-4 w-4" />
-                {activeWordInfo ? (
-                  <span className="font-display text-2xl font-extrabold normal-case tracking-normal text-foreground">{activeWordInfo.word}</span>
-                ) : (
-                  "Learning point"
-                )}
+                {activeWordInfo ? <Signature className="h-4 w-4" /> : <Target className="h-4 w-4" />}
+                {/* The word itself moves to its own line below, at the same
+                    size as the idle "Learning point" text -- keeping this
+                    label row a fixed height (instead of swapping in a much
+                    bigger word here) is what stops it jumping about. */}
+                {activeWordInfo
+                  ? `Word #${weekData.words.findIndex((w) => w.id === activeWordInfo.id) + 1}`
+                  : "Learning point"}
                 {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-primary">pinned</span>}
               </div>
+              {activeWordInfo && (
+                <p className={`mb-2 font-semibold leading-snug text-foreground ${wide ? "text-lg" : "text-base"}`}>
+                  {activeWordInfo.word}
+                </p>
+              )}
               <AnimatePresence mode="wait">
                 {activeWordInfo ? (
                   <motion.div
@@ -242,6 +268,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
           <div
             className={`grid min-w-0 grid-cols-1 content-start gap-3 sm:grid-cols-2 ${wide ? "" : "mt-8"}`}
             data-testid={`word-list-week-${weekData.week}`}
+            onMouseLeave={() => setHoveredWord(null)}
           >
             {weekData.words.map((entry, index) => (
               <WordChip
@@ -253,7 +280,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                 active={activeWordInfo?.id === entry.id}
                 pinned={pinnedWord?.id === entry.id}
                 onHover={() => setHoveredWord(entry)}
-                onLeave={() => setHoveredWord(null)}
+                onFocusPin={() => setPinnedWord(entry)}
                 onSelect={(e) => handleSelect(entry, e)}
               />
             ))}
