@@ -429,6 +429,25 @@ button:not(:disabled):active,
   scale: 0.985;
 }
 
+/* Under-development banner: hazard-stripe strip fixed above everything
+   else, including the header. When it's on (UnderDevelopmentBanner.jsx),
+   the app shell gets top padding equal to its height and the header is
+   pushed down by the same amount, so both sit right below it instead of
+   overlapping. */
+:root {
+  --dev-banner-height: 34px;
+}
+.dev-banner {
+  height: var(--dev-banner-height);
+  background-image: repeating-linear-gradient(45deg, #facc15 0 16px, #111827 16px 32px);
+}
+[data-dev-banner="true"] {
+  padding-top: var(--dev-banner-height);
+}
+[data-dev-banner="true"] .material-bar {
+  top: var(--dev-banner-height);
+}
+
 /* Materials: translucent floating chrome with content passing underneath.
    The bar is always a material (the hero is always dark, so a fully
    transparent bar would put theme-coloured text on the wrong surface).
@@ -608,11 +627,19 @@ button:not(:disabled):active,
 [data-theme="light"] .material-bar[data-scrolled="true"],
 [data-theme="dyslexia"] .material-bar[data-scrolled="true"] {
   background-color: hsl(var(--background) / 0.97);
-  box-shadow: inset 0 -1px 0 hsl(var(--foreground) / 0.14), 0 6px 20px rgb(15 23 42 / 0.1);
+  box-shadow: inset 0 -1px 0 hsl(var(--foreground) / 0.14);
 }
 [data-theme="light"] .material-bar nav,
 [data-theme="dyslexia"] .material-bar nav {
   color: hsl(var(--foreground) / 0.85);
+}
+/* The edge-fade below the bar is tinted for a dark surface (see the
+   dark-theme rule above) -- against the light header + dark hero
+   underneath it reads as a stray seam, so it's off for these themes,
+   same as it already is for high contrast. */
+[data-theme="light"] .material-bar::after,
+[data-theme="dyslexia"] .material-bar::after {
+  display: none;
 }
 
 /* Word search tiles: pastel solid fill, dark text, firm border. */

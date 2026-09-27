@@ -286,6 +286,10 @@ export const FAQS = [
     q: "Do the words come with definitions and example sentences for every year?",
     a: "Reception, Year 1 and Year 2 have them for every word today. Years 3 to 6 are being filled in.",
   },
+  {
+    q: "What is look, cover, write, check — and why do it?",
+    a: "A five-step way of learning a spelling by heart: look at the word, say it out loud, cover it up, write it from memory, then uncover it and check what you wrote against the original. It works because writing from memory — not copying — is what actually builds the recall a spelling test needs; copying a word can feel productive without teaching your hand and eye to produce it unaided. If the check turns up a mistake, repeat just that word, not the whole list, and try again. Every writing practice print sheet has this as a reminder strip at the top, and it's also step 4 of the offline routine on the offline journey page.",
+  },
 ];
 
 export const EDUCATOR_NOTES = [

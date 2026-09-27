@@ -22,6 +22,18 @@ const FONTS_HREF =
 // Lucide "star", inlined so the print tab needs no icon library.
 const STAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="star-glyph"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>`;
 
+// Lucide outline icons for the Look-Say-Cover-Write-Check strip, inlined
+// for the same reason as STAR_SVG above.
+const iconSvg = (paths) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const LSCWC_STEPS = [
+  { step: "Look", hint: "at the word", icon: iconSvg('<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle>') },
+  { step: "Say", hint: "it out loud", icon: iconSvg('<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>') },
+  { step: "Cover", hint: "it up", icon: iconSvg('<path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"></path><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>') },
+  { step: "Write", hint: "it from memory", icon: iconSvg('<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path>') },
+  { step: "Check", hint: "it's right", icon: iconSvg('<circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>') },
+];
+
 const BASE_STYLES = `
 :root{--ink:#0b1220;--navy:#070a13;--primary:#09c4dc;--primary-deep:#067a8a;--amber:#fbbf24;--muted:#64748b;--line:#d8dee8;--dot:#9aa5b1}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -85,6 +97,29 @@ export function printHeader({ eyebrow, title, topic, meta }) {
 ${topic ? `<p class="focus">${escapeHtml(topic)}</p>` : ""}
 ${meta ? `<p class="meta">${escapeHtml(meta)}</p>` : ""}`;
 }
+
+// The Look-Say-Cover-Write-Check reminder strip: one icon per step, so a
+// child can follow it without needing to read fluently yet.
+export function lscwcReminder() {
+  const items = LSCWC_STEPS.map(
+    ({ step, hint, icon }) => `
+    <div class="lscwc-step">
+      <span class="lscwc-icon">${icon}</span>
+      <span class="lscwc-text"><b>${step}</b> ${hint}</span>
+    </div>`,
+  ).join("");
+  return `<div class="lscwc"><p class="label" style="margin-top:0">Look, cover, write, check</p><div class="lscwc-row">${items}</div></div>`;
+}
+
+const LSCWC_STYLES = `
+.lscwc{margin-top:16px}
+.lscwc-row{display:flex;flex-wrap:wrap;gap:10px 18px}
+.lscwc-step{display:flex;align-items:center;gap:7px;flex:1 1 150px}
+.lscwc-icon{flex-shrink:0;width:26px;height:26px;border-radius:999px;border:1.5px solid var(--primary-deep);color:var(--primary-deep);display:flex;align-items:center;justify-content:center}
+.lscwc-icon svg{width:15px;height:15px}
+.lscwc-text{font-size:10.5px;line-height:1.3;color:var(--muted)}
+.lscwc-text b{color:var(--ink);font-weight:700}
+`;
 
 export function printFooter(text) {
   return `<footer><span>${escapeHtml(text)}</span><span class="credit">&copy; SPELL// ST&#9733;RS &mdash; free to print and share</span></footer>`;
@@ -161,6 +196,7 @@ function writingPracticeSection({ title, topic, meta, words }) {
     .join("");
 
   const style = `
+${LSCWC_STYLES}
 table{width:100%;border-collapse:collapse;margin-top:16px;table-layout:fixed}
 thead th{text-align:left;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 8px 7px 0;border-bottom:2px solid var(--ink)}
 thead th:first-child{width:28%}
@@ -170,11 +206,12 @@ tr{break-inside:avoid}
 .blank-cell + .blank-cell{border-left:1px dashed var(--line)}
 `;
   const body = `${printHeader({ eyebrow: "Writing practice", title, topic, meta })}
+${lscwcReminder()}
 <table>
   <thead><tr><th>Word</th><th>Write it</th><th>Write it again</th></tr></thead>
   <tbody>${rows}</tbody>
 </table>
-${printFooter("Practise writing each word twice.")}`;
+${printFooter("Look, cover, write, check — then compare.")}`;
   return { style, body };
 }
 

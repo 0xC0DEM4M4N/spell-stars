@@ -16,8 +16,12 @@ import SharedListPage from "@/pages/SharedListPage";
 import WordOriginsPage from "@/pages/WordOriginsPage";
 import DigitalJourney from "@/pages/DigitalJourney";
 import OfflineJourney from "@/pages/OfflineJourney";
+import WhatsNewPage from "@/pages/WhatsNewPage";
+import FeedbackPage from "@/pages/FeedbackPage";
+import AdminFeedbackPage from "@/pages/AdminFeedbackPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
+import { UnderDevelopmentBanner, UNDER_DEVELOPMENT } from "@/components/UnderDevelopmentBanner";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 
 // Links from before the home page was split (/#faq, /#offline-routine...)
@@ -130,7 +134,8 @@ function AppShell() {
     // still respects the OS-level prefers-reduced-motion setting.
     <MotionConfig reducedMotion={reducedMotion ? "always" : "user"}>
       <BrowserRouter>
-        <div data-testid="app-shell">
+        <div data-testid="app-shell" data-dev-banner={UNDER_DEVELOPMENT}>
+          <UnderDevelopmentBanner />
           <ScrollToTop lenisRef={lenisRef} />
           <Routes>
             <Route path="/" element={<YearIndex />} />
@@ -140,6 +145,10 @@ function AppShell() {
             <Route path="/about" element={<About />} />
             <Route path="/digital-journey" element={<DigitalJourney />} />
             <Route path="/offline-journey" element={<OfflineJourney />} />
+            <Route path="/whats-new" element={<WhatsNewPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+            {/* No link anywhere; password-gated (functions/api/feedback.js). */}
+            <Route path="/admin/feedback" element={<AdminFeedbackPage />} />
             <Route path="/sync" element={<SyncPage />} />
             <Route path="/custom" element={<CustomListsPage />} />
             <Route path="/custom/:listId" element={<CustomListPage />} />

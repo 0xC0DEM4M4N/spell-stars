@@ -11,6 +11,7 @@ const NAV = [
   { label: 'For educators', to: '/for-educators' },
   { label: 'FAQs', to: '/faq' },
   { label: 'About', to: '/about' },
+  { label: 'Feedback', to: '/feedback' },
 ];
 
 export const SiteHeader = () => {

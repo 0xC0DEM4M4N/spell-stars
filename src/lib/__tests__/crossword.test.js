@@ -89,7 +89,7 @@ describe("clues", () => {
   const because = WORDS[0];
 
   it("blanks the word out of the example sentence", () => {
-    expect(clueFor(because)).toEqual({ text: "I stayed in ______ it rained.", kind: "sentence" });
+    expect(clueFor(because)).toEqual({ text: "I stayed in _______ it rained.", kind: "sentence" });
   });
 
   it("can use the meaning instead, and skips the origin", () => {

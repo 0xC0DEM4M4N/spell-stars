@@ -13,7 +13,6 @@
 export const MAX_CROSSWORD_WORDS = 15;
 export const MIN_ANSWER_LENGTH = 2;
 const DEFAULT_TRIES = 400;
-const BLANK = "______";
 
 // ── Small helpers ──────────────────────────────────────────────────────
 
@@ -58,7 +57,8 @@ export function enumeration(word) {
 
 const maskWord = (text, word) => {
   const re = new RegExp("(?<![\\p{L}])" + escapeRegExp(word) + "(?![\\p{L}])", "giu");
-  return re.test(text) ? text.replace(re, BLANK) : null;
+  const blank = "_".repeat(answerOf(word).length);
+  return re.test(text) ? text.replace(re, blank) : null;
 };
 
 /** The meaning part of a definition: "From Latin 'x', old — belonging to..." gives "belonging to...". */

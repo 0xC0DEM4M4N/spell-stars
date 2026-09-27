@@ -91,7 +91,13 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
     setActive({ r, c, dir: useDir });
   };
 
-  const selectClue = (clue) => setActive({ r: clue.row, c: clue.col, dir: clue.dir });
+  // Jump to the first letter that's still blank, so re-selecting a
+  // part-filled word doesn't send the cursor back to a letter already found.
+  const selectClue = (clue) => {
+    const cells = cellsOf(clue);
+    const [r, c] = cells.find(([cr, cc]) => !values[cellKey(cr, cc)]) || cells[0];
+    setActive({ r, c, dir: clue.dir });
+  };
 
   const setLetter = (r, c, letter) => {
     setValues((prev) => {

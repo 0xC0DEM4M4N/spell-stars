@@ -13,6 +13,7 @@ export const INFO_PAGES = [
   { to: "/for-educators", label: "For educators & parents", blurb: "Pacing, differentiation and an offline routine." },
   { to: "/faq", label: "FAQs", blurb: "Year groups, practice time, progress and more." },
   { to: "/about", label: "About", blurb: "Why spelling still matters, and who made this." },
+  { to: "/feedback", label: "Give feedback", blurb: "Request a feature, report an error, or share a thought." },
 ];
 
 /**

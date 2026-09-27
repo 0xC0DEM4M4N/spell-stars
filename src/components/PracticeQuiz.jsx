@@ -168,6 +168,17 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
     setFinished(false); setBurstKey(0); setShowSentenceHint(false);
   };
 
+  // Switches between "listen" and "meaning" for the word already in
+  // progress, rather than resetAll's full restart -- so changing your
+  // mind about which mode suits a word doesn't cost the session's shuffle
+  // order, position or score. Only the current word's own attempt state
+  // (its typed answer, right/wrong flash, attempt count) resets, since
+  // it's being re-presented in a different way.
+  const switchMode = (newMode) => {
+    setMode(newMode);
+    setAnswer(""); setStatus("idle"); setWordAttempts(0); setShowSentenceHint(false);
+  };
+
   const goNext = () => {
     if (index === sessionWords.length - 1) {
       setFinished(true); setStatus("idle"); setAnswer("");
@@ -268,14 +279,14 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
               <div className="font-mono text-xs uppercase tracking-[0.28em] text-accent2">
                 Practice mode
               </div>
-              {mode && !finished && (
+              {mode && !finished && hasMeanings && (
                 <button
                   type="button"
-                  onClick={resetAll}
+                  onClick={() => switchMode(mode === "listen" ? "meaning" : "listen")}
                   className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
-                  data-testid="quiz-change-mode-button"
+                  data-testid="quiz-switch-mode-button"
                 >
-                  Change mode
+                  {mode === "listen" ? "Switch to clue mode" : "Switch to listening mode"}
                 </button>
               )}
             </div>
