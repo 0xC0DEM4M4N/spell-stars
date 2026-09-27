@@ -23,6 +23,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import { UnderDevelopmentBanner, UNDER_DEVELOPMENT } from "@/components/UnderDevelopmentBanner";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { VoiceSettingsProvider } from "@/context/VoiceSettingsContext";
 
 // Links from before the home page was split (/#faq, /#offline-routine...)
 // still work: they forward to the page that now holds that section.
@@ -168,7 +169,9 @@ function AppShell() {
 function App() {
   return (
     <ThemeProvider>
-      <AppShell />
+      <VoiceSettingsProvider>
+        <AppShell />
+      </VoiceSettingsProvider>
     </ThemeProvider>
   );
 }

@@ -8,6 +8,8 @@ import { toast } from "@/components/ui/sonner";
 import { ConfettiBurst } from "@/components/ConfettiBurst";
 import { OnScreenKeyboard } from "@/components/OnScreenKeyboard";
 import { SpeakButton } from "@/components/SpeakButton";
+import { VoiceSettingsMenu } from "@/components/VoiceSettingsMenu";
+import { useVoiceSettings } from "@/context/VoiceSettingsContext";
 
 // capabilities.ttsRate -> SpeechSynthesisUtterance.rate (mirrors PracticeQuiz.jsx's TTS_RATE).
 const TTS_RATE = { slow: 0.65, standard: 0.92 };
@@ -78,6 +80,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
 
   const pressTimerRef = useRef(null);
   const suppressClickRef = useRef(false);
+  const { applyTo } = useVoiceSettings();
 
   const letterModeAvailable = isSingleLetterPrompt(prompt);
 
@@ -129,7 +132,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(word);
     utterance.lang = "en-GB";
-    utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+    applyTo(utterance, TTS_RATE[ttsRate] ?? TTS_RATE.standard);
     window.speechSynthesis.speak(utterance);
   };
 
@@ -169,7 +172,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
     // this is a text hack rather than real phoneme audio.
     const utterance = new SpeechSynthesisUtterance(PHONICS_SOUND_TEXT[prompt] || prompt);
     utterance.lang = "en-GB";
-    utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+    applyTo(utterance, TTS_RATE[ttsRate] ?? TTS_RATE.standard);
     window.speechSynthesis.speak(utterance);
   };
 
@@ -316,7 +319,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
 
               {mode === "listen" ? (
                 <>
-                  <div className="mt-6 flex justify-center">
+                  <div className="mt-6 flex justify-center gap-2">
                     <Button
                       type="button"
                       onClick={speakPrompt}
@@ -326,6 +329,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                     >
                       <Volume2 className="h-4 w-4" /> Hear it again
                     </Button>
+                    <VoiceSettingsMenu />
                   </div>
 
                   <div className="mt-6 overflow-x-auto pb-1">

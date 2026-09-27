@@ -1,5 +1,6 @@
 import { Volume2 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+import { useVoiceSettings } from "@/context/VoiceSettingsContext";
 
 // capabilities.ttsRate -> SpeechSynthesisUtterance.rate (mirrors PracticeQuiz.jsx's TTS_RATE).
 const TTS_RATE = { slow: 0.65, standard: 0.92 };
@@ -18,13 +19,15 @@ const TTS_RATE = { slow: 0.65, standard: 0.92 };
  * deliberate separate rollout, not assumed here.
  */
 export const SpeakButton = ({ text, ttsRate, label = "Read this aloud", className = "" }) => {
+  const { applyTo } = useVoiceSettings();
+
   const handleClick = (e) => {
     e.stopPropagation();
     if (!window.speechSynthesis) { toast.error("Audio is not available in this browser"); return; }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "en-GB";
-    utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+    applyTo(utterance, TTS_RATE[ttsRate] ?? TTS_RATE.standard);
     window.speechSynthesis.speak(utterance);
   };
 

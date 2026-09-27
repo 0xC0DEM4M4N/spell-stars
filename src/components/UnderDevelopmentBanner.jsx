@@ -26,10 +26,10 @@ export const UnderDevelopmentBanner = () => {
           New features
         </Link>
         <Link
-          to="/whats-new"
+          to="/feedback"
           className="ml-1 underline decoration-yellow-300/60 underline-offset-2 hover:text-white"
         >
-          Give Feedback
+          Give feedback
         </Link>
       </span>
     </div>

@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
 import { ConfettiBurst } from "@/components/ConfettiBurst";
 import { SpeakButton } from "@/components/SpeakButton";
+import { VoiceSettingsMenu } from "@/components/VoiceSettingsMenu";
+import { useVoiceSettings } from "@/context/VoiceSettingsContext";
 import { progressKey } from "@/lib/wordKey";
 
 const normalize = (value) => value.trim().toLowerCase().replace(/['']/g, "'");
@@ -152,6 +154,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
   const [burstKey, setBurstKey] = useState(0);
   const [showSentenceHint, setShowSentenceHint] = useState(false);
   const inputRef = useRef(null);
+  const { applyTo } = useVoiceSettings();
 
   const currentWord = sessionWords[index];
   // "Guess from the meaning" needs something to show. A list someone typed in
@@ -193,7 +196,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(currentWord.word);
     utterance.lang = "en-GB";
-    utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+    applyTo(utterance, TTS_RATE[ttsRate] ?? TTS_RATE.standard);
     // Once the word's finished playing, move focus (back) onto the
     // answer input so typing lands in the right place straight away --
     // clicking "Hear word" would otherwise leave focus on that button.
@@ -212,7 +215,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(currentWord.word);
       utterance.lang = "en-GB";
-      utterance.rate = TTS_RATE[ttsRate] ?? TTS_RATE.standard;
+      applyTo(utterance, TTS_RATE[ttsRate] ?? TTS_RATE.standard);
       // Same as speakWord: focus the answer input once the word's been
       // read, so a typed answer lands correctly without an extra tap.
       utterance.onend = () => inputRef.current?.focus();
@@ -272,23 +275,26 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (v) resetAll(); }}>
       <DialogContent className="max-w-2xl overflow-hidden border-cyan-300/30 bg-popover p-0 text-foreground" data-testid="practice-quiz-dialog">
+        {/* A sibling of the close X (not nested in the padded card below) so
+            "top-4 right-*" lines it up level with the X, with a fixed gap
+            reserved before it -- rather than sharing the header row, where
+            the two different button labels would otherwise nudge things
+            around each time you switch. */}
+        {mode && !finished && hasMeanings && (
+          <button
+            type="button"
+            onClick={() => switchMode(mode === "listen" ? "meaning" : "listen")}
+            className="absolute right-14 top-4 z-10 whitespace-nowrap rounded-full border border-cyan-300/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+            data-testid="quiz-switch-mode-button"
+          >
+            {mode === "listen" ? "Switch to clue mode" : "Switch to listening mode"}
+          </button>
+        )}
         <div className="holo-card relative p-6 sm:p-8">
           {burstKey > 0 && <ConfettiBurst burstKey={burstKey} />}
           <DialogHeader>
-            <div className="flex items-center justify-between gap-4">
-              <div className="font-mono text-xs uppercase tracking-[0.28em] text-accent2">
-                Practice mode
-              </div>
-              {mode && !finished && hasMeanings && (
-                <button
-                  type="button"
-                  onClick={() => switchMode(mode === "listen" ? "meaning" : "listen")}
-                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
-                  data-testid="quiz-switch-mode-button"
-                >
-                  {mode === "listen" ? "Switch to clue mode" : "Switch to listening mode"}
-                </button>
-              )}
+            <div className="font-mono text-xs uppercase tracking-[0.28em] text-accent2">
+              Practice mode
             </div>
             <DialogTitle className="font-display text-3xl font-extrabold text-foreground" data-testid="quiz-title">
               {copy.title}
@@ -353,7 +359,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
 
               {mode === "listen" ? (
                 <div
-                  className={`relative mt-8 rounded-3xl border p-6 text-center transition-colors duration-300 ${
+                  className={`relative mt-8 flex min-h-[190px] flex-col items-center justify-center rounded-3xl border p-6 text-center transition-colors duration-300 ${
                     status === "correct"
                       ? "border-emerald-300/70 bg-emerald-400/25"
                       : status === "incorrect"
@@ -374,7 +380,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                 </div>
               ) : (
                 <div
-                  className={`relative mt-8 rounded-3xl border p-6 transition-colors duration-300 ${
+                  className={`relative mt-8 min-h-[190px] rounded-3xl border p-6 transition-colors duration-300 ${
                     status === "correct"
                       ? "border-emerald-300/70 bg-emerald-400/25"
                       : status === "incorrect"
@@ -438,13 +444,16 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
 
               <div className="mt-6 flex flex-col items-center gap-3">
                 {mode === "listen" && (
-                  <Button
-                    type="button" variant="outline" onClick={speakWord}
-                    className="border-cyan-300/30 bg-cyan-300/10 text-primary hover:bg-cyan-300 hover:text-slate-950"
-                    data-testid="quiz-hear-button"
-                  >
-                    <Ear className="h-4 w-4" /> Hear word
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button" variant="outline" onClick={speakWord}
+                      className="border-cyan-300/30 bg-cyan-300/10 text-primary hover:bg-cyan-300 hover:text-slate-950"
+                      data-testid="quiz-hear-button"
+                    >
+                      <Ear className="h-4 w-4" /> Hear word
+                    </Button>
+                    <VoiceSettingsMenu />
+                  </div>
                 )}
                 <input
                   ref={inputRef}
