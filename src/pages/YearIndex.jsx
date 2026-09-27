@@ -323,7 +323,7 @@ export default function YearIndex() {
                 >
                   ST
                   <Star
-                    className="inline-block h-[0.72em] w-[0.72em] text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)]"
+                    className="inline-block h-[0.9em] w-[0.9em] text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)] pl-2"
                     style={{ verticalAlign: '-0.1em' }}
                     aria-hidden="true"
                   />
