@@ -37,7 +37,7 @@ export const KEY_FEATURES = [
     big: true,
     icon: Save,
     title: "Progress saves itself",
-    body: "Every word you practise is remembered on this device. Close the tab, come back tomorrow, and the words that need another go are waiting. No login.",
+    body: "Every word you practise is remembered on this device. Close the tab, come back tomorrow, and the words that need another go are waiting. Sharing a device? Add a name for each child and their progress stays apart. No login.",
     to: "/how-it-works",
     cta: "See how a session works",
   },
@@ -273,6 +273,10 @@ export const FAQS = [
   {
     q: "Where is my child's progress saved?",
     a: "In the browser on the device they're practising on, so it carries over every time they come back on that device. Browsers can clear a site's saved data if it isn't used for a while, or if you clear your history, so it's worth saving a backup from the \"Save or move progress\" page (linked in the footer and the settings menu).",
+  },
+  {
+    q: "Can more than one child use the same device?",
+    a: "Yes. Open the learner button next to the site name (top right) and add a name for each child — each one gets their own separate progress on that device, and you can switch between them any time. If a device is shared and nobody's added a second name yet, everything is saved as one “Learner 1” until you do.",
   },
   {
     q: "How do I use it on another device, or back up progress?",

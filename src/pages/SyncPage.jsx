@@ -196,6 +196,17 @@ function SaveCard({ yearLabel }) {
     ([, y]) => Object.keys(y.words).length > 0,
   );
   const total = years.reduce((n, [, y]) => n + Object.keys(y.words).length, 0);
+  const learners = state.snapshot.learners || [];
+  const wordsIn = (progress) =>
+    Object.values(progress).reduce((n, y) => n + Object.keys(y.words).length, 0);
+  const learnerRows = learners.map((l) => ({
+    name: l.name || 'Learner',
+    count: l.id === 'main' ? total : wordsIn(l.progress || {}),
+  }));
+  const grandTotal =
+    learners.length > 0
+      ? learnerRows.reduce((n, r) => n + r.count, 0)
+      : total;
 
   return (
     <Card id="save-heading" title="Save or move your progress">
@@ -206,8 +217,15 @@ function SaveCard({ yearLabel }) {
         </p>
       ) : (
         <p data-testid="sync-summary">
-          On this device: {plural(total, 'word', 'words')} practised
-          {years.length > 0 &&
+          On this device: {plural(grandTotal, 'word', 'words')} practised
+          {learners.length > 0 ? (
+            ' (' +
+            learnerRows
+              .map((r) => r.name + ': ' + plural(r.count, 'word', 'words'))
+              .join(', ') +
+            ')'
+          ) : (
+            years.length > 0 &&
             ' (' +
               years
                 .map(
@@ -215,7 +233,8 @@ function SaveCard({ yearLabel }) {
                     yearLabel(slug) + ': ' + Object.keys(y.words).length,
                 )
                 .join(', ') +
-              ')'}
+              ')'
+          )}
           . The copy also keeps each year's current week
           {state.snapshot.lists.length > 0 &&
             ' and your ' +
@@ -224,6 +243,8 @@ function SaveCard({ yearLabel }) {
                 'custom list',
                 'custom lists',
               )}
+          {learners.length > 1 &&
+            ', and everyone’s name shown above'}
           .
         </p>
       )}
@@ -357,28 +378,61 @@ function SaveCard({ yearLabel }) {
 
 // ── Restore ────────────────────────────────────────────────────────────
 
+function YearRows({ years, yearLabel }) {
+  const rows = Object.entries(years);
+  if (rows.length === 0) return null;
+  return (
+    <ul className="space-y-1">
+      {rows.map(([slug, c]) => (
+        <li key={slug}>
+          <strong className="text-foreground">{yearLabel(slug)}:</strong>{' '}
+          {[
+            c.added && plural(c.added, 'new word', 'new words'),
+            c.updated && plural(c.updated, 'word', 'words') + ' updated',
+            c.removed && plural(c.removed, 'word', 'words') + ' removed',
+            c.unchanged &&
+              plural(c.unchanged, 'word', 'words') + ' already the same',
+          ]
+            .filter(Boolean)
+            .join(', ') || 'nothing to change'}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function PreviewSummary({ result, yearLabel }) {
   const s = result.summary;
-  const rows = Object.entries(s.years);
+  const learners = s.learners || [];
+  const multiLearner = learners.length > 1 || learners.some((l) => !l.isMain);
   return (
     <div className="space-y-2" data-testid="sync-preview">
-      {rows.length > 0 && (
-        <ul className="space-y-1">
-          {rows.map(([slug, c]) => (
-            <li key={slug}>
-              <strong className="text-foreground">{yearLabel(slug)}:</strong>{' '}
-              {[
-                c.added && plural(c.added, 'new word', 'new words'),
-                c.updated && plural(c.updated, 'word', 'words') + ' updated',
-                c.removed && plural(c.removed, 'word', 'words') + ' removed',
-                c.unchanged &&
-                  plural(c.unchanged, 'word', 'words') + ' already the same',
-              ]
-                .filter(Boolean)
-                .join(', ') || 'nothing to change'}
+      {multiLearner ? (
+        <ul className="space-y-2" data-testid="sync-preview-learners">
+          {learners.map((l) => (
+            <li key={l.id}>
+              <strong className="text-foreground">
+                {l.name || 'Learner'}
+                {l.isNew && ' (new)'}
+                {l.removedLearner && ' (removed)'}:
+              </strong>{' '}
+              {l.removedLearner ? (
+                'removed, along with ' + plural(l.removed, 'word', 'words') + ' of saved progress'
+              ) : (
+                <YearRows years={l.years} yearLabel={yearLabel} />
+              )}
             </li>
           ))}
         </ul>
+      ) : (
+        <YearRows years={s.years} yearLabel={yearLabel} />
+      )}
+      {s.learnersSkipped > 0 && (
+        <p role="alert" className="text-foreground">
+          {plural(s.learnersSkipped, 'learner', 'learners')} from the backup{' '}
+          {s.learnersSkipped === 1 ? "wasn't" : "weren't"} added &mdash; this device
+          already has as many as it can keep.
+        </p>
       )}
       {s.lists &&
         s.lists.added +

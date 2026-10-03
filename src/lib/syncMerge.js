@@ -6,10 +6,20 @@
 
 import { CUSTOM_LISTS_KEY, MAX_LISTS } from "./customLists";
 import {
+  LEARNERS_KEY,
+  LEARNER_PROGRESS_KEY_RE,
+  MAIN_LEARNER_ID,
+  MAX_LEARNERS,
+  makeLearnerId,
+  nameKey,
+  progressKeyFor,
+  uniqueDefaultName,
+} from "./learners";
+import {
   PROGRESS_KEY_RE,
   SETTING_NAMES,
-  progressStorageKey,
   settingStorageKey,
+  snapshotLearners,
 } from "./syncSnapshot";
 
 // ── Merging ────────────────────────────────────────────────────────────
@@ -75,62 +85,36 @@ function compareWordStates(a, b) {
 const sameState = (a, b) => compareWordStates(a, b) === 0;
 
 /**
- * Works out what applying `incoming` on top of `local` would do.
- *
- * @param {object} local     snapshot read from this device
- * @param {object} incoming  validated snapshot from a file, link or code
- * @param {object} [options]
- * @param {"merge"|"replace"} [options.mode="merge"]
- *        merge: keep the better record of every word, from both sides.
- *        replace: make this device match the backup (years the backup does
- *        not have are removed).
- * @param {boolean} [options.useIncomingWeeks=false]  merge only: also take
- *        the backup's current week for years that exist on both sides.
- * @param {boolean} [options.copySettings=false]  also copy display settings.
- * @param {string[]} [options.skipYears=[]]  years that must not be touched
- *        (their saved progress could not be read in the current format).
- * @returns {{ progress: object, removedYears: string[], settings: object,
- *             summary: object }}
+ * Merges one learner's years. `local` and `inc` are { slug: year } objects.
+ * Returns what to write and the counts for the preview.
  */
-export function mergeSnapshots(local, incoming, options = {}) {
-  const { mode = "merge", useIncomingWeeks = false, copySettings = false, skipYears = [] } = options;
-  const skip = new Set(skipYears);
+function mergeYears(local, inc, { mode, useIncomingWeeks, skip }) {
+  const progress = {};
+  const years = {};
+  const skipped = [];
+  const weekDiffers = [];
+  const total = { added: 0, updated: 0, unchanged: 0, removed: 0 };
 
-  const progress = {}; // years to write
-  const years = {};    // per-year counts for the preview
-  const summary = {
-    mode,
-    years,
-    added: 0,
-    updated: 0,
-    unchanged: 0,
-    removed: 0,
-    weekDiffers: [],
-    skippedYears: [],
-    settingsChanged: [],
-    lists: { added: 0, updated: 0, unchanged: 0, removed: 0, skipped: 0 },
-  };
-
-  for (const [slug, inc] of Object.entries(incoming.progress)) {
+  for (const [slug, incYear] of Object.entries(inc)) {
     if (skip.has(slug)) {
-      summary.skippedYears.push(slug);
+      skipped.push(slug);
       continue;
     }
-    const loc = local.progress[slug];
+    const loc = local[slug];
     const counts = { added: 0, updated: 0, unchanged: 0, removed: 0 };
 
     if (mode === "replace" || !loc) {
       const localWords = loc ? loc.words : {};
-      for (const [key, state] of Object.entries(inc.words)) {
+      for (const [key, state] of Object.entries(incYear.words)) {
         if (!localWords[key]) counts.added++;
         else if (sameState(localWords[key], state)) counts.unchanged++;
         else counts.updated++;
       }
-      for (const key of Object.keys(localWords)) if (!inc.words[key]) counts.removed++;
-      progress[slug] = { v: inc.v, currentWeek: inc.currentWeek, words: { ...inc.words } };
+      for (const key of Object.keys(localWords)) if (!incYear.words[key]) counts.removed++;
+      progress[slug] = { v: incYear.v, currentWeek: incYear.currentWeek, words: { ...incYear.words } };
     } else {
       const words = { ...loc.words };
-      for (const [key, state] of Object.entries(inc.words)) {
+      for (const [key, state] of Object.entries(incYear.words)) {
         const have = words[key];
         if (!have) {
           words[key] = state;
@@ -142,35 +126,211 @@ export function mergeSnapshots(local, incoming, options = {}) {
           counts.unchanged++;
         }
       }
-      if (inc.currentWeek !== loc.currentWeek) summary.weekDiffers.push({ slug, here: loc.currentWeek, there: inc.currentWeek });
+      if (incYear.currentWeek !== loc.currentWeek) weekDiffers.push({ slug, here: loc.currentWeek, there: incYear.currentWeek });
       progress[slug] = {
         v: loc.v,
-        currentWeek: useIncomingWeeks ? inc.currentWeek : loc.currentWeek,
+        currentWeek: useIncomingWeeks ? incYear.currentWeek : loc.currentWeek,
         words,
       };
     }
 
     years[slug] = counts;
-    summary.added += counts.added;
-    summary.updated += counts.updated;
-    summary.unchanged += counts.unchanged;
-    summary.removed += counts.removed;
+    for (const k of Object.keys(total)) total[k] += counts[k];
   }
 
   const removedYears = [];
   if (mode === "replace") {
-    for (const [slug, loc] of Object.entries(local.progress)) {
-      if (incoming.progress[slug] || skip.has(slug)) continue;
+    for (const [slug, loc] of Object.entries(local)) {
+      if (inc[slug] || skip.has(slug)) continue;
       removedYears.push(slug);
       const n = Object.keys(loc.words).length;
       years[slug] = { added: 0, updated: 0, unchanged: 0, removed: n };
+      total.removed += n;
+    }
+  }
+  return { progress, removedYears, years, skipped, weekDiffers, total };
+}
+
+const countWords = (progress) => Object.values(progress).reduce((n, y) => n + Object.keys(y.words).length, 0);
+
+/**
+ * Decides which learner on this device each learner in the backup goes to.
+ * Returns { plan, roster, skipped }:
+ *   plan     [{ inc, id, isNew, name }] one per learner taken from the backup
+ *   roster   the roster to store afterwards, or null when it is unchanged
+ *   skipped  learners not added because the device is at its limit
+ *
+ * Merge: a learner is matched to one on the device by name. A backup from
+ * before learners existed (one unnamed learner) goes to the main learner, and
+ * so does a named main learner when the device's main learner has no name yet.
+ * Anyone left over is added as a new learner.
+ * Replace: the backup's main learner replaces this device's main learner, the
+ * others are matched by name so their ids stay, and anyone on the device who
+ * is not in the backup is removed.
+ */
+function planLearners(localLearners, incLearners, hadRoster, mode, random) {
+  const localMain = localLearners.find((l) => l.id === MAIN_LEARNER_ID);
+  const taken = new Set(localLearners.map((l) => l.id));
+  const byName = new Map(localLearners.filter((l) => l.name).map((l) => [nameKey(l.name), l.id]));
+  const claimed = new Set();
+  const plan = [];
+  let skipped = 0;
+  let count = mode === "replace" ? 0 : localLearners.length;
+
+  for (const inc of incLearners) {
+    const nk = inc.name ? nameKey(inc.name) : "";
+    let id = null;
+    if (mode === "replace") {
+      if (inc.id === MAIN_LEARNER_ID) id = MAIN_LEARNER_ID;
+      else if (nk && byName.has(nk) && byName.get(nk) !== MAIN_LEARNER_ID && !claimed.has(byName.get(nk))) id = byName.get(nk);
+    } else if (nk && byName.has(nk) && !claimed.has(byName.get(nk))) {
+      id = byName.get(nk);
+    } else if (inc.id === MAIN_LEARNER_ID && !claimed.has(MAIN_LEARNER_ID) && (!inc.name || !localMain.name)) {
+      id = MAIN_LEARNER_ID;
+    }
+
+    if (id) {
+      claimed.add(id);
+      const takesName = mode === "merge" && id === MAIN_LEARNER_ID && !localMain.name && inc.name;
+      plan.push({ inc, id, isNew: false, name: mode === "replace" ? inc.name : takesName ? inc.name : null });
+      continue;
+    }
+
+    if (count >= MAX_LEARNERS) {
+      skipped++;
+      continue;
+    }
+    id = inc.id !== MAIN_LEARNER_ID && !taken.has(inc.id) ? inc.id : makeLearnerId([...taken], random);
+    taken.add(id);
+    claimed.add(id);
+    count++;
+    plan.push({ inc, id, isNew: true, name: inc.name });
+  }
+
+  // The roster to store afterwards.
+  let roster = null;
+  if (mode === "replace") {
+    if (incLearners.length === 1 && !incLearners[0].name) {
+      roster = hadRoster ? [] : null;
+    } else {
+      const next = plan.map((p) => ({ id: p.id, name: p.inc.name, createdAt: p.inc.createdAt || "" }));
+      const before = localLearners.filter((l) => !l.implicit);
+      if (JSON.stringify(next) !== JSON.stringify(before.map((l) => ({ id: l.id, name: l.name, createdAt: l.createdAt || "" })))) roster = next;
+    }
+  } else {
+    const additions = plan.filter((p) => p.isNew);
+    const naming = plan.find((p) => p.id === MAIN_LEARNER_ID && p.name);
+    if (additions.length > 0 || naming) {
+      const others = additions.map((p) => p.name);
+      const mainName = naming
+        ? naming.name
+        : localMain.name || uniqueDefaultName([...localLearners.map((l) => l.name), ...others]);
+      roster = [
+        ...localLearners.map((l) => ({ id: l.id, name: l.id === MAIN_LEARNER_ID ? mainName : l.name, createdAt: l.createdAt || "" })),
+        ...additions.map((p) => ({ id: p.id, name: p.name, createdAt: p.inc.createdAt || "" })),
+      ];
+    }
+  }
+  return { plan, roster, skipped };
+}
+
+/**
+ * Works out what applying `incoming` on top of `local` would do.
+ *
+ * @param {object} local     snapshot read from this device
+ * @param {object} incoming  validated snapshot from a file, link or code
+ * @param {object} [options]
+ * @param {"merge"|"replace"} [options.mode="merge"]
+ *        merge: keep the better record of every word, from both sides.
+ *        replace: make this device match the backup (years, lists and
+ *        learners the backup does not have are removed).
+ * @param {boolean} [options.useIncomingWeeks=false]  merge only: also take
+ *        the backup's current week for years that exist on both sides.
+ * @param {boolean} [options.copySettings=false]  also copy display settings.
+ * @param {string[]} [options.skipYears=[]]  years that must not be touched
+ *        (the main learner's saved progress could not be read in the current
+ *        format).
+ * @param {() => number} [options.random]  for choosing ids of new learners.
+ * @returns {{ progress: object, removedYears: string[], learners: object,
+ *             settings: object, summary: object }}
+ *   `progress` and `removedYears` are for the main learner. `learners` is
+ *   { roster, progress: { [id]: years }, removedYears: { [id]: slugs } }.
+ */
+export function mergeSnapshots(local, incoming, options = {}) {
+  const { mode = "merge", useIncomingWeeks = false, copySettings = false, skipYears = [], random = Math.random } = options;
+  const skip = new Set(skipYears);
+
+  const localLearners = snapshotLearners(local).map((l, i, all) => ({
+    ...l,
+    implicit: (local.learners || []).length === 0 && all.length === 1,
+  }));
+  const incLearners = snapshotLearners(incoming);
+  const { plan, roster, skipped } = planLearners(localLearners, incLearners, (local.learners || []).length > 0, mode, random);
+  const localById = new Map(localLearners.map((l) => [l.id, l]));
+
+  const summary = {
+    mode,
+    years: {},
+    added: 0,
+    updated: 0,
+    unchanged: 0,
+    removed: 0,
+    weekDiffers: [],
+    skippedYears: [],
+    settingsChanged: [],
+    lists: { added: 0, updated: 0, unchanged: 0, removed: 0, skipped: 0 },
+    learners: [],
+    learnersSkipped: skipped,
+  };
+  const out = {
+    progress: {},
+    removedYears: [],
+    learners: { roster, progress: {}, removedYears: {} },
+  };
+
+  for (const p of plan) {
+    const isMain = p.id === MAIN_LEARNER_ID;
+    const loc = localById.get(p.id);
+    const merged = mergeYears(loc ? loc.progress : {}, p.inc.progress, { mode, useIncomingWeeks, skip: isMain ? skip : new Set() });
+    if (isMain) {
+      out.progress = merged.progress;
+      out.removedYears = merged.removedYears;
+      summary.years = merged.years;
+      summary.skippedYears.push(...merged.skipped);
+      summary.weekDiffers.push(...merged.weekDiffers);
+    } else {
+      out.learners.progress[p.id] = merged.progress;
+      out.learners.removedYears[p.id] = merged.removedYears;
+      summary.weekDiffers.push(...merged.weekDiffers.map((d) => ({ ...d, learnerId: p.id })));
+    }
+    for (const k of ["added", "updated", "unchanged", "removed"]) summary[k] += merged.total[k];
+    summary.learners.push({
+      id: p.id,
+      name: p.inc.name || (loc && loc.name) || "",
+      isNew: p.isNew,
+      isMain,
+      years: merged.years,
+      ...merged.total,
+    });
+  }
+
+  // Replace: anyone on the device who is not in the backup is removed.
+  if (mode === "replace") {
+    const kept = new Set(plan.map((p) => p.id));
+    for (const l of localLearners) {
+      if (kept.has(l.id)) continue;
+      const slugs = Object.keys(l.progress);
+      const n = countWords(l.progress);
+      out.learners.removedYears[l.id] = slugs;
       summary.removed += n;
+      summary.learners.push({ id: l.id, name: l.name, isNew: false, isMain: false, removedLearner: true, years: {}, added: 0, updated: 0, unchanged: 0, removed: n });
     }
   }
 
   const merged = mergeLists(local.lists || [], incoming.lists || [], mode);
   summary.lists = merged.counts;
-  const listsChanged = merged.counts.added + merged.counts.updated + merged.counts.removed > 0;
+  out.lists = merged.lists;
+  out.listsChanged = merged.counts.added + merged.counts.updated + merged.counts.removed > 0;
 
   const settings = {};
   if (copySettings) {
@@ -181,23 +341,30 @@ export function mergeSnapshots(local, incoming, options = {}) {
       settings[name] = value;
     }
   }
-
-  return { progress, removedYears, settings, lists: merged.lists, listsChanged, summary };
+  out.settings = settings;
+  out.summary = summary;
+  return out;
 }
 
 /** True when applying the result would change nothing. */
 export function isNoOp(result) {
   const s = result.summary;
+  const l = result.learners || { roster: null, progress: {}, removedYears: {} };
+  const weekPending = (id, progress) =>
+    Object.entries(progress).some(([slug, y]) => {
+      const d = s.weekDiffers.find((w) => w.slug === slug && (w.learnerId || MAIN_LEARNER_ID) === id);
+      // A different current week is a change only if it is going to be applied.
+      return d && d.here !== y.currentWeek;
+    });
   return (
     s.added === 0 && s.updated === 0 && s.removed === 0 &&
     !result.listsChanged &&
     result.removedYears.length === 0 &&
+    l.roster === null &&
+    Object.values(l.removedYears).every((slugs) => slugs.length === 0) &&
     s.settingsChanged.length === 0 &&
-    // A different current week is a change only if it is going to be applied.
-    Object.entries(result.progress).every(([slug, y]) => {
-      const d = s.weekDiffers.find((w) => w.slug === slug);
-      return !d || d.here === y.currentWeek;
-    })
+    !weekPending(MAIN_LEARNER_ID, result.progress) &&
+    !Object.entries(l.progress).some(([id, progress]) => weekPending(id, progress))
   );
 }
 
@@ -208,9 +375,19 @@ export const UNDO_WINDOW_MS = 10 * 60 * 1000;
 
 /** The storage keys applying a result will write or remove. */
 export function keysToChange(result) {
+  const l = result.learners || { roster: null, progress: {}, removedYears: {} };
+  const learnerKeys = [];
+  for (const [id, years] of Object.entries(l.progress)) {
+    for (const slug of Object.keys(years)) learnerKeys.push(progressKeyFor(slug, id));
+  }
+  for (const [id, slugs] of Object.entries(l.removedYears)) {
+    for (const slug of slugs) learnerKeys.push(progressKeyFor(slug, id));
+  }
   return [
-    ...Object.keys(result.progress).map(progressStorageKey),
-    ...result.removedYears.map(progressStorageKey),
+    ...Object.keys(result.progress).map((slug) => progressKeyFor(slug, MAIN_LEARNER_ID)),
+    ...result.removedYears.map((slug) => progressKeyFor(slug, MAIN_LEARNER_ID)),
+    ...learnerKeys,
+    ...(l.roster !== null ? [LEARNERS_KEY] : []),
     ...Object.keys(result.settings).map(settingStorageKey),
     ...(result.listsChanged ? [CUSTOM_LISTS_KEY] : []),
   ];
@@ -224,7 +401,8 @@ export function createBackup(storage, keys, now = Date.now()) {
 }
 
 function isKnownKey(key) {
-  if (key === CUSTOM_LISTS_KEY || PROGRESS_KEY_RE.test(key)) return true;
+  if (key === CUSTOM_LISTS_KEY || key === LEARNERS_KEY) return true;
+  if (PROGRESS_KEY_RE.test(key) || LEARNER_PROGRESS_KEY_RE.test(key)) return true;
   return SETTING_NAMES.some((n) => settingStorageKey(n) === key);
 }
 
@@ -278,9 +456,20 @@ export function applyMergeResult(storage, result, now = Date.now()) {
   const backup = readBackup(storage, now);
   try {
     for (const [slug, year] of Object.entries(result.progress)) {
-      storage.setItem(progressStorageKey(slug), JSON.stringify(year));
+      storage.setItem(progressKeyFor(slug, MAIN_LEARNER_ID), JSON.stringify(year));
     }
-    for (const slug of result.removedYears) storage.removeItem(progressStorageKey(slug));
+    for (const slug of result.removedYears) storage.removeItem(progressKeyFor(slug, MAIN_LEARNER_ID));
+    const l = result.learners || { roster: null, progress: {}, removedYears: {} };
+    for (const [id, years] of Object.entries(l.progress)) {
+      for (const [slug, year] of Object.entries(years)) storage.setItem(progressKeyFor(slug, id), JSON.stringify(year));
+    }
+    for (const [id, slugs] of Object.entries(l.removedYears)) {
+      for (const slug of slugs) storage.removeItem(progressKeyFor(slug, id));
+    }
+    if (l.roster !== null) {
+      if (l.roster.length === 0) storage.removeItem(LEARNERS_KEY);
+      else storage.setItem(LEARNERS_KEY, JSON.stringify(l.roster));
+    }
     for (const [name, value] of Object.entries(result.settings)) {
       storage.setItem(settingStorageKey(name), value);
     }

@@ -9,10 +9,14 @@ export const NUDGE_MIN_WORDS = 40;
 export const NUDGE_QUIET_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Number of words with any saved practice, across all saved years. */
+/** Number of words with any saved practice, across all saved years and learners. */
 export function practisedWordCount(storage) {
   const { snapshot } = readLocalSnapshot(storage);
-  return Object.values(snapshot.progress).reduce((n, y) => n + Object.keys(y.words).length, 0);
+  const count = (progress) => Object.values(progress).reduce((n, y) => n + Object.keys(y.words).length, 0);
+  return (
+    count(snapshot.progress) +
+    (snapshot.learners || []).reduce((n, l) => n + count(l.progress || {}), 0)
+  );
 }
 
 /**

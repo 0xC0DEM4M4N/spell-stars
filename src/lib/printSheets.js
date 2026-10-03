@@ -223,9 +223,11 @@ function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections
   const wordStrings = words.map((w) => w.word);
   const { grid, placed } = buildGrid(wordStrings, size, dirs, gridLetterCase);
   const letters = grid.map((row) => row.map((cell) => cell.letter));
-  const cellPx = gridLetterCase === "lowercase" ? 32 : 26;
-  const cellFont = gridLetterCase === "lowercase" ? 17 : 12;
-  const wordFont = gridLetterCase === "lowercase" ? 15 : 12;
+  // Default (no explicit choice) prints lowercase; "uppercase" is the opt-in.
+  const isUpperCase = gridLetterCase === "uppercase";
+  const cellPx = isUpperCase ? 26 : 32;
+  const cellFont = isUpperCase ? 12 : 17;
+  const wordFont = isUpperCase ? 12 : 15;
 
   const style = `
 .layout{display:flex;gap:40px;margin-top:20px;align-items:flex-start}
@@ -234,7 +236,7 @@ function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections
 .words-col{flex:1;min-width:120px}
 .words-col .label{margin-top:0}
 .words{list-style:none}
-.words li{font-weight:600;font-size:${wordFont}px;${gridLetterCase === "lowercase" ? "" : "text-transform:uppercase;"}letter-spacing:${gridLetterCase === "lowercase" ? ".02em" : ".1em"};padding:6px 0;border-bottom:1px solid var(--line)}
+.words li{font-weight:600;font-size:${wordFont}px;${isUpperCase ? "text-transform:uppercase;" : ""}letter-spacing:${isUpperCase ? ".1em" : ".02em"};padding:6px 0;border-bottom:1px solid var(--line)}
 `;
   const body = `${printHeader({ eyebrow: "Word search", title, topic, meta })}
 <div class="layout">
@@ -291,24 +293,36 @@ function crosswordSection({ title, topic, meta, words, puzzle: given, clueMode =
 .xclues{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
 .xclues .label{margin-top:0}
 .xclues ol{list-style:none}
-.xclues li{display:flex;gap:8px;font-size:${size > 16 ? 10 : 11.5}px;line-height:1.4;padding:4px 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.xclues li{display:flex;align-items:flex-start;gap:8px;font-size:${size > 16 ? 10 : 11.5}px;line-height:1.4;padding:4px 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.xclues .cb{flex:0 0 auto;width:10px;height:10px;margin-top:3px;border:1.3px solid var(--ink);border-radius:2px}
 .xclues .cn{flex:0 0 auto;min-width:16px;font-family:'Lexend',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:700;color:var(--primary-deep)}
 .xclues .len{color:var(--muted);white-space:nowrap}
 .xanswers{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:20px;font-size:11px}
 .xanswers b{font-variant-numeric:tabular-nums;color:var(--primary-deep)}
+.xwriteout{margin-top:22px}
+.xwriteout .note{font-size:10.5px;line-height:1.4;color:var(--muted);margin-top:8px}
+.writeout-lines{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin-top:12px}
+.writeout-lines li{height:22px;border-bottom:1px dotted var(--dot);break-inside:avoid}
 `;
   const clueList = (label, clues) => `<div>
   <p class="label">${label}</p>
   <ol>${clues
     .map(
       (c) =>
-        `<li><span class="cn">${c.number}</span><span>${escapeHtml(c.clue)} <span class="len">${escapeHtml(c.enumeration)}</span></span></li>`,
+        `<li><span class="cb"></span><span class="cn">${c.number}</span><span>${escapeHtml(c.clue)} <span class="len">${escapeHtml(c.enumeration)}</span></span></li>`,
     )
     .join("")}</ol>
+</div>`;
+  const wordCount = puzzle.across.length + puzzle.down.length;
+  const writeout = `<div class="xwriteout">
+  <p class="label" style="margin-top:0">Write them out first</p>
+  <p class="note">To help, you could write out all of the words for this week and then cross them off as you use them in the crossword.</p>
+  <ol class="writeout-lines">${Array.from({ length: wordCount }, () => "<li></li>").join("")}</ol>
 </div>`;
   const body = `${printHeader({ eyebrow: "Crossword", title, topic, meta })}
 ${crosswordGridHtml(puzzle, cell, false)}
 <div class="xclues">${clueList("Across", puzzle.across)}${clueList("Down", puzzle.down)}</div>
+${writeout}
 ${printFooter("Fill in the grid using the clues. The answers are on the next page.")}`;
 
   const answers = [...puzzle.across.map((c) => ({ ...c, label: "Across" })), ...puzzle.down.map((c) => ({ ...c, label: "Down" }))];

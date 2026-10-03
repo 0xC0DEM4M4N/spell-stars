@@ -70,6 +70,17 @@ if (config.enableHealthCheck) {
 }
 
 let webpackConfig = {
+  // CRA's jest runner doesn't see webpack's resolve.alias below, so "@/..."
+  // imports (most of src/) can't be required from a test file without this.
+  jest: {
+    configure: (jestConfig) => {
+      jestConfig.moduleNameMapper = {
+        ...jestConfig.moduleNameMapper,
+        "^@/(.*)$": "<rootDir>/src/$1",
+      };
+      return jestConfig;
+    },
+  },
   eslint: {
     configure: {
       extends: ["plugin:react-hooks/recommended"],

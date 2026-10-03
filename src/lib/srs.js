@@ -9,7 +9,10 @@
 //
 // Progress is namespaced per year in localStorage as
 // `spellstars.<yearSlug>.progress`, per the routing plan (switching years
-// must never clobber another year's saved progress).
+// must never clobber another year's saved progress). Every function that
+// touches storage takes an optional trailing `learnerId`: left out (or
+// "main") it is that key; for any other learner it is
+// `spellstars.<learnerId>.<yearSlug>.progress` (see learners.js).
 //
 // Storage format versions (the `v` field):
 //   (none)  words are keyed by slot id, e.g. "year3-w01-01"
@@ -19,8 +22,7 @@
 //           is loaded.
 
 import { progressKey } from "./wordKey";
-
-const STORAGE_PREFIX = "spellstars";
+import { progressKeyFor } from "./learners";
 
 export const PROGRESS_VERSION = 2;
 
@@ -37,8 +39,8 @@ function addDays(dateISO, days) {
   return d.toISOString().slice(0, 10);
 }
 
-function storageKey(yearSlug) {
-  return STORAGE_PREFIX + "." + yearSlug + ".progress";
+function storageKey(yearSlug, learnerId) {
+  return progressKeyFor(yearSlug, learnerId);
 }
 
 function defaultProgress() {
@@ -48,9 +50,9 @@ function defaultProgress() {
 /** Reads a year's progress from localStorage. Never throws — falls back
  * to a fresh default if storage is unavailable or corrupt (private
  * browsing, disabled storage, hand-edited JSON, etc). */
-export function loadProgress(yearSlug) {
+export function loadProgress(yearSlug, learnerId) {
   try {
-    const raw = window.localStorage.getItem(storageKey(yearSlug));
+    const raw = window.localStorage.getItem(storageKey(yearSlug, learnerId));
     if (!raw) return defaultProgress();
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || !parsed.words) return defaultProgress();
@@ -64,9 +66,9 @@ export function loadProgress(yearSlug) {
 
 /** Writes a year's progress to localStorage. Silently no-ops if storage
  * isn't available rather than throwing and breaking the session. */
-export function saveProgress(yearSlug, progress) {
+export function saveProgress(yearSlug, progress, learnerId) {
   try {
-    window.localStorage.setItem(storageKey(yearSlug), JSON.stringify(progress));
+    window.localStorage.setItem(storageKey(yearSlug, learnerId), JSON.stringify(progress));
   } catch (err) {
     // Storage full / unavailable — practice still works this session,
     // it just won't persist. Not fatal.
@@ -246,10 +248,10 @@ function mergeWordStates(a, b) {
  *   are rather than dropped.
  * - When one word had records in several slots, they are combined.
  */
-export function migrateProgress(yearSlug, words) {
+export function migrateProgress(yearSlug, words, learnerId) {
   let raw;
   try {
-    raw = window.localStorage.getItem(storageKey(yearSlug));
+    raw = window.localStorage.getItem(storageKey(yearSlug, learnerId));
   } catch (err) {
     return null;
   }
@@ -292,11 +294,11 @@ export function migrateProgress(yearSlug, words) {
   };
 
   try {
-    const backupKey = storageKey(yearSlug) + ".v1";
+    const backupKey = storageKey(yearSlug, learnerId) + ".v1";
     if (window.localStorage.getItem(backupKey) === null) {
       window.localStorage.setItem(backupKey, raw);
     }
-    window.localStorage.setItem(storageKey(yearSlug), JSON.stringify(migrated));
+    window.localStorage.setItem(storageKey(yearSlug, learnerId), JSON.stringify(migrated));
   } catch (err) {
     // Storage full or unavailable: the app still works this session with
     // the migrated object in memory. The next visit simply migrates again.

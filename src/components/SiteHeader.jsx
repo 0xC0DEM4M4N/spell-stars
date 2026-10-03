@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { useScrolled } from '@/hooks/useScrolled';
+import { LearnerMenu } from '@/components/LearnerMenu';
 
 // One header for every page. Home keeps the year picker one click away;
 // the long-form content lives on its own pages.
@@ -41,24 +42,29 @@ export const SiteHeader = () => {
             RS
           </span>
         </Link>
-        <nav
-          className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex"
-          aria-label="Primary"
-        >
-          {NAV.map((item) => {
-            const current = item.to === pathname;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                aria-current={current ? 'page' : undefined}
-                className={`transition-colors duration-300 hover:text-primary ${current ? 'text-primary' : ''}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="flex items-center gap-3">
+          <nav
+            className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex"
+            aria-label="Primary"
+          >
+            {NAV.map((item) => {
+              const current = item.to === pathname;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  aria-current={current ? 'page' : undefined}
+                  className={`transition-colors duration-300 hover:text-primary ${current ? 'text-primary' : ''}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          {/* Visible on every screen size, unlike the nav above -- switching
+              who's practising is a routine action, not a secondary link. */}
+          <LearnerMenu />
+        </div>
       </div>
     </header>
   );

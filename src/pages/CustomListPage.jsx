@@ -17,6 +17,8 @@ import { MAX_CROSSWORD_WORDS } from "@/lib/crossword";
 import { PrintWeekMenu } from "@/components/PrintWeekMenu";
 import { BackupReminder } from "@/components/BackupReminder";
 import { ShareListDialog } from "@/components/ShareListDialog";
+import { LearnerGate } from "@/components/LearnerGate";
+import { useLearners } from "@/context/LearnerContext";
 import { useYearsConfig } from "@/lib/yearData";
 import { CUSTOM_ID_RE, deleteList, getList, gridSettingsFor, listToEntries } from "@/lib/customLists";
 import { PROGRESS_VERSION, loadProgress, recordAttempt, saveProgress, todayISO } from "@/lib/srs";
@@ -53,18 +55,19 @@ export default function CustomListPage() {
   const { listId } = useParams();
   const navigate = useNavigate();
   const { yearsConfig } = useYearsConfig();
+  const { activeLearnerId } = useLearners();
 
   const [list, setList] = useState(() => readList(listId));
-  const [progress, setProgress] = useState(() => loadProgress(listId));
+  const [progress, setProgress] = useState(() => loadProgress(listId, activeLearnerId));
   const [quizOpen, setQuizOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
     setList(readList(listId));
-    setProgress(loadProgress(listId));
+    setProgress(loadProgress(listId, activeLearnerId));
     setQuizOpen(false);
     setConfirmingDelete(false);
-  }, [listId]);
+  }, [listId, activeLearnerId]);
 
   const entries = useMemo(() => (list ? listToEntries(list) : []), [list]);
   const year = list && yearsConfig ? yearsConfig.years.find((y) => y.slug === list.yearHint) : null;
@@ -105,11 +108,12 @@ export default function CustomListPage() {
     return state && state.attempts > 0;
   }).length;
 
-  // Same recording as a year page: progress under the list's own id.
+  // Same recording as a year page: progress under the list's own id, and
+  // under whoever is practising (see lib/learners.js).
   const handleAttempt = (wordKey, correct) => {
     setProgress((prev) => {
       const next = { ...recordAttempt(prev, wordKey, correct, todayISO()), v: PROGRESS_VERSION };
-      saveProgress(listId, next);
+      saveProgress(listId, next, activeLearnerId);
       return next;
     });
   };
@@ -277,6 +281,7 @@ export default function CustomListPage() {
       </main>
 
       <BackupReminder />
+      <LearnerGate />
     </Shell>
   );
 }

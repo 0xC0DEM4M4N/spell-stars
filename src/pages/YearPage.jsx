@@ -18,6 +18,8 @@ import { PrintTermListButton } from "@/components/PrintTermListButton";
 import { SPRING } from "@/lib/motion";
 import { SiteHeader } from "@/components/SiteHeader";
 import { BackupReminder } from "@/components/BackupReminder";
+import { LearnerGate } from "@/components/LearnerGate";
+import { useLearners } from "@/context/LearnerContext";
 
 const SCOPE_EXPLAINERS = {
   term: "\u201cBy term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
@@ -65,13 +67,16 @@ export default function YearPage() {
   const navigate = useNavigate();
   const configState = useYearsConfig();
   const yearState = useYearData(yearSlug);
+  const { activeLearnerId } = useLearners();
 
-  const [progress, setProgress] = useState(() => loadProgress(yearSlug));
-  // Which year's saved progress has been through migrateProgress() (word
-  // ids -> word keys). The page waits for this before showing anything
-  // that picks words from progress, so a returning child's first session
-  // is chosen from their real history, not from an empty one.
+  const [progress, setProgress] = useState(() => loadProgress(yearSlug, activeLearnerId));
+  // Which (year, learner) pair's saved progress has been through
+  // migrateProgress() (word ids -> word keys). The page waits for this
+  // before showing anything that picks words from progress, so a returning
+  // child's first session is chosen from their real history, not from an
+  // empty one -- and switching who's practising re-waits the same way.
   const [progressReadyFor, setProgressReadyFor] = useState(null);
+  const progressReadyKey = yearSlug + ":" + activeLearnerId;
   // Scope (day/term/all) is mirrored in the ?scope= query param so
   // refreshing the page — or sharing the link — comes back to the same
   // tab. Read it once on first mount; the sync effect below keeps it
@@ -113,14 +118,14 @@ export default function YearPage() {
   // to "day" on an actual year switch, not on first mount — otherwise
   // it would stomp the scope just restored from the URL hash above.
   useEffect(() => {
-    setProgress(loadProgress(yearSlug));
+    setProgress(loadProgress(yearSlug, activeLearnerId));
     setQuizOpen(false);
     if (prevYearSlugRef.current !== yearSlug) {
       setScope("day");
       setTerm(null);
     }
     prevYearSlugRef.current = yearSlug;
-  }, [yearSlug]);
+  }, [yearSlug, activeLearnerId]);
 
   // Keep ?scope=, ?term= and ?count= in sync with the current tab so a
   // refresh or shared link comes back to the same place: which term is
@@ -169,7 +174,7 @@ export default function YearPage() {
   const setCurrentWeek = (week) => {
     setProgress((prev) => {
       const next = withCurrentWeek(prev, week);
-      saveProgress(yearSlug, next);
+      saveProgress(yearSlug, next, activeLearnerId);
       return next;
     });
   };
@@ -179,7 +184,7 @@ export default function YearPage() {
   const handleAttempt = (wordId, correct) => {
     setProgress((prev) => {
       const next = recordAttempt(prev, wordId, correct, todayISO());
-      saveProgress(yearSlug, next);
+      saveProgress(yearSlug, next, activeLearnerId);
       return next;
     });
   };
@@ -191,10 +196,10 @@ export default function YearPage() {
     // Right after a route change yearState can still hold the previous
     // year's words for one render, so check they are this year's.
     if (yearState.status !== "ready" || yearState.yearMeta?.slug !== yearSlug) return;
-    const migrated = migrateProgress(yearSlug, yearState.words);
+    const migrated = migrateProgress(yearSlug, yearState.words, activeLearnerId);
     if (migrated) setProgress(migrated);
-    setProgressReadyFor(yearSlug);
-  }, [yearSlug, yearState.status, yearState.words]);
+    setProgressReadyFor(progressReadyKey);
+  }, [yearSlug, activeLearnerId, yearState.status, yearState.words, progressReadyKey]);
 
   if (configState.status === "loading" || yearState.status === "loading") {
     return <Centered>Loading…</Centered>;
@@ -213,7 +218,7 @@ export default function YearPage() {
     );
   }
 
-  if (progressReadyFor !== yearSlug) {
+  if (progressReadyFor !== progressReadyKey) {
     return <Centered>Loading…</Centered>;
   }
 
@@ -322,6 +327,7 @@ export default function YearPage() {
       <BackupReminder />
 
       <SiteFooter />
+      <LearnerGate />
     </div>
   );
 }

@@ -62,7 +62,7 @@ function fmtTime(s) {
  * `words` entries use the wordlist-spec schema — only contentType:
  * "word" entries should be passed in.
  */
-export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDirections, gridLetterCase = "uppercase", title = "Word Search", focus = "", trigger }) => {
+export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDirections, gridLetterCase = "lowercase", title = "Word Search", focus = "", trigger }) => {
   const size = gridSize || DEFAULT_SIZE;
   const dirs = useMemo(() => buildDirections(gridDirections), [gridDirections]);
   const words = useMemo(() => wordEntries.map(w => w.word), [wordEntries]);

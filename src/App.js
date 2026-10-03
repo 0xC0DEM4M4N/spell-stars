@@ -24,6 +24,7 @@ import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import { UnderDevelopmentBanner, UNDER_DEVELOPMENT } from "@/components/UnderDevelopmentBanner";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { VoiceSettingsProvider } from "@/context/VoiceSettingsContext";
+import { LearnersProvider } from "@/context/LearnerContext";
 
 // Links from before the home page was split (/#faq, /#offline-routine...)
 // still work: they forward to the page that now holds that section.
@@ -170,7 +171,9 @@ function App() {
   return (
     <ThemeProvider>
       <VoiceSettingsProvider>
-        <AppShell />
+        <LearnersProvider>
+          <AppShell />
+        </LearnersProvider>
       </VoiceSettingsProvider>
     </ThemeProvider>
   );

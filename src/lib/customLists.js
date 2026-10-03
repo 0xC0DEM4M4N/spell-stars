@@ -9,6 +9,7 @@
 
 import { z } from "zod";
 import { normaliseWord, withWordKeys } from "./wordKey";
+import { removeProgressForSlug } from "./learners";
 
 export const CUSTOM_LISTS_KEY = "spellstars.customLists";
 export const CUSTOM_ID_RE = /^custom-[a-z0-9]{4,12}$/;
@@ -254,18 +255,12 @@ export function upsertList(storage, list) {
   return saveLists(storage, lists);
 }
 
-/** Deletes a list and the progress saved for it. */
+/** Deletes a list and the progress saved for it — every learner's, not just
+ * whoever is active right now. */
 export function deleteList(storage, id) {
   const lists = loadLists(storage).filter((l) => l.id !== id);
   const out = saveLists(storage, lists);
-  if (CUSTOM_ID_RE.test(id)) {
-    try {
-      storage.removeItem("spellstars." + id + ".progress");
-      storage.removeItem("spellstars." + id + ".progress.v1");
-    } catch (err) {
-      // nothing to do
-    }
-  }
+  if (CUSTOM_ID_RE.test(id)) removeProgressForSlug(storage, id);
   return out;
 }
 

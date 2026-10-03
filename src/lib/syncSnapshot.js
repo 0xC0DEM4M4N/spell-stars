@@ -15,6 +15,15 @@
 import { z } from "zod";
 import { PROGRESS_VERSION } from "./srs";
 import { MAX_LISTS, listSchema, loadLists } from "./customLists";
+import {
+  LEARNER_PROGRESS_KEY_RE,
+  MAIN_LEARNER_ID,
+  MAX_LEARNERS,
+  cleanName,
+  loadLearners,
+  nameKey,
+  uniqueDefaultName,
+} from "./learners";
 
 export const SNAPSHOT_APP = "spell-stars";
 export const SNAPSHOT_VERSION = 1;
@@ -26,6 +35,12 @@ export const SNAPSHOT_VERSION = 1;
 // match.
 export const PROGRESS_KEY_RE = /^spellstars\.([a-z0-9-]{1,40})\.progress$/;
 export const progressStorageKey = (slug) => "spellstars." + slug + ".progress";
+
+// Learners other than the main one keep their progress under
+// `spellstars.<learnerId>.<slug>.progress` (see learners.js). Their progress
+// travels inside the snapshot's `learners` list; the main learner's stays in
+// the top-level `progress`, so a backup made before learners existed is still
+// a valid backup for one unnamed learner.
 
 // Display and behaviour settings, all under the `spellstars.` prefix. Values
 // are stored as the raw strings the app writes, so they round-trip exactly.
@@ -90,17 +105,38 @@ const settingsSchema = z
     scopeExplainerDismissed: z.literal("1").optional(),
   });
 
+const progressByYear = z
+  .record(z.string().regex(/^[a-z0-9-]{1,40}$/), yearProgressSchema)
+  .refine((p) => Object.keys(p).length <= MAX_YEARS, "too many years");
+
+// One entry per child. The main learner has no `progress` here (it is the
+// snapshot's top-level `progress`).
+export const learnerSchema = z.object({
+  id: z.string().regex(/^(main|l-[a-z0-9]{4,12})$/),
+  name: z.string().max(60).transform(cleanName).refine((n) => n.length > 0, "empty name"),
+  createdAt: z.string().max(40).default(""),
+  progress: progressByYear.default({}),
+});
+
+const learnersSchema = z
+  .array(learnerSchema)
+  .max(MAX_LEARNERS)
+  .default([])
+  .refine((list) => new Set(list.map((l) => l.id)).size === list.length, "repeated learner")
+  .refine((list) => new Set(list.map((l) => nameKey(l.name))).size === list.length, "repeated name");
+
 export const snapshotSchema = z.object({
   app: z.literal(SNAPSHOT_APP),
   v: z.literal(SNAPSHOT_VERSION),
   exportedAt: z.string().max(40),
-  progress: z
-    .record(z.string().regex(/^[a-z0-9-]{1,40}$/), yearProgressSchema)
-    .refine((p) => Object.keys(p).length <= MAX_YEARS, "too many years"),
+  progress: progressByYear,
   settings: settingsSchema,
   // Custom spelling lists (see customLists.js). Backups made before lists
   // existed have none, which reads as an empty set.
   lists: z.array(listSchema).max(MAX_LISTS).default([]),
+  // Named learners (see learners.js). Backups made before learners existed
+  // have none, which reads as one unnamed learner.
+  learners: learnersSchema,
 });
 
 // ── Reading the device ─────────────────────────────────────────────────
@@ -116,6 +152,40 @@ function cleanYear(parsed) {
   }
   const week = Number.isInteger(parsed.currentWeek) ? Math.min(Math.max(parsed.currentWeek, 1), 60) : 1;
   return { v: PROGRESS_VERSION, currentWeek: week, words };
+}
+
+/** Reads one saved year without caring whether it is the current format. */
+function readYear(storage, key) {
+  let parsed;
+  try {
+    parsed = JSON.parse(storage.getItem(key));
+  } catch (err) {
+    return null;
+  }
+  if (!parsed || typeof parsed !== "object" || !parsed.words || typeof parsed.words !== "object") return null;
+  return parsed;
+}
+
+/** The roster as a snapshot carries it, with each other learner's progress. */
+function readLocalLearners(storage) {
+  const roster = loadLearners(storage);
+  if (roster.length === 0) return [];
+  const byLearner = {};
+  for (let i = 0; i < storage.length; i++) {
+    const key = storage.key(i);
+    const match = key && LEARNER_PROGRESS_KEY_RE.exec(key);
+    if (!match) continue;
+    const parsed = readYear(storage, key);
+    // Only the current format is shared. Learner progress has never existed in
+    // the older one, so nothing is lost by leaving anything else out.
+    if (!parsed || parsed.v !== PROGRESS_VERSION) continue;
+    (byLearner[match[1]] = byLearner[match[1]] || {})[match[2]] = cleanYear(parsed);
+  }
+  return roster.map((l) => {
+    const entry = { id: l.id, name: l.name, createdAt: l.createdAt || "" };
+    if (l.id !== MAIN_LEARNER_ID) entry.progress = byLearner[l.id] || {};
+    return entry;
+  });
 }
 
 /**
@@ -165,17 +235,35 @@ export function readLocalSnapshot(storage = window.localStorage, now = new Date(
       progress,
       settings,
       lists: loadLists(storage),
+      learners: readLocalLearners(storage),
     },
     unmigrated: unmigrated.sort(),
   };
 }
 
-/** True when a snapshot carries no practice and no custom lists. */
+const yearsHaveWords = (progress) => Object.values(progress || {}).some((y) => Object.keys(y.words).length > 0);
+
+/** True when a snapshot carries no practice, no custom lists and no named learners. */
 export function isEmptySnapshot(snapshot) {
   return (
     (snapshot.lists || []).length === 0 &&
-    Object.values(snapshot.progress).every((y) => Object.keys(y.words).length === 0)
+    (snapshot.learners || []).length === 0 &&
+    !yearsHaveWords(snapshot.progress)
   );
+}
+
+/** The learners a snapshot describes, main first. A snapshot without any is
+ * one unnamed learner whose progress is the top-level `progress`. */
+export function snapshotLearners(snapshot) {
+  const list = snapshot.learners || [];
+  if (list.length === 0) return [{ id: MAIN_LEARNER_ID, name: "", createdAt: "", progress: snapshot.progress }];
+  const out = list.map((l) => ({ ...l, progress: l.id === MAIN_LEARNER_ID ? snapshot.progress : l.progress || {} }));
+  if (!out.some((l) => l.id === MAIN_LEARNER_ID)) {
+    // A hand-edited file with named learners but none for the top-level
+    // progress: give that progress a learner rather than lose it.
+    out.unshift({ id: MAIN_LEARNER_ID, name: uniqueDefaultName(out.map((l) => l.name)), createdAt: "", progress: snapshot.progress });
+  }
+  return out;
 }
 
 // ── File format ────────────────────────────────────────────────────────
