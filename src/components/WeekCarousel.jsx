@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Info, Signature, Sparkles, Target } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, ClipboardCheck, Info, Signature, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WordSearch } from "./WordSearch";
 import { Crossword } from "./Crossword";
@@ -12,6 +12,8 @@ import { formatWeekCommencing } from "@/lib/weekDates";
 import { SPRING } from "@/lib/motion";
 import { progressKey } from "@/lib/wordKey";
 import { useTheme } from "@/context/ThemeContext";
+import { useLearners } from "@/context/LearnerContext";
+import { OFFLINE_STEPS, getWeekLog, loadOfflineLog, markOfflineStep } from "@/lib/offlineLog";
 
 // Renders sentence text with the spelling word highlighted in bold cyan
 function HighlightWord({ text, word }) {
@@ -128,7 +130,141 @@ function useReportHeight(ref, onMeasure, week, wide) {
   }, [ref, onMeasure, week, wide]);
 }
 
-const WeekCard = memo(function WeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onMeasure, capabilities }) {
+// "We did this" checklist for the week's offline routine (see the
+// "offline" entry in content/journeys.js: word search, crossword,
+// look-cover-write-check, verbal test). A tick calls onAttempt — the
+// exact same recordAttempt() path a digital answer takes — for every
+// word in the week, so it moves real words through real Leitner boxes
+// rather than a side counter; status points come along for free since
+// they're just summed correct answers. For the two puzzle steps it also
+// calls markOfflineStep(), which feeds badges.js's recordCompletion()/
+// checkStatus() exactly like a digital crossword/word search completion
+// does. offlineLog.js's own per-learner, per-week log guarantees a step
+// is only ever applied once; after that, clicking a row only changes how
+// it looks, never re-applies anything (same "it only goes up" principle
+// as badges.js).
+function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
+  const { activeLearnerId } = useLearners();
+
+  const readLog = () => getWeekLog(loadOfflineLog(window.localStorage, activeLearnerId), yearSlug, week);
+  const [applied, setApplied] = useState(() => {
+    const log = readLog();
+    const next = {};
+    for (const step of OFFLINE_STEPS) next[step.id] = !!log[step.id]?.done;
+    return next;
+  });
+  const [checked, setChecked] = useState(applied);
+  const [cleanRun, setCleanRun] = useState({});
+  const [justUnlocked, setJustUnlocked] = useState([]);
+  const [justReached, setJustReached] = useState(null);
+
+  // A different learner (or, in principle, a different week landing on
+  // the same mounted card) has its own log — re-read rather than keep
+  // showing whoever was active a moment ago.
+  useEffect(() => {
+    const log = readLog();
+    const next = {};
+    for (const step of OFFLINE_STEPS) next[step.id] = !!log[step.id]?.done;
+    setApplied(next);
+    setChecked(next);
+    setCleanRun({});
+    setJustUnlocked([]);
+    setJustReached(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLearnerId, yearSlug, week]);
+
+  const handleTick = (step) => {
+    if (applied[step.id]) {
+      // Already applied for real — this only changes how the row looks.
+      setChecked((prev) => ({ ...prev, [step.id]: !prev[step.id] }));
+      return;
+    }
+    for (const entry of words) onAttempt(progressKey(entry), true);
+    const result = markOfflineStep(window.localStorage, activeLearnerId, {
+      yearSlug,
+      week,
+      stepId: step.id,
+      cleanRun: !!cleanRun[step.id],
+    });
+    setApplied((prev) => ({ ...prev, [step.id]: true }));
+    setChecked((prev) => ({ ...prev, [step.id]: true }));
+    if (result.unlocked.length > 0) setJustUnlocked((prev) => [...prev, ...result.unlocked]);
+    if (result.status?.justReached) setJustReached(result.status.status);
+  };
+
+  return (
+    <div className="mt-8 border-t border-foreground/10 pt-6" onClick={(e) => e.stopPropagation()} data-testid={`offline-routine-week-${week}`}>
+      <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+        <ClipboardCheck className="h-4 w-4" /> Offline routine
+      </div>
+      <div className="space-y-2">
+        {OFFLINE_STEPS.map((step) => {
+          const isDone = checked[step.id];
+          return (
+            <div
+              key={step.id}
+              className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5 transition-colors duration-200 ${
+                isDone ? "border-emerald-300/30 bg-emerald-400/10" : "border-foreground/10 bg-foreground/[0.03]"
+              }`}
+              data-testid={`offline-step-${step.id}-week-${week}`}
+            >
+              <button
+                type="button"
+                onClick={() => handleTick(step)}
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                aria-pressed={isDone}
+                data-testid={`offline-step-${step.id}-week-${week}-tap`}
+              >
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors duration-200 ${
+                    isDone ? "border-emerald-400 bg-emerald-400 text-white" : "border-foreground/25 bg-foreground/5 text-transparent"
+                  }`}
+                  aria-hidden="true"
+                >
+                  <Check className="h-4 w-4" />
+                </span>
+                <span className="min-w-0">
+                  <span className={`block text-sm font-semibold ${isDone ? "text-success" : "text-foreground"}`}>{step.label}</span>
+                  <span className="block text-xs text-muted-foreground">{step.hint}</span>
+                </span>
+              </button>
+              {step.activity && !applied[step.id] && (
+                <label className="flex shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={!!cleanRun[step.id]}
+                    onChange={(e) => setCleanRun((prev) => ({ ...prev, [step.id]: e.target.checked }))}
+                    className="h-3.5 w-3.5"
+                    data-testid={`offline-step-${step.id}-week-${week}-cleanrun`}
+                  />
+                  No mistakes
+                </label>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {(justUnlocked.length > 0 || justReached) && (
+        <div
+          className="mt-3 rounded-xl border border-emerald-300/30 bg-emerald-400/10 p-3 text-center"
+          role="status"
+          data-testid={`offline-routine-unlocked-week-${week}`}
+        >
+          {justReached && (
+            <p className="font-display text-sm font-bold text-success">You've become a {justReached.label}!</p>
+          )}
+          {justUnlocked.length > 0 && (
+            <p className="mt-1 text-sm font-semibold text-primary">
+              New badge{justUnlocked.length > 1 ? "s" : ""}: {justUnlocked.map((b) => b.label).join(", ")}!
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const WeekCard = memo(function WeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onMeasure, capabilities, yearSlug }) {
   const measureRef = useRef(null);
   useReportHeight(measureRef, onMeasure, weekData.week, wide);
   // pinnedWord is the sticky choice (click, or tabbing onto a chip -- a
@@ -286,6 +422,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
             ))}
           </div>
         </div>
+        <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} />
       </div>
       <PracticeQuiz words={weekData.words} onAttempt={onAttempt} ttsRate={caps.ttsRate} open={quizOpen} onOpenChange={setQuizOpen} />
     </motion.article>
@@ -375,7 +512,7 @@ const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current,
  * swiping to a week sets it as current, since there's no calendar-driven
  * "true" current week to keep separate from it.
  */
-export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, onAttempt, capabilities }) => {
+export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, onAttempt, capabilities, yearSlug }) => {
   // The card track runs the full width of the page, while the week strip,
   // summary banner and arrows stay in the centred content column. The
   // column wrapper is measured so the active card always rests exactly on
@@ -586,6 +723,7 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
               onAttempt,
               onMeasure: handleMeasure,
               capabilities,
+              yearSlug,
             };
             return (
               <div

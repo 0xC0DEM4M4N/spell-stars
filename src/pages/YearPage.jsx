@@ -300,6 +300,7 @@ export default function YearPage() {
             onSelectWeek={setCurrentWeek}
             onAttempt={handleAttempt}
             capabilities={capabilities}
+            yearSlug={yearSlug}
           />
         ) : (
           <div className="mx-auto max-w-7xl px-6">
@@ -332,7 +333,7 @@ export default function YearPage() {
   );
 }
 
-function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt, capabilities }) {
+function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt, capabilities, yearSlug }) {
   const weeks = buildWeeksForYear(words, totalWeeks);
   if (!weeks.length) {
     return (
@@ -352,6 +353,7 @@ function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt,
       onSelectWeek={onSelectWeek}
       onAttempt={onAttempt}
       capabilities={capabilities}
+      yearSlug={yearSlug}
     />
   );
 }

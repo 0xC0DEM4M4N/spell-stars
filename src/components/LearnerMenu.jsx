@@ -3,7 +3,8 @@
 // to the nav, always visible (including on mobile, unlike the collapsed nav
 // links) since switching who's practising is a routine, one-tap action.
 import { useState } from "react";
-import { Check, Pencil, Plus, Trash2, Users, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Check, ChevronRight, Pencil, Plus, Trash2, Trophy, Users, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -185,7 +186,19 @@ export function LearnerMenu() {
           <DialogTitle className="font-display text-xl">Who's practising?</DialogTitle>
         </DialogHeader>
 
-        <div className="mt-1 max-h-[65vh] space-y-4 overflow-y-auto pr-1">
+        <Link
+          to="/progress"
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm font-semibold text-foreground transition-colors duration-150 hover:border-primary/50 hover:bg-primary/10"
+          data-testid="progress-link"
+        >
+          <Trophy className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+          My progress
+          <span className="ml-1 text-xs font-normal text-muted-foreground">Badges &amp; status</span>
+          <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        </Link>
+
+        <div className="mt-3 max-h-[65vh] space-y-4 overflow-y-auto pr-1">
           <div role="radiogroup" aria-label="Learners" className="space-y-2" data-testid="learner-list">
             {learners.map((learner) => (
               <LearnerRow

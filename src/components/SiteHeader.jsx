@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Star, Trophy } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { useScrolled } from '@/hooks/useScrolled';
 import { LearnerMenu } from '@/components/LearnerMenu';
 
@@ -61,19 +61,9 @@ export const SiteHeader = () => {
               );
             })}
           </nav>
-          {/* Visible on every screen size, unlike the nav above -- switching
-              who's practising is a routine action, not a secondary link. */}
-          <Link
-            to="/progress"
-            aria-current={pathname === '/progress' ? 'page' : undefined}
-            className={`inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-1.5 font-mono text-xs uppercase tracking-[0.16em] transition-colors duration-200 hover:border-primary/50 hover:text-primary ${
-              pathname === '/progress' ? 'text-primary' : 'text-muted-foreground'
-            }`}
-            data-testid="progress-link"
-          >
-            <Trophy className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="hidden sm:inline">My progress</span>
-          </Link>
+          {/* "My progress" now lives inside the learner switcher below --
+              there isn't room for its own pill at every header width, and
+              it belongs next to "who's practising" anyway. */}
           <LearnerMenu />
         </div>
       </div>

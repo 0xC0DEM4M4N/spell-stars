@@ -8,6 +8,18 @@ export const WHATS_NEW = [
     description:
       "A site-wide banner (shown while the REACT_APP_UNDER_DEVELOPMENT env var is on) links here so visitors can see what's shipped recently.",
   },
+  {
+    date: "2026-10-03",
+    title: "Badges and status levels",
+    description:
+      "Every correct answer now earns a point, and points build into one of nine status levels, from Letter Explorer up to an uncapped Galaxy rank, each with its own animal badge. Finishing crosswords and word searches also earns milestone, gold-star and speed badges. See them all on the new \"My progress\" page, in the learner menu next to the site name.",
+  },
+  {
+    date: "2026-10-03",
+    title: "Tick off the offline routine for real",
+    description:
+      "Each week's card now has an \"Offline routine\" checklist — printed word search, printed crossword, look-cover-write-check and a verbal test. Ticking a step counts those words as practised and feeds the same badges a digital crossword or word search would, so paper practice isn't just a reminder any more.",
+  },
    {
     date: "2026-01-04",
     title: "Add and assign users",

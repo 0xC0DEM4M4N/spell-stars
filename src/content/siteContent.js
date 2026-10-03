@@ -18,6 +18,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   SpellCheck2,
+  Trophy,
   Volume2,
 } from "lucide-react";
 
@@ -92,6 +93,14 @@ export const KEY_FEATURES = [
     body: "Print the word list, a handwriting sheet, a word search or a crossword (with its answers on a second page), and follow the look, cover, write, check routine away from the screen.",
     to: "/offline-journey",
     cta: "See the paper routine",
+  },
+  {
+    id: "badges",
+    icon: Trophy,
+    title: "Badges and status levels",
+    body: "Every correct answer earns a point. Points build into one of nine status levels — from Letter Explorer up to an uncapped Galaxy rank — each shown as its own animal badge. Crosswords and word searches add milestone, gold-star and speed badges too, from on-screen play or the printed offline routine.",
+    to: "/progress",
+    cta: "See your progress",
   },
   {
     id: "dyslexia",
@@ -291,6 +300,14 @@ export const FAQS = [
     a: "There's a five-step weekly routine: word search, the practice game, a printed sheet, look-cover-write-check, and a spoken test at the end. The digital journey and offline journey pages set out both halves, and every word search has a print button. The site needs an internet connection to load, so print the week's sheets first if you'll be offline.",
   },
   {
+    q: "Does paper practice count towards progress and badges?",
+    a: "Yes. Each week's card has an \"Offline routine\" checklist underneath the word list — a printed word search, a printed crossword, look-cover-write-check and a verbal test. Ticking a step off marks every word in that week as correctly practised for real, the same as a digital answer, and the two puzzle steps feed the same milestone and gold-star badges a digital crossword or word search would. There's an optional \"no mistakes\" tick alongside those two for the gold star, and each step only ever counts once per week, so it's safe to revisit the card later without double-counting.",
+  },
+  {
+    q: "What are badges and status levels?",
+    a: "Every correct answer — on screen or on paper — adds to a running points total, and those points move a learner up through nine status levels, from Letter Explorer through to an uncapped Galaxy rank, each shown as its own animal badge. On top of that, finishing crosswords and word searches earns milestone badges (10, 25, 50 completed), a gold star for a clean run with no mistakes, gold streak badges, and a couple of speed badges for a fast, clean solve. See them all, and how close the next one is, on \"My progress\" — open the learner button next to the site name and it's the first thing in the menu.",
+  },
+  {
     q: "Do the words come with definitions and example sentences for every year?",
     a: "Reception, Year 1 and Year 2 have them for every word today. Years 3 to 6 are being filled in.",
   },
@@ -320,6 +337,11 @@ export const EDUCATOR_NOTES = [
     icon: Printer,
     title: "Worksheets, on demand",
     body: "Every word search and crossword has a print button for an offline worksheet (a crossword prints with an answers page for the grown-up), and the practice timer can switch to countdown mode for a bit of gentle pressure once a list is well known.",
+  },
+  {
+    icon: Trophy,
+    title: "Badges without the pressure",
+    body: "Status levels and badges only ever go up — a wrong answer can't cost one, so there's nothing to lose by trying. They're genuinely grounded in practice, too: points are just the words got right, so a status change is a real, visible marker of how much a child has actually done, on screen or on paper.",
   },
 ];
 
