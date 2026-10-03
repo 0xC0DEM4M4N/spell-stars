@@ -24,6 +24,7 @@ import {
   nameKey,
   uniqueDefaultName,
 } from "./learners";
+import { loadBadges } from "./badges";
 
 export const SNAPSHOT_APP = "spell-stars";
 export const SNAPSHOT_VERSION = 1;
@@ -109,6 +110,27 @@ const progressByYear = z
   .record(z.string().regex(/^[a-z0-9-]{1,40}$/), yearProgressSchema)
   .refine((p) => Object.keys(p).length <= MAX_YEARS, "too many years");
 
+// A learner's badge counters/earned badges/status-tier dates (see badges.js).
+// Backups made before badges existed have none, which reads as nothing
+// earned yet — never as badges lost.
+const MAX_BADGE_ENTRIES = 200;
+const badgeKeyString = z.string().regex(/^[a-z0-9-]{1,40}$/);
+const badgeCounter = z.number().int().min(0).max(1_000_000);
+
+export const emptyBadges = () => ({ v: 1, counters: { crossword: 0, wordsearch: 0, gold: 0 }, earned: {}, statusReached: {} });
+
+export const badgesDataSchema = z
+  .object({
+    v: z.literal(1),
+    counters: z.object({ crossword: badgeCounter, wordsearch: badgeCounter, gold: badgeCounter }),
+    earned: z.record(badgeKeyString, dateString),
+    statusReached: z.record(badgeKeyString, dateString),
+  })
+  .refine(
+    (b) => Object.keys(b.earned).length <= MAX_BADGE_ENTRIES && Object.keys(b.statusReached).length <= MAX_BADGE_ENTRIES,
+    "too many badge entries",
+  );
+
 // One entry per child. The main learner has no `progress` here (it is the
 // snapshot's top-level `progress`).
 export const learnerSchema = z.object({
@@ -116,6 +138,7 @@ export const learnerSchema = z.object({
   name: z.string().max(60).transform(cleanName).refine((n) => n.length > 0, "empty name"),
   createdAt: z.string().max(40).default(""),
   progress: progressByYear.default({}),
+  badges: badgesDataSchema.default(emptyBadges()),
 });
 
 const learnersSchema = z
@@ -124,6 +147,7 @@ const learnersSchema = z
   .default([])
   .refine((list) => new Set(list.map((l) => l.id)).size === list.length, "repeated learner")
   .refine((list) => new Set(list.map((l) => nameKey(l.name))).size === list.length, "repeated name");
+
 
 export const snapshotSchema = z.object({
   app: z.literal(SNAPSHOT_APP),
@@ -137,6 +161,8 @@ export const snapshotSchema = z.object({
   // Named learners (see learners.js). Backups made before learners existed
   // have none, which reads as one unnamed learner.
   learners: learnersSchema,
+  // The main learner's badges (see learnerSchema.badges for everyone else).
+  badges: badgesDataSchema.default(emptyBadges()),
 });
 
 // ── Reading the device ─────────────────────────────────────────────────
@@ -152,6 +178,37 @@ function cleanYear(parsed) {
   }
   const week = Number.isInteger(parsed.currentWeek) ? Math.min(Math.max(parsed.currentWeek, 1), 60) : 1;
   return { v: PROGRESS_VERSION, currentWeek: week, words };
+}
+
+const BADGE_ENTRY_KEY_RE = /^[a-z0-9-]{1,40}$/;
+
+/** Keeps only well-formed counters/dates from a learner's saved badge data,
+ * the same leniency cleanYear() gives saved progress. */
+function cleanBadges(parsed) {
+  const safeCount = (n) => (Number.isInteger(n) && n >= 0 && n <= 1_000_000 ? n : 0);
+  const cleanDates = (obj) => {
+    const out = {};
+    if (!obj || typeof obj !== "object") return out;
+    let n = 0;
+    for (const [key, value] of Object.entries(obj)) {
+      if (n >= MAX_BADGE_ENTRIES) break;
+      if (!BADGE_ENTRY_KEY_RE.test(key) || !DATE_RE.test(value)) continue;
+      out[key] = value;
+      n++;
+    }
+    return out;
+  };
+  const counters = (parsed && parsed.counters) || {};
+  return {
+    v: 1,
+    counters: {
+      crossword: safeCount(counters.crossword),
+      wordsearch: safeCount(counters.wordsearch),
+      gold: safeCount(counters.gold),
+    },
+    earned: cleanDates(parsed && parsed.earned),
+    statusReached: cleanDates(parsed && parsed.statusReached),
+  };
 }
 
 /** Reads one saved year without caring whether it is the current format. */
@@ -183,7 +240,10 @@ function readLocalLearners(storage) {
   }
   return roster.map((l) => {
     const entry = { id: l.id, name: l.name, createdAt: l.createdAt || "" };
-    if (l.id !== MAIN_LEARNER_ID) entry.progress = byLearner[l.id] || {};
+    if (l.id !== MAIN_LEARNER_ID) {
+      entry.progress = byLearner[l.id] || {};
+      entry.badges = cleanBadges(loadBadges(storage, l.id));
+    }
     return entry;
   });
 }
@@ -236,6 +296,7 @@ export function readLocalSnapshot(storage = window.localStorage, now = new Date(
       settings,
       lists: loadLists(storage),
       learners: readLocalLearners(storage),
+      badges: cleanBadges(loadBadges(storage, MAIN_LEARNER_ID)),
     },
     unmigrated: unmigrated.sort(),
   };
@@ -256,12 +317,19 @@ export function isEmptySnapshot(snapshot) {
  * one unnamed learner whose progress is the top-level `progress`. */
 export function snapshotLearners(snapshot) {
   const list = snapshot.learners || [];
-  if (list.length === 0) return [{ id: MAIN_LEARNER_ID, name: "", createdAt: "", progress: snapshot.progress }];
-  const out = list.map((l) => ({ ...l, progress: l.id === MAIN_LEARNER_ID ? snapshot.progress : l.progress || {} }));
+  const mainBadges = snapshot.badges || emptyBadges();
+  if (list.length === 0) {
+    return [{ id: MAIN_LEARNER_ID, name: "", createdAt: "", progress: snapshot.progress, badges: mainBadges }];
+  }
+  const out = list.map((l) => ({
+    ...l,
+    progress: l.id === MAIN_LEARNER_ID ? snapshot.progress : l.progress || {},
+    badges: l.id === MAIN_LEARNER_ID ? mainBadges : l.badges || emptyBadges(),
+  }));
   if (!out.some((l) => l.id === MAIN_LEARNER_ID)) {
     // A hand-edited file with named learners but none for the top-level
-    // progress: give that progress a learner rather than lose it.
-    out.unshift({ id: MAIN_LEARNER_ID, name: uniqueDefaultName(out.map((l) => l.name)), createdAt: "", progress: snapshot.progress });
+    // progress: give that progress (and badges) a learner rather than lose it.
+    out.unshift({ id: MAIN_LEARNER_ID, name: uniqueDefaultName(out.map((l) => l.name)), createdAt: "", progress: snapshot.progress, badges: mainBadges });
   }
   return out;
 }

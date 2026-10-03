@@ -218,8 +218,76 @@ describe("apply and undo", () => {
     expect(now).toEqual(before);
   });
 
-  test("keysToChange lists progress, removed years and settings", () => {
+  test("keysToChange lists progress, removed years, settings and the main learner's badges key", () => {
     const r = { progress: { year3: {} }, removedYears: ["year2"], settings: { theme: "dark" }, summary: {} };
-    expect(keysToChange(r)).toEqual(["spellstars.year3.progress", "spellstars.year2.progress", "spellstars.theme"]);
+    expect(keysToChange(r)).toEqual([
+      "spellstars.year3.progress",
+      "spellstars.year2.progress",
+      "spellstars.theme",
+      "spellstars.badges",
+    ]);
+  });
+});
+
+describe("badges travel with sync", () => {
+  const badges = (over) => ({ v: 1, counters: { crossword: 0, wordsearch: 0, gold: 0 }, earned: {}, statusReached: {}, ...over });
+
+  test("counters take the higher value from either side", () => {
+    const local = { ...snap({}), badges: badges({ counters: { crossword: 3, wordsearch: 1, gold: 5 } }) };
+    const inc = { ...snap({}), badges: badges({ counters: { crossword: 1, wordsearch: 9, gold: 2 } }) };
+    const r = mergeSnapshots(local, inc);
+    expect(r.badges.counters).toEqual({ crossword: 3, wordsearch: 9, gold: 5 });
+  });
+
+  test("earned badges are a union, keeping whichever date is earliest", () => {
+    const local = { ...snap({}), badges: badges({ earned: { "crossword-10": "2026-10-05" } }) };
+    const inc = { ...snap({}), badges: badges({ earned: { "crossword-10": "2026-09-20", "gold-star": "2026-09-01" } }) };
+    const r = mergeSnapshots(local, inc);
+    expect(r.badges.earned).toEqual({ "crossword-10": "2026-09-20", "gold-star": "2026-09-01" });
+  });
+
+  test("statusReached merges the same way", () => {
+    const local = { ...snap({}), badges: badges({ statusReached: { rabbit: "2026-10-05" } }) };
+    const inc = { ...snap({}), badges: badges({ statusReached: { rabbit: "2026-09-20", fox: "2026-09-25" } }) };
+    const r = mergeSnapshots(local, inc);
+    expect(r.badges.statusReached).toEqual({ rabbit: "2026-09-20", fox: "2026-09-25" });
+  });
+
+  test("replace mode still never loses a badge already earned on this device", () => {
+    const local = {
+      ...snap({}),
+      badges: badges({ counters: { crossword: 20, wordsearch: 0, gold: 0 }, earned: { "crossword-10": "2026-09-01" } }),
+    };
+    const inc = { ...snap({}), badges: badges({ counters: { crossword: 5, wordsearch: 0, gold: 0 } }) };
+    const r = mergeSnapshots(local, inc, { mode: "replace" });
+    expect(r.badges.counters.crossword).toBe(20);
+    expect(r.badges.earned["crossword-10"]).toBe("2026-09-01");
+  });
+
+  test("identical badges on both sides is a no-op", () => {
+    const local = { ...snap({}), badges: badges({ counters: { crossword: 2, wordsearch: 0, gold: 0 } }) };
+    const inc = { ...snap({}), badges: badges({ counters: { crossword: 2, wordsearch: 0, gold: 0 } }) };
+    expect(isNoOp(mergeSnapshots(local, inc))).toBe(true);
+  });
+
+  test("a higher counter coming in is not a no-op", () => {
+    const local = { ...snap({}), badges: badges() };
+    const inc = { ...snap({}), badges: badges({ counters: { crossword: 1, wordsearch: 0, gold: 0 } }) };
+    expect(isNoOp(mergeSnapshots(local, inc))).toBe(false);
+  });
+
+  test("applyMergeResult writes the merged badges to storage", () => {
+    window.localStorage.clear();
+    window.localStorage.setItem("spellstars.badges", JSON.stringify(badges({ counters: { crossword: 1, wordsearch: 0, gold: 0 } })));
+    const { snapshot: local } = readLocalSnapshot(window.localStorage);
+    const inc = {
+      ...snap({}),
+      badges: badges({ counters: { crossword: 9, wordsearch: 0, gold: 0 }, earned: { "crossword-10": "2026-09-01" } }),
+    };
+    const r = mergeSnapshots(local, inc);
+    applyMergeResult(window.localStorage, r);
+    const saved = JSON.parse(window.localStorage.getItem("spellstars.badges"));
+    expect(saved.counters.crossword).toBe(9);
+    expect(saved.earned["crossword-10"]).toBe("2026-09-01");
   });
 });

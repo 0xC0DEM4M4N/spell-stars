@@ -18,9 +18,11 @@ import {
 import {
   PROGRESS_KEY_RE,
   SETTING_NAMES,
+  emptyBadges,
   settingStorageKey,
   snapshotLearners,
 } from "./syncSnapshot";
+import { badgesKeyFor } from "./badges";
 
 // ── Merging ────────────────────────────────────────────────────────────
 
@@ -154,6 +156,32 @@ function mergeYears(local, inc, { mode, useIncomingWeeks, skip }) {
 const countWords = (progress) => Object.values(progress).reduce((n, y) => n + Object.keys(y.words).length, 0);
 
 /**
+ * Combines one learner's badge data from both sides. Unlike years/lists,
+ * this never has a "replace" behaviour — a restore should never cost
+ * someone a badge or a status date they'd already earned, so counters take
+ * the higher value and earned-badge/status dates take whichever is
+ * earliest. Returns the merged data plus whether it differs from `local`.
+ */
+function mergeBadges(local, inc) {
+  const a = local || emptyBadges();
+  const b = inc || emptyBadges();
+  const earliest = (x, y) => (x && (!y || x < y) ? x : y);
+
+  const counters = {
+    crossword: Math.max(a.counters.crossword, b.counters.crossword),
+    wordsearch: Math.max(a.counters.wordsearch, b.counters.wordsearch),
+    gold: Math.max(a.counters.gold, b.counters.gold),
+  };
+  const earned = { ...a.earned };
+  for (const [id, date] of Object.entries(b.earned)) earned[id] = earliest(earned[id], date);
+  const statusReached = { ...a.statusReached };
+  for (const [key, date] of Object.entries(b.statusReached)) statusReached[key] = earliest(statusReached[key], date);
+
+  const badges = { v: 1, counters, earned, statusReached };
+  return { badges, changed: JSON.stringify(badges) !== JSON.stringify(a) };
+}
+
+/**
  * Decides which learner on this device each learner in the backup goes to.
  * Returns { plan, roster, skipped }:
  *   plan     [{ inc, id, isNew, name }] one per learner taken from the backup
@@ -281,26 +309,32 @@ export function mergeSnapshots(local, incoming, options = {}) {
     lists: { added: 0, updated: 0, unchanged: 0, removed: 0, skipped: 0 },
     learners: [],
     learnersSkipped: skipped,
+    badgesChanged: false,
   };
   const out = {
     progress: {},
     removedYears: [],
-    learners: { roster, progress: {}, removedYears: {} },
+    badges: emptyBadges(),
+    learners: { roster, progress: {}, removedYears: {}, badges: {}, removedBadges: [] },
   };
 
   for (const p of plan) {
     const isMain = p.id === MAIN_LEARNER_ID;
     const loc = localById.get(p.id);
     const merged = mergeYears(loc ? loc.progress : {}, p.inc.progress, { mode, useIncomingWeeks, skip: isMain ? skip : new Set() });
+    const mergedBadges = mergeBadges(loc ? loc.badges : emptyBadges(), p.inc.badges);
+    if (mergedBadges.changed) summary.badgesChanged = true;
     if (isMain) {
       out.progress = merged.progress;
       out.removedYears = merged.removedYears;
+      out.badges = mergedBadges.badges;
       summary.years = merged.years;
       summary.skippedYears.push(...merged.skipped);
       summary.weekDiffers.push(...merged.weekDiffers);
     } else {
       out.learners.progress[p.id] = merged.progress;
       out.learners.removedYears[p.id] = merged.removedYears;
+      out.learners.badges[p.id] = mergedBadges.badges;
       summary.weekDiffers.push(...merged.weekDiffers.map((d) => ({ ...d, learnerId: p.id })));
     }
     for (const k of ["added", "updated", "unchanged", "removed"]) summary[k] += merged.total[k];
@@ -322,6 +356,10 @@ export function mergeSnapshots(local, incoming, options = {}) {
       const slugs = Object.keys(l.progress);
       const n = countWords(l.progress);
       out.learners.removedYears[l.id] = slugs;
+      out.learners.removedBadges.push(l.id);
+      const hadBadges = l.badges && (Object.keys(l.badges.earned || {}).length > 0 ||
+        l.badges.counters.crossword > 0 || l.badges.counters.wordsearch > 0 || l.badges.counters.gold > 0);
+      if (hadBadges) summary.badgesChanged = true;
       summary.removed += n;
       summary.learners.push({ id: l.id, name: l.name, isNew: false, isMain: false, removedLearner: true, years: {}, added: 0, updated: 0, unchanged: 0, removed: n });
     }
@@ -349,7 +387,7 @@ export function mergeSnapshots(local, incoming, options = {}) {
 /** True when applying the result would change nothing. */
 export function isNoOp(result) {
   const s = result.summary;
-  const l = result.learners || { roster: null, progress: {}, removedYears: {} };
+  const l = result.learners || { roster: null, progress: {}, removedYears: {}, badges: {}, removedBadges: [] };
   const weekPending = (id, progress) =>
     Object.entries(progress).some(([slug, y]) => {
       const d = s.weekDiffers.find((w) => w.slug === slug && (w.learnerId || MAIN_LEARNER_ID) === id);
@@ -363,6 +401,7 @@ export function isNoOp(result) {
     l.roster === null &&
     Object.values(l.removedYears).every((slugs) => slugs.length === 0) &&
     s.settingsChanged.length === 0 &&
+    !s.badgesChanged &&
     !weekPending(MAIN_LEARNER_ID, result.progress) &&
     !Object.entries(l.progress).some(([id, progress]) => weekPending(id, progress))
   );
@@ -375,7 +414,7 @@ export const UNDO_WINDOW_MS = 10 * 60 * 1000;
 
 /** The storage keys applying a result will write or remove. */
 export function keysToChange(result) {
-  const l = result.learners || { roster: null, progress: {}, removedYears: {} };
+  const l = result.learners || { roster: null, progress: {}, removedYears: {}, badges: {}, removedBadges: [] };
   const learnerKeys = [];
   for (const [id, years] of Object.entries(l.progress)) {
     for (const slug of Object.keys(years)) learnerKeys.push(progressKeyFor(slug, id));
@@ -383,6 +422,11 @@ export function keysToChange(result) {
   for (const [id, slugs] of Object.entries(l.removedYears)) {
     for (const slug of slugs) learnerKeys.push(progressKeyFor(slug, id));
   }
+  const badgeKeys = [
+    badgesKeyFor(MAIN_LEARNER_ID),
+    ...Object.keys(l.badges || {}).map((id) => badgesKeyFor(id)),
+    ...(l.removedBadges || []).map((id) => badgesKeyFor(id)),
+  ];
   return [
     ...Object.keys(result.progress).map((slug) => progressKeyFor(slug, MAIN_LEARNER_ID)),
     ...result.removedYears.map((slug) => progressKeyFor(slug, MAIN_LEARNER_ID)),
@@ -390,6 +434,7 @@ export function keysToChange(result) {
     ...(l.roster !== null ? [LEARNERS_KEY] : []),
     ...Object.keys(result.settings).map(settingStorageKey),
     ...(result.listsChanged ? [CUSTOM_LISTS_KEY] : []),
+    ...badgeKeys,
   ];
 }
 
@@ -400,9 +445,11 @@ export function createBackup(storage, keys, now = Date.now()) {
   storage.setItem(BACKUP_KEY, JSON.stringify({ at: now, entries }));
 }
 
+const BADGES_KEY_RE = /^spellstars\.(?:l-[a-z0-9]{4,12}\.)?badges$/;
+
 function isKnownKey(key) {
   if (key === CUSTOM_LISTS_KEY || key === LEARNERS_KEY) return true;
-  if (PROGRESS_KEY_RE.test(key) || LEARNER_PROGRESS_KEY_RE.test(key)) return true;
+  if (PROGRESS_KEY_RE.test(key) || LEARNER_PROGRESS_KEY_RE.test(key) || BADGES_KEY_RE.test(key)) return true;
   return SETTING_NAMES.some((n) => settingStorageKey(n) === key);
 }
 
@@ -459,7 +506,7 @@ export function applyMergeResult(storage, result, now = Date.now()) {
       storage.setItem(progressKeyFor(slug, MAIN_LEARNER_ID), JSON.stringify(year));
     }
     for (const slug of result.removedYears) storage.removeItem(progressKeyFor(slug, MAIN_LEARNER_ID));
-    const l = result.learners || { roster: null, progress: {}, removedYears: {} };
+    const l = result.learners || { roster: null, progress: {}, removedYears: {}, badges: {}, removedBadges: [] };
     for (const [id, years] of Object.entries(l.progress)) {
       for (const [slug, year] of Object.entries(years)) storage.setItem(progressKeyFor(slug, id), JSON.stringify(year));
     }
@@ -470,6 +517,11 @@ export function applyMergeResult(storage, result, now = Date.now()) {
       if (l.roster.length === 0) storage.removeItem(LEARNERS_KEY);
       else storage.setItem(LEARNERS_KEY, JSON.stringify(l.roster));
     }
+    if (result.badges) storage.setItem(badgesKeyFor(MAIN_LEARNER_ID), JSON.stringify(result.badges));
+    for (const [id, badges] of Object.entries(l.badges || {})) {
+      storage.setItem(badgesKeyFor(id), JSON.stringify(badges));
+    }
+    for (const id of l.removedBadges || []) storage.removeItem(badgesKeyFor(id));
     for (const [name, value] of Object.entries(result.settings)) {
       storage.setItem(settingStorageKey(name), value);
     }

@@ -10,6 +10,7 @@ import ForEducators from "@/pages/ForEducators";
 import Faq from "@/pages/Faq";
 import About from "@/pages/About";
 import SyncPage from "@/pages/SyncPage";
+import ProgressPage from "@/pages/ProgressPage";
 import CustomListsPage from "@/pages/CustomListsPage";
 import CustomListPage from "@/pages/CustomListPage";
 import SharedListPage from "@/pages/SharedListPage";
@@ -152,6 +153,7 @@ function AppShell() {
             {/* No link anywhere; password-gated (functions/api/feedback.js). */}
             <Route path="/admin/feedback" element={<AdminFeedbackPage />} />
             <Route path="/sync" element={<SyncPage />} />
+            <Route path="/progress" element={<ProgressPage />} />
             <Route path="/custom" element={<CustomListsPage />} />
             <Route path="/custom/:listId" element={<CustomListPage />} />
             <Route path="/shared" element={<SharedListPage />} />

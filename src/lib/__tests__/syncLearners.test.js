@@ -1,7 +1,7 @@
 import { LEARNERS_KEY, addLearner, loadLearners, progressKeyFor } from "../learners";
 import { saveProgress } from "../srs";
 import { practisedWordCount } from "../syncNudge";
-import { isEmptySnapshot, readLocalSnapshot, snapshotLearners, validateSnapshot } from "../syncSnapshot";
+import { emptyBadges, isEmptySnapshot, readLocalSnapshot, snapshotLearners, validateSnapshot } from "../syncSnapshot";
 import { applyMergeResult, isNoOp, keysToChange, mergeSnapshots, readBackup, restoreBackup } from "../syncMerge";
 
 const store = () => window.localStorage;
@@ -43,7 +43,7 @@ describe("reading the device", () => {
     saveProgress("year3", year(["year3:badge"]));
     const s = local();
     expect(s.learners).toEqual([]);
-    expect(snapshotLearners(s)).toEqual([{ id: "main", name: "", createdAt: "", progress: s.progress }]);
+    expect(snapshotLearners(s)).toEqual([{ id: "main", name: "", createdAt: "", progress: s.progress, badges: emptyBadges() }]);
   });
 
   test("the main learner's progress stays top-level; others travel with their learner", () => {

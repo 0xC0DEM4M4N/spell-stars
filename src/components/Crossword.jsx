@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { buildCrossword, withClueMode } from "@/lib/crossword";
 import { buildCrosswordSheet, openPrintWindow } from "@/lib/printSheets";
 import { loadCrosswordClueMode, saveCrosswordClueMode } from "@/lib/crosswordPrefs";
+import { useLearners } from "@/context/LearnerContext";
+import { checkStatus, recordCompletion } from "@/lib/badges";
 
 const MIN_CELL_PX = 26;
 const MAX_CELL_PX = 46;
@@ -28,7 +30,15 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
   const [wrong, setWrong] = useState(() => new Set());
   const [active, setActive] = useState({ r: 0, c: 0, dir: "across" });
   const [gaveUp, setGaveUp] = useState(false);
+  const [justUnlocked, setJustUnlocked] = useState([]);
   const inputs = useRef({});
+  const { activeLearnerId } = useLearners();
+  // Badge/status bookkeeping for this attempt: when it started, whether any
+  // help was used (a reveal, or an incorrect letter caught by Check), and a
+  // guard so one completed puzzle is only ever recorded once.
+  const startedAtRef = useRef(null);
+  const usedHelpRef = useRef(false);
+  const recordedRef = useRef(false);
 
   const start = useCallback(() => {
     const next = buildCrossword(words, { clueMode: loadCrosswordClueMode() });
@@ -36,6 +46,10 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
     setValues({});
     setWrong(new Set());
     setGaveUp(false);
+    setJustUnlocked([]);
+    startedAtRef.current = Date.now();
+    usedHelpRef.current = false;
+    recordedRef.current = false;
     if (next) {
       const [a, d] = [next.across[0], next.down[0]];
       const first = !d || (a && a.number <= d.number) ? a : d;
@@ -84,6 +98,23 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
 
   const isSolved = (clue) => cellsOf(clue).every(([r, c], i) => values[cellKey(r, c)] === clue.answer[i]);
   const complete = puzzle && clueList.length > 0 && clueList.every(isSolved);
+
+  // Record the completion (badges, status points) the instant the puzzle is
+  // first fully solved. Giving up still counts towards the lifetime
+  // milestone badges — it just never counts as a clean run.
+  useEffect(() => {
+    if (!complete || recordedRef.current) return;
+    recordedRef.current = true;
+    const seconds = startedAtRef.current ? Math.round((Date.now() - startedAtRef.current) / 1000) : undefined;
+    const { unlocked } = recordCompletion(window.localStorage, activeLearnerId, {
+      activity: "crossword",
+      errors: usedHelpRef.current ? 1 : 0,
+      seconds,
+      wordCount: clueList.length,
+    });
+    checkStatus(window.localStorage, activeLearnerId);
+    if (unlocked.length > 0) setJustUnlocked(unlocked);
+  }, [complete, activeLearnerId, clueList]);
 
   const select = (r, c, dir) => {
     const here = info.get(cellKey(r, c)) || {};
@@ -180,10 +211,12 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
       const [r, c] = k.split(",").map(Number);
       if (puzzle.grid[r][c] !== letter) bad.add(k);
     }
+    if (bad.size > 0) usedHelpRef.current = true;
     setWrong(bad);
   };
 
   const revealFor = (clues) => {
+    usedHelpRef.current = true;
     setValues((prev) => {
       const next = { ...prev };
       for (const clue of clues) cellsOf(clue).forEach(([r, c], i) => { next[cellKey(r, c)] = clue.answer[i]; });
@@ -282,6 +315,11 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
                   <p className="font-display text-lg font-bold text-success">
                     {gaveUp ? "All the answers are in." : "Crossword complete — brilliant work!"}
                   </p>
+                  {justUnlocked.length > 0 && (
+                    <p className="mt-1 text-sm font-semibold text-primary" data-testid="crossword-badge-unlocked">
+                      New badge{justUnlocked.length > 1 ? "s" : ""}: {justUnlocked.map((b) => b.label).join(", ")}!
+                    </p>
+                  )}
                 </div>
               )}
 

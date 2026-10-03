@@ -75,6 +75,24 @@ describe("readLocalSnapshot", () => {
     put("spellstars.year3.progress", { v: 2, currentWeek: 1, words: { "year3:a": state() } });
     expect(isEmptySnapshot(readLocalSnapshot().snapshot)).toBe(false);
   });
+
+  test("collects the main learner's badges, defaulting to none earned", () => {
+    expect(readLocalSnapshot().snapshot.badges).toEqual({
+      v: 1, counters: { crossword: 0, wordsearch: 0, gold: 0 }, earned: {}, statusReached: {},
+    });
+    put("spellstars.badges", {
+      v: 1,
+      counters: { crossword: 3, wordsearch: 1, gold: 4 },
+      earned: { "crossword-10": "2026-10-01", "Bad Key!": "2026-10-01" },
+      statusReached: { rabbit: "2026-09-01", fox: "not-a-date" },
+    });
+    const { snapshot } = readLocalSnapshot();
+    expect(snapshot.badges.counters).toEqual({ crossword: 3, wordsearch: 1, gold: 4 });
+    // Malformed entries (a bad key, a bad date) are dropped, not kept or thrown on.
+    expect(snapshot.badges.earned).toEqual({ "crossword-10": "2026-10-01" });
+    expect(snapshot.badges.statusReached).toEqual({ rabbit: "2026-09-01" });
+    expect(validateSnapshot(snapshot).ok).toBe(true);
+  });
 });
 
 describe("file format", () => {
@@ -109,6 +127,15 @@ describe("file format", () => {
   test("rejects a newer version with a helpful error", () => {
     const r = validateSnapshot({ ...snap(), v: 2 });
     expect(r).toMatchObject({ ok: false, error: "newer" });
+  });
+
+  test("an old backup with no badges still validates, defaulting to none earned", () => {
+    const old = { app: "spell-stars", v: 1, exportedAt: "x", progress: {}, settings: {} };
+    const r = validateSnapshot(old);
+    expect(r.ok).toBe(true);
+    expect(r.snapshot.badges).toEqual({
+      v: 1, counters: { crossword: 0, wordsearch: 0, gold: 0 }, earned: {}, statusReached: {},
+    });
   });
 
   test("rejects oversized text", () => {

@@ -11,6 +11,8 @@ import { loadTimerPrefs, saveTimerPrefs } from "@/lib/timerPrefs";
 import { loadLetterCasePref, saveLetterCasePref } from "@/lib/letterCasePrefs";
 import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
 import { escapeHtml, openPrintWindow, printFooter, printHeader, wrapDocument } from "@/lib/printSheets";
+import { useLearners } from "@/context/LearnerContext";
+import { checkStatus, recordCompletion } from "@/lib/badges";
 
 const COLORS = [
   "ws-found ws-h0 bg-cyan-400/40 text-white border-cyan-400",
@@ -70,6 +72,14 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
   const [open, setOpen] = useState(false);
   const [game, setGame] = useState(null);
   const [found, setFound] = useState(new Set());
+  const [justUnlocked, setJustUnlocked] = useState([]);
+  const { activeLearnerId } = useLearners();
+  // Badge/status bookkeeping for this attempt: when it started, whether any
+  // help was used (a reveal, including the auto-reveal when time runs out),
+  // and a guard so one completed game is only ever recorded once.
+  const startedAtRef = useRef(null);
+  const usedHelpRef = useRef(false);
+  const recordedRef = useRef(false);
 
   // Upper/lowercase for both the grid letters and the word list --
   // defaults to the year's own capability (e.g. Reception starts
@@ -110,6 +120,25 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     ? found.size >= game.placed.filter(p => !p.failed).length && game.placed.length > 0
     : false;
 
+  // Record the completion (badges, status points) the instant every
+  // placeable word has been found. Having revealed the grid at any point
+  // still counts towards the lifetime milestone badges — it just never
+  // counts as a clean run (no gold star, no Speedster).
+  useEffect(() => {
+    if (!allDone || recordedRef.current) return;
+    recordedRef.current = true;
+    const seconds = startedAtRef.current ? Math.round((Date.now() - startedAtRef.current) / 1000) : undefined;
+    const wordCount = game ? game.placed.filter(p => !p.failed).length : undefined;
+    const { unlocked } = recordCompletion(window.localStorage, activeLearnerId, {
+      activity: "wordsearch",
+      errors: usedHelpRef.current ? 1 : 0,
+      seconds,
+      wordCount,
+    });
+    checkStatus(window.localStorage, activeLearnerId);
+    if (unlocked.length > 0) setJustUnlocked(unlocked);
+  }, [allDone, activeLearnerId, game]);
+
   const startGame = useCallback((caseOverride) => {
     clearInterval(timerRef.current);
     const g = buildGrid(words, size, dirs, caseOverride || letterCase);
@@ -121,6 +150,10 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     setTimerOn(false);
     setTimeLeft(timerMode === "countdown" ? countdownSeconds : 0);
     setTimeUp(false);
+    setJustUnlocked([]);
+    startedAtRef.current = Date.now();
+    usedHelpRef.current = false;
+    recordedRef.current = false;
   }, [words, size, dirs, letterCase, timerMode, countdownSeconds]);
 
   const changeLetterCase = useCallback((next) => {
@@ -140,7 +173,7 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
         return;
       }
       setTimeLeft(prev => {
-        if (prev <= 1) { setTimeUp(true); setRevealed(true); return 0; }
+        if (prev <= 1) { setTimeUp(true); setRevealed(true); usedHelpRef.current = true; return 0; }
         return prev - 1;
       });
     }, 1000);
@@ -330,6 +363,11 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
           {allDone && !timeUp && (
             <div className="mb-5 rounded-2xl border border-emerald-300/30 bg-emerald-400/10 p-3 text-center" data-testid="all-done-banner">
               <p className="font-display text-lg font-bold text-success">All words found — brilliant work!</p>
+              {justUnlocked.length > 0 && (
+                <p className="mt-1 text-sm font-semibold text-primary" data-testid="word-search-badge-unlocked">
+                  New badge{justUnlocked.length > 1 ? "s" : ""}: {justUnlocked.map(b => b.label).join(", ")}!
+                </p>
+              )}
             </div>
           )}
 
@@ -437,7 +475,7 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel className="rounded-full border-foreground/20 bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground">Keep trying</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => setRevealed(true)} className="rounded-full bg-pink-500 text-white hover:bg-pink-600" data-testid="reveal-confirm">
+                    <AlertDialogAction onClick={() => { usedHelpRef.current = true; setRevealed(true); }} className="rounded-full bg-pink-500 text-white hover:bg-pink-600" data-testid="reveal-confirm">
                       Yes, reveal
                     </AlertDialogAction>
                   </AlertDialogFooter>
