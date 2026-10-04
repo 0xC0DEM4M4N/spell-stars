@@ -13,23 +13,18 @@ export const UnderDevelopmentBanner = () => {
 
   return (
     <div
-      className="dev-banner fixed inset-x-0 top-0 z-[60] flex items-center justify-center px-3"
+      className="dev-banner fixed inset-x-0 top-0 z-[60] flex items-center justify-center px-2 sm:px-3"
       role="status"
     >
-      <span className="flex items-center gap-2 rounded-full bg-neutral-900 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-yellow-300 shadow-[0_0_0_1.5px_rgba(250,204,21,0.9)] sm:text-xs">
-        <HardHat className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-        Application still under development - new features added frequently.
+      <span className="flex max-w-full items-center gap-1.5 whitespace-nowrap rounded-full bg-neutral-900 px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-yellow-300 shadow-[0_0_0_1.5px_rgba(250,204,21,0.9)] sm:gap-2 sm:px-3 sm:py-1 sm:text-xs sm:tracking-[0.16em]">
+        <HardHat className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" aria-hidden="true" />
+        <span className="sm:hidden">Under development</span>
+        <span className="hidden sm:inline">Application still under development - new features added frequently.</span>
         <Link
           to="/whats-new"
-          className="ml-1 underline decoration-yellow-300/60 underline-offset-2 hover:text-white"
+          className="underline decoration-yellow-300/60 underline-offset-2 hover:text-white sm:ml-1"
         >
           New features
-        </Link>
-        <Link
-          to="/feedback"
-          className="ml-1 underline decoration-yellow-300/60 underline-offset-2 hover:text-white"
-        >
-          Give feedback
         </Link>
       </span>
     </div>
