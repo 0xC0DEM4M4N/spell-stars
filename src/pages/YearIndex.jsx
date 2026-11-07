@@ -593,7 +593,7 @@ export default function YearIndex() {
           <h2 className="mt-3 type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Pick up where you are.
           </h2>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-8 grid auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {yearsConfig.years.map((year, index) => {
               const accent = getYearAccent(year.slug);
               const ink = getYearInk(year.slug, theme);
@@ -609,7 +609,7 @@ export default function YearIndex() {
                 >
                   <Link
                     to={`/${year.slug}`}
-                    className="group relative block h-full overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
+                    className="group relative flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
                     style={{
                       backgroundColor: rgba(accent, bgAlpha),
                       borderColor: rgba(accent, borderAlpha),
@@ -651,7 +651,7 @@ export default function YearIndex() {
                 >
                   <Link
                     to={group.to}
-                    className="group relative block h-full overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
+                    className="group relative flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
                     style={{
                       backgroundColor: rgba(accent, 0.1),
                       borderColor: rgba(accent, 0.38),
