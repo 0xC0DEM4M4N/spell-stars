@@ -1,7 +1,7 @@
 SPELL// STARS: share copy
 
 Short (X / Bluesky / Threads)
-All the spelling practice. None of the sign-up. 3,388 words, Reception to Year 6. Practice, word searches, crosswords, and now search by spelling rule (/ee/, -le endings) to build your own lessons, grouped into series like "Child 1, Year 1". Free: spell-stars.pages.dev
+All the spelling practice. None of the sign-up. 3,388 words, Reception to Year 6. Practice, word searches, crosswords, and now search by spelling rule (/ee/, -le endings) to build your own lessons, grouped into series like "Child 1, Year 1". Free: spell-stars.hannahredmond.co.uk
 
 Medium (LinkedIn / Facebook parent groups)
 I've been building SPELL// STARS, a free spelling practice site for UK primary school children, Reception to Year 6.
@@ -11,7 +11,7 @@ New this week:
 - Group lessons into a series, like "Child 1, Year 1"
 - Use it on one device with no account, or add a free account to sync lessons across devices
 - Dyslexia-friendly, dark and high-contrast looks
-Try it: spell-stars.pages.dev
+Try it: spell-stars.hannahredmond.co.uk
 
 Alt text for the video
-A 28-second tour of the SPELL// STARS spelling site with screenshots of the year picker, practice quiz, word search, crossword, spelling-rule search, lesson builder, series, account and accessibility options, ending on the home page and the address spell-stars.pages.dev.
+A 28-second tour of the SPELL// STARS spelling site with screenshots of the year picker, practice quiz, word search, crossword, spelling-rule search, lesson builder, series, account and accessibility options, ending on the home page on a computer, tablet and phone, and the address spell-stars.hannahredmond.co.uk.

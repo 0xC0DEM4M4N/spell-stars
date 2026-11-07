@@ -26,7 +26,7 @@ export function buildDirections(directions) {
   return dirs.length ? dirs : [[0, 1], [1, 0]];
 }
 
-export function buildGrid(words, size, dirs, letterCase) {
+function buildGridOnce(words, size, dirs, letterCase) {
   // Default (no explicit choice) is lowercase; "uppercase" is the opt-in.
   const toGridCase = (w) => (letterCase === "uppercase" ? w.toUpperCase() : w.toLowerCase());
   const alphabet = letterCase === "uppercase" ? ALPHA : ALPHA_LOWER;
@@ -70,4 +70,54 @@ export function buildGrid(words, size, dirs, letterCase) {
       if (!grid[r][c].letter)
         grid[r][c].letter = alphabet[Math.floor(Math.random() * 26)];
   return { grid, placed };
+}
+
+const ALL_STEPS = [[0, 1], [1, 0], [1, 1], [1, -1], [0, -1], [-1, 0], [-1, 1], [-1, -1]];
+const MIN_UNIQUE_LEN = 3;
+
+// How many EXTRA times the words (3+ letters) turn up in the grid, in any of
+// the eight directions, beyond the one place each was hidden. A word found
+// in a second spot confuses a child ("I found it but it won't count"), so
+// the grid is regenerated until this is zero. Reading a palindrome backwards
+// over the same cells is the same spot, not a second one.
+export function countDuplicateWords(grid, placed) {
+  const size = grid.length;
+  let extras = 0;
+  const seen = new Set();
+  for (const p of placed) {
+    if (p.failed || p.up.length < MIN_UNIQUE_LEN || seen.has(p.up)) continue;
+    seen.add(p.up);
+    const spots = new Set();
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        for (const [dr, dc] of ALL_STEPS) {
+          const er = r + dr * (p.up.length - 1);
+          const ec = c + dc * (p.up.length - 1);
+          if (er < 0 || ec < 0 || er >= size || ec >= size) continue;
+          let ok = true;
+          for (let i = 0; i < p.up.length && ok; i++) {
+            if (grid[r + i * dr][c + i * dc].letter !== p.up[i]) ok = false;
+          }
+          if (!ok) continue;
+          const cells = [];
+          for (let i = 0; i < p.up.length; i++) cells.push((r + i * dr) * size + (c + i * dc));
+          spots.add(cells.sort((a, b) => a - b).join("-"));
+        }
+      }
+    }
+    extras += Math.max(0, spots.size - 1);
+  }
+  return extras;
+}
+
+export function buildGrid(words, size, dirs, letterCase) {
+  let best = null;
+  let bestScore = Infinity;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const g = buildGridOnce(words, size, dirs, letterCase);
+    const score = countDuplicateWords(g.grid, g.placed);
+    if (score < bestScore) { best = g; bestScore = score; }
+    if (score === 0) break;
+  }
+  return best;
 }
