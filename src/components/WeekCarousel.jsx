@@ -78,7 +78,7 @@ const WordChip = ({ entry, index, week, active, pinned, wide, onHover, onFocusPi
       data-testid={`word-chip-week-${week}-${index + 1}`}
     >
       <span className={`font-display font-bold tracking-wide text-foreground ${wide ? "text-2xl" : "text-lg"}`}>{entry.word}</span>
-      <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+      <span className="flex items-center gap-2 font-mono text-sm text-muted-foreground">
         {String(index + 1).padStart(2, "0")}
         {(entry.exampleSentence || entry.definition) && (
           <Info className={`h-3 w-3 transition-colors ${pinned ? "text-primary" : active ? "text-muted-foreground" : "text-slate-600"}`} aria-hidden="true" />
@@ -194,7 +194,7 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
 
   return (
     <div className="mt-8 border-t border-foreground/10 pt-6" onClick={(e) => e.stopPropagation()} data-testid={`offline-routine-week-${week}`}>
-      <div className="mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+      <div className="mb-3 flex items-center gap-2 font-mono text-sm text-primary">
         <ClipboardCheck className="h-4 w-4" /> Offline routine
       </div>
       <div className="space-y-2">
@@ -229,7 +229,7 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
                 </span>
               </button>
               {step.activity && !applied[step.id] && (
-                <label className="flex shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                <label className="flex shrink-0 items-center gap-1.5 font-mono text-sm text-muted-foreground">
                   <input
                     type="checkbox"
                     checked={!!cleanRun[step.id]}
@@ -308,12 +308,12 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
           <div className="flex min-w-0 flex-col">
             <div className={wide ? "flex flex-col items-start gap-5" : "flex flex-wrap items-start justify-between gap-4"}>
               <div>
-                <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
+                <div className="font-mono text-xs text-primary">{capitalize(weekData.term)} term</div>
                 <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {current && (
-                  <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
+                  <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-sm text-success" data-testid="current-week-pill">
                     Current
                   </div>
                 )}
@@ -330,24 +330,26 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                   title={`Week ${String(weekData.week).padStart(2, "0")}`}
                   focus={weekData.focus}
                 />
-                <button
-                  onClick={e => { e.stopPropagation(); setQuizOpen(true); }}
-                  className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-pink-300/50 hover:bg-pink-300/10 hover:text-accent2"
-                  data-testid="practice-button"
-                >
-                  <Sparkles className="h-3.5 w-3.5" /> Practice
-                </button>
                 <PrintWeekMenu weekData={weekData} capabilities={capabilities} />
               </div>
             </div>
 
-            <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <button
+              type="button"
+              onClick={e => { e.stopPropagation(); setQuizOpen(true); }}
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-md transition-[filter,transform] duration-200 hover:brightness-110 sm:w-auto"
+              data-testid="practice-button"
+            >
+              <Sparkles className="h-4 w-4" aria-hidden="true" /> Practise these words
+            </button>
+
+            <div className="mt-6 flex items-center gap-2 font-mono text-xs text-muted-foreground">
               Week {weekData.weekOfTerm} of term
             </div>
 
             {/* Fixed-height info panel — prevents card from jumping */}
             <div className={`mt-7 overflow-hidden border-l-2 border-cyan-300 pl-5 ${wide ? "h-[12rem]" : "h-[9rem]"}`}>
-              <div className="mb-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-primary">
+              <div className="mb-2 flex items-center gap-2 font-mono text-sm text-primary">
                 {activeWordInfo ? <Signature className="h-4 w-4" /> : <Target className="h-4 w-4" />}
                 {/* The word itself moves to its own line below, at the same
                     size as the idle "Learning point" text -- keeping this
@@ -356,7 +358,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                 {activeWordInfo
                   ? `Word #${weekData.words.findIndex((w) => w.id === activeWordInfo.id) + 1}`
                   : "Learning point"}
-                {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-[9px] text-primary">pinned</span>}
+                {pinnedWord && !hoveredWord && <span className="ml-1 rounded-full bg-cyan-300/20 px-2 py-0.5 text-sm text-primary">pinned</span>}
               </div>
               {activeWordInfo && (
                 <p className={`mb-2 font-semibold leading-snug text-foreground ${wide ? "text-lg" : "text-base"}`}>
@@ -372,13 +374,13 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                   >
                     {activeWordInfo.exampleSentence && (
                       <p className="text-base leading-snug text-foreground">
-                        <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">eg</span>
+                        <span className="mr-2 font-mono text-sm text-primary">eg</span>
                         <HighlightWord text={activeWordInfo.exampleSentence} word={activeWordInfo.word} />
                       </p>
                     )}
                     {activeWordInfo.definition && (
                       <p className="mt-1.5 text-base leading-snug text-muted-foreground">
-                        <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">means</span>
+                        <span className="mr-2 font-mono text-sm text-muted-foreground">means</span>
                         {activeWordInfo.definition}
                       </p>
                     )}
@@ -456,17 +458,17 @@ const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current,
           <div className="min-w-0">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{capitalize(weekData.term)} term</div>
+                <div className="font-mono text-xs text-primary">{capitalize(weekData.term)} term</div>
                 <h3 className="type-section mt-3 font-display text-4xl font-extrabold text-foreground">Week {String(weekData.week).padStart(2, "0")}</h3>
               </div>
               {current && (
-                <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-success" data-testid="current-week-pill">
+                <div className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 font-mono text-sm text-success" data-testid="current-week-pill">
                   Current
                 </div>
               )}
             </div>
 
-            <div className="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <div className="mt-6 flex items-center gap-2 font-mono text-xs text-muted-foreground">
               Letter of the day — one new sound each school day
             </div>
 
@@ -490,7 +492,7 @@ const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current,
           </div>
 
           <div className={`flex min-w-0 flex-col items-center justify-center gap-4 rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 text-center ${wide ? "" : "mt-6"}`}>
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{dayEntry.focus}</div>
+            <div className="font-mono text-xs text-muted-foreground">{dayEntry.focus}</div>
             <div className="font-display text-7xl font-extrabold text-primary" data-testid="letter-of-the-day">
               {dayEntry.prompt}
             </div>
@@ -684,19 +686,12 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
               data-testid={`week-jump-${weekData.week}`}
             >
               {String(weekData.week).padStart(2, "0")}
-              <span className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-foreground/10 bg-popover px-2 py-1 text-[10px] font-normal normal-case tracking-normal text-muted-foreground opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+              <span className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-foreground/10 bg-popover px-2 py-1 text-sm font-normal normal-case tracking-normal text-muted-foreground opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
                 {formatWeekCommencing(weekData.week)}
               </span>
             </button>
           ))}
         </div>
-        {activeWeek && (
-          <div className="mt-6 flex flex-wrap items-center gap-3 border-l-4 border-cyan-400 bg-foreground/[0.04] p-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="active-week-summary">
-            <span>Active selection:</span>
-            <span className="rounded-full bg-cyan-400 px-2.5 py-1 font-bold text-slate-950">Week {String(activeWeek.week).padStart(2, "0")}</span>
-            <span>// {activeWeek.focus}</span>
-          </div>
-        )}
       </div>
 
       {/* Full-bleed track: spans the whole page width, edge to edge. */}

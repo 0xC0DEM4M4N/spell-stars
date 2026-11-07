@@ -11,7 +11,7 @@ export const ProgressTracker = ({ weeks, currentWeek, selectedWeek, completedWee
     <div className="mt-6 border border-foreground/10 bg-foreground/[0.03] p-5" data-testid="progress-tracker">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="font-mono text-xs uppercase tracking-[0.24em] text-success" data-testid="progress-tracker-label">Progress tracker</div>
+          <div className="font-mono text-xs text-success" data-testid="progress-tracker-label">Progress tracker</div>
           <p className="mt-2 text-sm text-muted-foreground" data-testid="progress-tracker-summary">
             {completed.size} complete · {nextWeek ? `Week ${nextWeek} next` : "All weeks complete"} · {weeks.length - completed.size} to go
           </p>
@@ -40,7 +40,7 @@ export const ProgressTracker = ({ weeks, currentWeek, selectedWeek, completedWee
               key={week.week}
               type="button"
               onClick={() => onSelectWeek(week.week)}
-              className={`grid h-8 w-8 place-items-center rounded-md border font-mono text-[10px] transition-colors duration-300 ${isComplete ? "border-emerald-300/50 bg-emerald-400/20 text-success" : isCurrent ? "border-cyan-300 bg-cyan-300/20 text-primary" : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/40 hover:text-primary"} ${isSelected ? "ring-1 ring-cyan-300" : ""}`}
+              className={`grid h-8 w-8 place-items-center rounded-md border font-mono text-sm transition-colors duration-300 ${isComplete ? "border-emerald-300/50 bg-emerald-400/20 text-success" : isCurrent ? "border-cyan-300 bg-cyan-300/20 text-primary" : "border-foreground/10 bg-foreground/5 text-muted-foreground hover:border-cyan-300/40 hover:text-primary"} ${isSelected ? "ring-1 ring-cyan-300" : ""}`}
               title={`Week ${week.week}: ${week.focus}`}
               aria-label={`Go to week ${week.week}${isComplete ? ", complete" : ""}`}
               data-testid={`progress-week-${week.week}`}

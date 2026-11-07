@@ -220,7 +220,7 @@ export function KeyFeatures({ totalWords }) {
         className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl"
       />
       <div className="relative mx-auto max-w-7xl">
-        <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Why SPELL// STARS</div>
+        <div className="font-mono text-xs text-primary">Why Spell Stars</div>
         <h2 id="key-features-heading" className="mt-3 max-w-5xl type-display font-display text-4xl font-extrabold text-foreground sm:text-5xl lg:text-6xl">
           {KEY_FEATURES_HEADING.map((line) => (
             <span key={line} className="block">

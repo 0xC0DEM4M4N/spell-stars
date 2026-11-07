@@ -23,8 +23,8 @@ import { LearnerGate } from "@/components/LearnerGate";
 import { useLearners } from "@/context/LearnerContext";
 
 const SCOPE_EXPLAINERS = {
-  term: "\u201cBy term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
-  all: "\u201cBy all up to now\u201d pools together every word covered so far this year \u2014 good for a big review, but sessions can take longer than a single week's list.",
+  term: "\u201cThis term\u201d pools together every word covered so far this term, not just this week's list \u2014 spaced repetition then decides which ones to ask first, so words you're shakier on come back more often.",
+  all: "\u201cEverything so far\u201d pools together every word covered so far this year \u2014 good for a big review, but sessions can take longer than a single week's list.",
 };
 
 const DEFAULT_COUNT = 15;
@@ -468,11 +468,11 @@ function PooledScopeView({
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="term-scope-summary">
+              <div className="font-mono text-xs text-muted-foreground" data-testid="term-scope-summary">
                 {termWords.length} words selected for this session
               </div>
               <div className="flex items-center gap-2" data-testid="term-count-picker">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Words</span>
+                <span className="font-mono text-sm text-muted-foreground">Words</span>
                 {SESSION_COUNT_OPTIONS.map((option) => (
                   <button
                     key={option}
@@ -529,7 +529,7 @@ function PooledScopeView({
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="all-scope-summary">
+            <div className="font-mono text-xs text-muted-foreground" data-testid="all-scope-summary">
               {allWords.length} of {allPool.length} words covered so far
             </div>
             <Button
@@ -583,13 +583,13 @@ function TermCarousel({ termStructure, currentTerm, selectedTerm, onSelectTerm, 
             <div className="flex items-center justify-between gap-2">
               <span className="type-card font-display text-lg font-bold text-foreground">{TERM_LABELS[term]} term</span>
               {isCurrent && (
-                <span className="shrink-0 rounded-full border border-emerald-300/40 bg-emerald-400/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-success" data-testid={`term-current-pill-${term}`}>
+                <span className="shrink-0 rounded-full border border-emerald-300/40 bg-emerald-400/10 px-2 py-0.5 font-mono text-sm text-success" data-testid={`term-current-pill-${term}`}>
                   Current
                 </span>
               )}
             </div>
             {range && (
-              <div className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              <div className="mt-1.5 font-mono text-sm text-muted-foreground">
                 Weeks {range[0]}–{range[1]}
               </div>
             )}

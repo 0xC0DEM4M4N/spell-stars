@@ -9,7 +9,7 @@ export const Footer = ({ onPrint }) => (
         </div>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-400">Year 2 Weekly Spelling Programme · 36 weeks · September 2026.</p>
       </div>
-      <button onClick={onPrint} className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-6 py-3 font-mono text-xs uppercase tracking-[0.22em] text-cyan-200 transition-colors duration-300 hover:bg-cyan-300 hover:text-slate-950" data-testid="footer-print-button">
+      <button onClick={onPrint} className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-6 py-3 font-mono text-xs text-cyan-200 transition-colors duration-300 hover:bg-cyan-300 hover:text-slate-950" data-testid="footer-print-button">
         <Printer className="h-4 w-4" /> Print active week
       </button>
     </div>

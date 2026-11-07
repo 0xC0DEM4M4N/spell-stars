@@ -10,7 +10,7 @@ export function GetStarted({ steps }) {
   return (
     <section className="px-5 pb-16 pt-10 sm:px-8" aria-labelledby="get-started-heading" data-testid="get-started">
       <div className="mx-auto max-w-7xl">
-        <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Next steps</div>
+        <div className="font-mono text-xs text-primary">Next steps</div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
           <h2 id="get-started-heading" className="type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
             Get started.

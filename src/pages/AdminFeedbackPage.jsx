@@ -114,7 +114,7 @@ export default function AdminFeedbackPage() {
               return (
                 <li key={entry.id} className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-4">
                   <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5 font-mono uppercase tracking-[0.14em] text-primary">
+                    <span className="flex items-center gap-1.5 font-mono text-primary">
                       <Icon className="h-3.5 w-3.5" aria-hidden="true" /> {meta.label}
                     </span>
                     <span className="flex items-center gap-3">

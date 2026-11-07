@@ -72,7 +72,7 @@ export function VoiceSettingsMenu({ className = "", triggerLabel = "Listening se
         <div className="mt-2 space-y-6">
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Volume</p>
+              <p className="font-mono text-sm text-muted-foreground">Volume</p>
               <VolumeIcon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             </div>
             <Slider
@@ -87,7 +87,7 @@ export function VoiceSettingsMenu({ className = "", triggerLabel = "Listening se
           </section>
 
           <section>
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Speed</p>
+            <p className="mb-3 font-mono text-sm text-muted-foreground">Speed</p>
             <Slider
               value={[effectiveRate]}
               onValueChange={([v]) => setRate(v)}
@@ -103,7 +103,7 @@ export function VoiceSettingsMenu({ className = "", triggerLabel = "Listening se
                   key={value}
                   type="button"
                   onClick={() => setRate(value)}
-                  className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-primary"
+                  className="font-mono text-sm text-muted-foreground transition-colors hover:text-primary"
                   data-testid={`voice-settings-rate-${label.toLowerCase()}`}
                 >
                   {label}
@@ -113,7 +113,7 @@ export function VoiceSettingsMenu({ className = "", triggerLabel = "Listening se
           </section>
 
           <section>
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Voice</p>
+            <p className="mb-3 font-mono text-sm text-muted-foreground">Voice</p>
             <Select
               value={voiceURI || DEFAULT_VOICE_VALUE}
               onValueChange={(v) => setVoiceURI(v === DEFAULT_VOICE_VALUE ? "" : v)}

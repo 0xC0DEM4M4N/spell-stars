@@ -13,7 +13,7 @@ export const Hero = ({ programme, activeWeek }) => (
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="mb-8 inline-flex items-center gap-3 border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.28em] text-primary"
+          className="mb-8 inline-flex items-center gap-3 border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 font-mono text-xs text-primary"
           data-testid="hero-eyebrow"
         >
           <Sparkles className="h-4 w-4" /> Year 2 // Autumn 2026

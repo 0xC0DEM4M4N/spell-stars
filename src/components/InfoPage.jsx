@@ -47,12 +47,12 @@ export function InfoPage({ path, title, description, eyebrow, heading, intro, ar
           transition={SPRING.reveal}
           className="mx-auto max-w-7xl"
         >
-          <Link to="/" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground transition-colors duration-300 hover:text-primary">
+          <Link to="/" className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground transition-colors duration-300 hover:text-primary">
             <ArrowLeft className="h-3.5 w-3.5" /> Home
           </Link>
           <div className="mt-8 flex items-center justify-between gap-10">
             <div className="min-w-0">
-              <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{eyebrow}</div>
+              <div className="font-mono text-xs text-primary">{eyebrow}</div>
               <h1 className="mt-3 max-w-3xl type-section font-display text-4xl font-extrabold text-foreground sm:text-5xl" data-testid="info-page-title">
                 {heading}
               </h1>
@@ -74,7 +74,7 @@ export function InfoPage({ path, title, description, eyebrow, heading, intro, ar
 
       <section className="px-5 pb-16 pt-6 sm:px-8" data-testid="keep-exploring">
         <div className="mx-auto max-w-7xl">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Keep exploring</div>
+          <div className="font-mono text-xs text-primary">Keep exploring</div>
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {others.map((page) => (
               <TeaserLink key={page.to} {...page} />

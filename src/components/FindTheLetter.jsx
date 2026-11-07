@@ -238,7 +238,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
       <DialogTrigger asChild>
         <button
           onClick={(e) => e.stopPropagation()}
-          className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
+          className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-sm text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
           data-testid="find-the-letter-button"
         >
           <Sparkles className="h-3.5 w-3.5" /> Find the letter
@@ -249,12 +249,12 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
         <div className="holo-card p-6 sm:p-8">
           <DialogHeader>
             <div className="flex items-center justify-between gap-4">
-              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">Find the letter</div>
+              <div className="font-mono text-sm text-primary">Find the letter</div>
               {mode && letterModeAvailable && (
                 <button
                   type="button"
                   onClick={backToChooser}
-                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
+                  className="font-mono text-sm text-muted-foreground transition-colors hover:text-primary"
                   data-testid="find-the-letter-change-mode"
                 >
                   Change practice
@@ -366,7 +366,7 @@ export const FindTheLetter = ({ prompt, entryId, onAttempt, ttsRate }) => {
                 <>
                   {mode === "picture" && (
                     <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-foreground/10 bg-foreground/[0.03] px-4 py-2.5">
-                      <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      <span className="flex items-center gap-2 font-mono text-sm text-muted-foreground">
                         <Volume2 className="h-3.5 w-3.5" /> Say the word on hover
                       </span>
                       <button

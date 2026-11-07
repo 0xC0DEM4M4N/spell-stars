@@ -74,11 +74,11 @@ export function AccessibilityMenu() {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="fixed bottom-5 left-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-popover text-primary shadow-lg shadow-black/20 transition-colors duration-200 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="fixed bottom-4 left-0 z-40 flex h-11 w-8 items-center justify-center rounded-l-none rounded-r-full border-l-0 border sm:bottom-5 sm:left-5 sm:h-12 sm:w-12 sm:rounded-full sm:border-l border border-border bg-popover text-primary shadow-lg shadow-black/20 transition-colors duration-200 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           aria-label="Display and accessibility settings"
           data-testid="accessibility-menu-button"
         >
-          <Accessibility className="h-6 w-6" aria-hidden="true" />
+          <Accessibility className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-md border-border bg-popover text-popover-foreground">
@@ -88,7 +88,7 @@ export function AccessibilityMenu() {
 
         <div className="mt-2 max-h-[70vh] space-y-6 overflow-y-auto pr-1">
           <section>
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="mb-3 font-mono text-sm text-muted-foreground">
               Theme
             </p>
             <div role="radiogroup" aria-label="Theme" className="grid grid-cols-2 gap-2">
@@ -109,7 +109,7 @@ export function AccessibilityMenu() {
 
           {theme === "dyslexia" && (
             <section>
-              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              <p className="mb-3 font-mono text-sm text-muted-foreground">
                 Dyslexia-friendly font
               </p>
               <div role="radiogroup" aria-label="Dyslexia-friendly font" className="flex gap-2">
@@ -135,7 +135,7 @@ export function AccessibilityMenu() {
           )}
 
           <section>
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="mb-3 font-mono text-sm text-muted-foreground">
               Text size
             </p>
             <div role="radiogroup" aria-label="Text size" className="flex gap-2">

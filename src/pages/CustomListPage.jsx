@@ -144,7 +144,7 @@ export default function CustomListPage() {
     <Shell title={list.name}>
       <div className="border-b px-6 pb-6 pt-24" style={{ borderColor: rgba(accent, 0.35), backgroundImage: `linear-gradient(180deg, ${rgba(accent, 0.08)}, transparent)` }}>
         <div className="mx-auto max-w-7xl">
-          <Link to="/custom" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground transition-colors duration-300 hover:text-primary">
+          <Link to="/custom" className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground transition-colors duration-300 hover:text-primary">
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" /> Your lessons
           </Link>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
@@ -197,7 +197,7 @@ export default function CustomListPage() {
               </Link>
             </div>
           </div>
-          <p className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground" data-testid="custom-list-summary">
+          <p className="mt-3 font-mono text-xs text-muted-foreground" data-testid="custom-list-summary">
             {plural(list.words.length, "word", "words")}
             {practised > 0 && " · " + practised + " practised"}
           </p>

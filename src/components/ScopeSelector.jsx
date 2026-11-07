@@ -26,7 +26,7 @@ export const ScopeSelector = ({
   return (
     <div className="border border-white/10 bg-white/[0.03] p-5" data-testid="scope-selector">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="font-mono text-xs uppercase tracking-[0.24em]" style={{ color: accentColor }}>
+        <span className="font-mono text-xs" style={{ color: accentColor }}>
           Current week
         </span>
         <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export const ScopeSelector = ({
 
       {showCount && (
         <div className="mt-4 flex flex-wrap items-center gap-2" data-testid="scope-count-picker">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-slate-400">Words</span>
+          <span className="font-mono text-xs text-slate-400">Words</span>
           {SESSION_COUNT_OPTIONS.map((option) => (
             <Button
               key={option}

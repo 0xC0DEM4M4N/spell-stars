@@ -58,7 +58,7 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
 
       <div className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-3">
         <div>
-          <div className="border-b border-foreground/15 pb-2 font-mono text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+          <div className="border-b border-foreground/15 pb-2 font-mono text-xs font-semibold text-primary">
             Explore
           </div>
           <ul className="mt-4 space-y-3 text-sm text-foreground/80">
@@ -131,7 +131,7 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
         </div>
 
         <div>
-          <div className="border-b border-foreground/15 pb-2 font-mono text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+          <div className="border-b border-foreground/15 pb-2 font-mono text-xs font-semibold text-primary">
             Tools
           </div>
           <ul className="mt-4 space-y-3 text-sm text-foreground/80">
@@ -213,7 +213,7 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
         </div>
 
         <div>
-          <div className="border-b border-foreground/15 pb-2 font-mono text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+          <div className="border-b border-foreground/15 pb-2 font-mono text-xs font-semibold text-primary">
             Curriculum
           </div>
           <ul className="mt-4 space-y-3 text-sm text-foreground/80">

@@ -181,7 +181,7 @@ export function LearnerMenu() {
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <Users className="h-4 w-4" aria-hidden="true" />
         </span>
-        <span className="max-w-[6rem] truncate normal-case tracking-normal">{displayName(activeLearner)}</span>
+        <span className={`max-w-[10rem] truncate normal-case tracking-normal ${activeLearner && activeLearner.name ? "max-sm:max-w-[6rem]" : "max-sm:hidden"}`}>{(activeLearner && activeLearner.name) || "Who's practising?"}</span>
       </button>
       <DialogContent className="max-w-md border-border bg-popover text-popover-foreground">
         <DialogHeader>
@@ -216,7 +216,7 @@ export function LearnerMenu() {
           </div>
 
           <div className="border-t border-border pt-4">
-            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Add a learner</p>
+            <p className="mb-2 font-mono text-sm text-muted-foreground">Add a learner</p>
             <AddLearnerForm onAdd={addLearner} />
           </div>
 

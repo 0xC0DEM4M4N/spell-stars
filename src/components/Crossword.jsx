@@ -241,7 +241,7 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
 
   const renderClueList = (label, clues) => (
     <div>
-      <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">{label}</h3>
+      <h3 className="font-mono text-sm text-primary">{label}</h3>
       <ol className="mt-2 space-y-1">
         {clues.map((clue) => {
           const isActive = activeClue === clue;
@@ -283,7 +283,7 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
         ) : (
           <button
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
+            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-sm text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
             data-testid="crossword-button"
           >
             <Puzzle className="h-3.5 w-3.5" aria-hidden="true" /> Crossword
@@ -297,7 +297,7 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
       >
         <div className="holo-card p-5 sm:p-7">
           <DialogHeader className="mb-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">Crossword // {title}</div>
+            <div className="font-mono text-sm text-primary">Crossword: {title}</div>
             <DialogTitle className="font-display text-2xl font-extrabold text-foreground">Solve the clues.</DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
               {focus || "Type each answer into the grid. Use the arrow keys to move, and the space bar to switch between across and down."}
@@ -331,7 +331,7 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
                       type="button"
                       aria-pressed={clueMode === mode}
                       onClick={() => changeClueMode(mode)}
-                      className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+                      className={`rounded-full px-3 py-1.5 font-mono text-sm transition-colors ${
                         clueMode === mode ? "bg-primary text-primary-foreground" : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
                       }`}
                       data-testid={`crossword-mode-${mode}`}
@@ -420,7 +420,7 @@ export function Crossword({ words, title = "", focus = "", trigger, meta = "" })
                             }`}
                           >
                             {number && (
-                              <span className="pointer-events-none absolute left-0.5 top-0 font-mono text-[9px] font-bold leading-none text-muted-foreground" aria-hidden="true">
+                              <span className="pointer-events-none absolute left-0.5 top-0 font-mono text-sm font-bold leading-none text-muted-foreground" aria-hidden="true">
                                 {number}
                               </span>
                             )}

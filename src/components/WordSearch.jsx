@@ -36,12 +36,12 @@ function cellTextSizeClass(size) {
   if (size <= 6) return "text-2xl sm:text-3xl";
   if (size <= 8) return "text-xl sm:text-2xl";
   if (size <= 10) return "text-sm sm:text-base";
-  return "text-[11px] sm:text-xs";
+  return "text-sm sm:text-xs";
 }
 
 function chipTextSizeClass(size) {
   if (size <= 8) return "text-sm";
-  return "text-[10px]";
+  return "text-sm";
 }
 
 // true when b is directly adjacent (8-directional) to a
@@ -320,7 +320,7 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
         ) : (
           <button
             onClick={e => e.stopPropagation()}
-            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
+            className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-sm text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"
             data-testid="word-search-button"
           >
             <Grid2x2 className="h-3.5 w-3.5" /> Word search
@@ -335,8 +335,8 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
         <div className="holo-card p-5 sm:p-7">
           <DialogHeader className="mb-5">
             <div className="flex items-center justify-between">
-              <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
-                Word Search // {title}
+              <div className="font-mono text-sm text-primary">
+                Word search: {title}
               </div>
               {timerOn && game && (
                 <div
@@ -425,8 +425,8 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
               <button
                 type="button"
                 onClick={() => changeLetterCase("uppercase")}
-                className={`px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
-                  letterCase === "uppercase" ? "bg-cyan-400 text-slate-950" : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                className={`px-3 py-1.5 font-mono text-xs transition-colors ${
+                  letterCase === "" ? "bg-cyan-400 text-slate-950" : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
                 }`}
                 aria-pressed={letterCase === "uppercase"}
                 data-testid="letter-case-uppercase"
@@ -550,7 +550,7 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
 
           {draftMode === "countdown" && (
             <div>
-              <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">Minutes</div>
+              <div className="font-mono text-xs text-muted-foreground">Minutes</div>
               <div className="mt-2 flex items-center gap-3">
                 <Button
                   type="button" variant="outline" size="icon"

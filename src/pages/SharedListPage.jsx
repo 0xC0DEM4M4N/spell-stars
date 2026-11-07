@@ -71,7 +71,7 @@ export default function SharedListPage() {
   return (
     <Shell>
       <div className="mx-auto max-w-2xl" data-testid="shared-page">
-        <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">A spelling challenge</div>
+        <div className="font-mono text-xs text-primary">A spelling challenge</div>
         <h1 className="mt-3 type-section font-display text-4xl font-extrabold text-foreground">
           Someone has challenged you!
         </h1>
@@ -89,7 +89,7 @@ export default function SharedListPage() {
         </ul>
 
         <div className="mt-8">
-          <label htmlFor="shared-list-name" className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          <label htmlFor="shared-list-name" className="font-mono text-xs text-muted-foreground">
             Lesson name
           </label>
           <input

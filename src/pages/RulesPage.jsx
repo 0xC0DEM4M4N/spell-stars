@@ -529,7 +529,7 @@ export default function RulesPage() {
                   <div className="mt-3 space-y-6" data-testid="rule-points">
                     {grouped.map((g) => (
                       <section key={g.slug} aria-labelledby={'rules-' + g.slug}>
-                        <h4 id={'rules-' + g.slug} className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
+                        <h4 id={'rules-' + g.slug} className="font-mono text-xs text-primary">
                           {yearLabel[g.slug] || g.slug} · {plural(g.points.length, 'rule', 'rules')}
                         </h4>
                         <ul className="mt-1 divide-y divide-foreground/10">

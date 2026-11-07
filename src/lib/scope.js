@@ -10,9 +10,9 @@
 import { dedupeByProgressKey } from "./wordKey";
 
 export const SCOPES = [
-  { value: "day", label: "By week" },
-  { value: "term", label: "By term" },
-  { value: "all", label: "By all up to now" },
+  { value: "day", label: "This week" },
+  { value: "term", label: "This term" },
+  { value: "all", label: "Everything so far" },
 ];
 
 export const SESSION_COUNT_OPTIONS = [10, 15, 20];

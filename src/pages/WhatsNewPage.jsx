@@ -17,7 +17,7 @@ export default function WhatsNewPage() {
       <section className="px-5 pb-16 sm:px-8" data-testid="whats-new-list">
         <div className="mx-auto max-w-3xl">
           {LAST_UPDATED && (
-            <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground" data-testid="whats-new-last-updated">
+            <p className="mb-5 font-mono text-xs text-muted-foreground" data-testid="whats-new-last-updated">
               Last updated {formatShortDate(LAST_UPDATED)}
             </p>
           )}
@@ -27,7 +27,7 @@ export default function WhatsNewPage() {
                 key={item.date + item.title}
                 className="rounded-2xl border border-foreground/20 border-l-[3px] border-l-primary bg-card p-5 shadow-sm"
               >
-                <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-primary">
+                <div className="flex items-center gap-2 font-mono text-xs text-primary">
                   <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                   {formatDate(item.date)}
                 </div>

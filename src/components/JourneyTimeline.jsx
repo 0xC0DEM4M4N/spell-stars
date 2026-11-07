@@ -102,7 +102,7 @@ export function JourneyTimeline({ journey }) {
 
   return (
     <div className="max-w-3xl" data-testid={`journey-${journey}`}>
-      <div className="mb-6 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{count}</div>
+      <div className="mb-6 font-mono text-xs text-muted-foreground">{count}</div>
 
       <ol className="relative list-none space-y-6 pl-[46px] sm:pl-[54px]">
         <div

@@ -602,7 +602,7 @@ function SavedLists({ lists, allSeries, onDelete }) {
       </p>
       {groups.map((group) => (
         <section key={group.key} className="mt-5" data-testid={'custom-group-' + group.key}>
-          <h3 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          <h3 className="flex items-center gap-2 font-mono text-sm text-muted-foreground">
             <Link to={group.to} className="hover:text-primary">
               {group.isSeries ? 'Series · ' : ''}
               {group.title}

@@ -90,7 +90,7 @@ export const PrintWeekMenu = ({ weekData, capabilities, sheet, gridSettings, tri
       <DialogTrigger asChild>
         <button
           onClick={(e) => e.stopPropagation()}
-          className={triggerClassName || "flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"}
+          className={triggerClassName || "flex items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1 font-mono text-sm text-muted-foreground transition-colors duration-200 hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-primary"}
           data-testid="print-week-button"
         >
           <Printer className="h-3.5 w-3.5" /> {triggerLabel}
@@ -103,8 +103,8 @@ export const PrintWeekMenu = ({ weekData, capabilities, sheet, gridSettings, tri
       >
         <div className="holo-card p-6 sm:p-7">
           <DialogHeader>
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
-              Print // {title}
+            <div className="font-mono text-sm text-primary">
+              Print: {title}
             </div>
             <DialogTitle className="font-display text-2xl font-extrabold text-foreground">
               What would you like to print?

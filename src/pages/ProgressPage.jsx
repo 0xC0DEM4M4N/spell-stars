@@ -73,7 +73,7 @@ function StatusBanner({ status }) {
       <div className="flex flex-wrap items-center gap-5">
         <AnimalMedal kind={status.key} title={status.animal} size="h-20 w-20" />
         <div className="min-w-[12rem] flex-1">
-          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">Current status</div>
+          <div className="font-mono text-sm text-primary">Current status</div>
           <h2 className="mt-1 font-display text-2xl font-extrabold text-foreground" data-testid="status-label">
             {status.label}
           </h2>
@@ -81,7 +81,7 @@ function StatusBanner({ status }) {
         </div>
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Next</div>
+            <div className="font-mono text-sm text-muted-foreground">Next</div>
             <div className="text-sm font-semibold text-muted-foreground">{nextLabel}</div>
           </div>
           <AnimalMedal kind={status.nextKey} title={nextLabel} size="h-12 w-12" dim />
@@ -150,7 +150,7 @@ export default function ProgressPage() {
       <div className="border-b border-foreground/15 px-6 pb-6 pt-28 sm:px-8">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-8">
           <div className="min-w-0">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">My progress</div>
+          <div className="font-mono text-xs text-primary">My progress</div>
           <h1 className="mt-2 font-display text-3xl font-extrabold text-foreground sm:text-4xl" data-testid="progress-heading">
             {displayName(activeLearner)}'s progress
           </h1>
@@ -173,7 +173,7 @@ export default function ProgressPage() {
         <div data-testid="badge-groups">
           {GROUPS.map((group) => (
             <section key={group.key} className="mt-8 first:mt-0">
-              <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{group.label}</h3>
+              <h3 className="font-mono text-xs text-muted-foreground">{group.label}</h3>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {group.badgeIds.map((id) => {
                   const badge = BADGES.find((b) => b.id === id);

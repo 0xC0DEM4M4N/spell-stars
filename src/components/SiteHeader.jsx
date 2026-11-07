@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Star } from 'lucide-react';
+import { Menu, Star } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useScrolled } from '@/hooks/useScrolled';
 import { LearnerMenu } from '@/components/LearnerMenu';
 import { useAccount } from '@/lib/useAccount';
@@ -16,6 +18,63 @@ const NAV = [
   { label: 'About', to: '/about' },
   { label: 'Feedback', to: '/feedback' },
 ];
+
+// Below the large breakpoint the inline links are hidden, so phones and
+// tablets get the same destinations in a menu, plus the places a family
+// uses most (own lessons, progress, account).
+const MENU_EXTRAS = [
+  { label: 'Make your own lesson', to: '/custom' },
+  { label: 'My progress', to: '/progress' },
+];
+
+const MobileMenu = ({ account, pathname }) => {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+  const items = [
+    ...NAV.slice(0, 2),
+    ...MENU_EXTRAS,
+    ...NAV.slice(2),
+  ];
+  const linkClass =
+    'block rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-primary/10';
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-secondary text-foreground transition-colors hover:border-primary/50 lg:hidden"
+          aria-label="Open menu"
+          data-testid="mobile-menu-button"
+        >
+          <Menu className="h-5 w-5" aria-hidden="true" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md border-border bg-popover text-popover-foreground">
+        <DialogHeader>
+          <DialogTitle className="font-display text-xl">Menu</DialogTitle>
+        </DialogHeader>
+        <nav aria-label="Menu" className="mt-1 max-h-[70vh] space-y-1 overflow-y-auto" data-testid="mobile-menu">
+          {items.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={close}
+              aria-current={item.to === pathname ? 'page' : undefined}
+              className={linkClass}
+            >
+              {item.label}
+            </Link>
+          ))}
+          {account.enabled && account.ready && (
+            <Link to="/account" onClick={close} className={linkClass}>
+              {account.user ? 'Account' : 'Sign in'}
+            </Link>
+          )}
+        </nav>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export const SiteHeader = () => {
   const scrolled = useScrolled();
@@ -77,6 +136,7 @@ export const SiteHeader = () => {
             </Link>
           )}
           <LearnerMenu />
+          <MobileMenu account={account} pathname={pathname} />
         </div>
       </div>
     </header>

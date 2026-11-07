@@ -292,21 +292,33 @@ function FeatureStrip() {
               onMouseEnter={() => setActive(i)}
               onClick={() => setActive(i)}
               data-active={on}
-              className={`rounded-3xl p-6 transition-colors duration-500 ease-out ${
-                on ? 'bg-primary text-primary-foreground' : 'text-card-foreground'
+              className={`relative rounded-3xl p-6 transition-colors duration-700 ease-in-out ${
+                on ? 'text-primary-foreground' : 'text-card-foreground'
               }`}
             >
-              <span className="relative inline-flex">
+              {/* One highlight that glides from card to card, rather than each
+                  card fading its own background in and out. */}
+              {on && (
+                <motion.span
+                  layoutId="feature-strip-highlight"
+                  className="absolute inset-0 rounded-3xl bg-primary"
+                  transition={
+                    reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 26, mass: 0.9 }
+                  }
+                  aria-hidden="true"
+                />
+              )}
+              <span className="relative z-10 inline-flex">
                 <item.icon className="h-9 w-9" aria-hidden="true" />
                 <span
-                  className={`absolute -bottom-1 -right-2 h-3 w-3 rounded-full transition-colors duration-500 ${
+                  className={`absolute -bottom-1 -right-2 h-3 w-3 rounded-full transition-colors duration-700 ease-in-out ${
                     on ? 'bg-primary-foreground' : 'bg-primary'
                   }`}
                 />
               </span>
-              <h3 className="type-card mt-8 font-display text-xl font-medium">{item.title}</h3>
+              <h3 className="type-card relative z-10 mt-8 font-display text-xl font-medium">{item.title}</h3>
               <p
-                className={`type-body mt-3 text-sm font-light transition-colors duration-500 ${
+                className={`type-body relative z-10 mt-3 text-sm font-light transition-colors duration-700 ease-in-out ${
                   on ? 'text-primary-foreground/85' : 'text-muted-foreground'
                 }`}
               >
@@ -587,7 +599,7 @@ export default function YearIndex() {
         data-testid="year-grid-section"
       >
         <div className="mx-auto max-w-7xl">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">
+          <div className="font-mono text-xs text-primary">
             Choose a year
           </div>
           <h2 className="mt-3 type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
@@ -625,7 +637,7 @@ export default function YearIndex() {
                       {year.label}
                     </div>
                     <div
-                      className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em]"
+                      className="mt-2 font-mono text-sm"
                       style={{ color: ink }}
                     >
                       {year.wordsPerWeek}/week · {year.wordCount} words
@@ -673,7 +685,7 @@ export default function YearIndex() {
                     <div className="type-card break-words font-display text-xl font-bold text-foreground">
                       {group.name}
                     </div>
-                    <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <div className="mt-2 font-mono text-sm text-muted-foreground">
                       {group.label} · {group.count}{' '}
                       {group.count === 1 ? 'lesson' : 'lessons'}
                     </div>
@@ -693,7 +705,7 @@ export default function YearIndex() {
               >
                 <Plus className="h-9 w-9 text-primary" aria-hidden="true" />
 
-                <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="mt-2 font-mono text-sm text-muted-foreground">
                   Add your own lesson
                 </div>
               </Link>
@@ -715,7 +727,7 @@ export default function YearIndex() {
         >
           <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">
+              <div className="font-mono text-xs text-primary">
                 Search by spelling rule
               </div>
               <h2
@@ -750,7 +762,7 @@ export default function YearIndex() {
             </div>
 
             <div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="font-mono text-sm text-muted-foreground">
                 Try a search
               </div>
               <ul className="mt-3 flex flex-wrap gap-2">
@@ -767,7 +779,7 @@ export default function YearIndex() {
               </ul>
               {seriesList.length > 0 && (
                 <div className="mt-6" data-testid="home-series">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="font-mono text-sm text-muted-foreground">
                     Your series
                   </div>
                   <ul className="mt-3 space-y-2">
@@ -778,7 +790,7 @@ export default function YearIndex() {
                           className="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary/50"
                         >
                           <span className="truncate">{series.name}</span>
-                          <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                          <span className="shrink-0 font-mono text-sm text-muted-foreground">
                             {series.listIds.length}{' '}
                             {series.listIds.length === 1 ? 'lesson' : 'lessons'}
                           </span>
@@ -800,7 +812,7 @@ export default function YearIndex() {
         data-testid="learn-more-section"
       >
         <div className="mx-auto max-w-7xl">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">
+          <div className="font-mono text-xs text-primary">
             New here?
           </div>
           <h2 className="mt-3 max-w-2xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">

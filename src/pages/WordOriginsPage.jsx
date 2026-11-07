@@ -101,7 +101,7 @@ export default function WordOriginsPage() {
       <main className="mx-auto max-w-7xl px-5 pb-16 pt-28 sm:px-8">
         <div className="flex items-center justify-between gap-10">
           <div className="min-w-0">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Reference</div>
+          <div className="font-mono text-xs text-primary">Reference</div>
           <h1 className="mt-3 type-section font-display text-3xl font-extrabold sm:text-4xl">Word origins</h1>
           <p className="mt-3 max-w-3xl type-body text-sm text-muted-foreground">
             Every word in every year, one row per word. Where a definition explains the word's origin, it is filled in
@@ -158,7 +158,7 @@ export default function WordOriginsPage() {
           </label>
         </div>
 
-        <p className="mt-4 font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground" role="status" data-testid="origins-count">
+        <p className="mt-4 font-mono text-xs text-muted-foreground" role="status" data-testid="origins-count">
           {rows
             ? shown.length + " of " + rows.length + " words · " + withOrigin + " with an origin · " + checked.size + " checked"
             : failed
@@ -171,7 +171,7 @@ export default function WordOriginsPage() {
           <div className="mt-4 overflow-x-auto rounded-2xl border border-foreground/10">
             <table className="w-full min-w-[60rem] border-collapse text-left text-sm" data-testid="origins-table">
               <caption className="sr-only">Words and where they come from</caption>
-              <thead className="bg-foreground/5 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              <thead className="bg-foreground/5 font-mono text-xs text-muted-foreground">
                 <tr>
                   <th scope="col" className="w-12 px-3 py-3"><span className="sr-only">Checked</span></th>
                   <th scope="col" className="px-3 py-3">Word</th>

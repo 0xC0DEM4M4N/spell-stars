@@ -284,7 +284,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
           <button
             type="button"
             onClick={() => switchMode(mode === "listen" ? "meaning" : "listen")}
-            className="absolute right-14 top-4 z-10 whitespace-nowrap rounded-full border border-cyan-300/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+            className="relative z-10 ml-6 mt-4 w-fit whitespace-nowrap rounded-full sm:absolute sm:right-14 sm:top-4 sm:ml-0 sm:mt-0 border border-cyan-300/40 px-3 py-1.5 font-mono text-sm text-muted-foreground transition-colors hover:border-primary hover:text-primary"
             data-testid="quiz-switch-mode-button"
           >
             {mode === "listen" ? "Switch to clue mode" : "Switch to listening mode"}
@@ -293,7 +293,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
         <div className="holo-card relative p-6 sm:p-8">
           {burstKey > 0 && <ConfettiBurst burstKey={burstKey} />}
           <DialogHeader>
-            <div className="font-mono text-xs uppercase tracking-[0.28em] text-accent2">
+            <div className="font-mono text-xs text-accent2">
               Practice mode
             </div>
             <DialogTitle className="font-display text-3xl font-extrabold text-foreground" data-testid="quiz-title">
@@ -335,7 +335,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
             </div>
           ) : !finished ? (
             <div className="mt-8">
-              <div className="mb-5 flex items-center justify-between gap-4 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              <div className="mb-5 flex items-center justify-between gap-4 font-mono text-xs text-muted-foreground">
                 <span data-testid="quiz-progress-label">Word {index + 1} / {sessionWords.length}</span>
                 <span className="flex items-center gap-3">
                   <span className="flex items-center gap-1 normal-case tracking-normal text-muted-foreground">
@@ -391,7 +391,7 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                 >
                   <FeedbackBadge status={status} />
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-accent2">
+                    <div className="flex items-center gap-2 font-mono text-sm text-accent2">
                       <Puzzle className="h-3.5 w-3.5" /> Meaning clue
                     </div>
                     {meaningSpeechText && (
@@ -406,14 +406,14 @@ export const PracticeQuiz = ({ words, onAttempt, onSessionComplete, ttsRate = "s
                   {currentWord.exampleSentence && (
                     showSentenceHint ? (
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground" data-testid="quiz-sentence-hint">
-                        <span className="mr-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">in a sentence</span>
+                        <span className="mr-1.5 font-mono text-sm text-muted-foreground">in a sentence</span>
                         {blankSentence(currentWord.exampleSentence, currentWord.word)}
                       </p>
                     ) : (
                       <button
                         type="button"
                         onClick={() => setShowSentenceHint(true)}
-                        className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-accent2/80 underline decoration-dotted underline-offset-4 transition-colors hover:text-accent2"
+                        className="mt-3 font-mono text-sm text-accent2/80 underline decoration-dotted underline-offset-4 transition-colors hover:text-accent2"
                         data-testid="quiz-sentence-hint-button"
                       >
                         Need a hint? Show the sentence

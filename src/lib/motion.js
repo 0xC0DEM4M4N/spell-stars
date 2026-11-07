@@ -31,7 +31,7 @@ export const PRESS_SOFT = { scale: 0.985 };
 // Scroll-reveal props for a staggered list. The stagger is capped so a
 // long list never makes the last item wait noticeably.
 export const revealOnScroll = (index = 0) => ({
-  initial: { opacity: 0, y: 16 },
+  initial: { opacity: 1, y: 12 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
   transition: { ...SPRING.reveal, delay: Math.min(index, 6) * 0.04 },

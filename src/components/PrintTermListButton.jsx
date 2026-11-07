@@ -73,8 +73,8 @@ export const PrintTermListButton = ({ words, term, yearLabel }) => {
       >
         <div className="holo-card p-6 sm:p-7">
           <DialogHeader>
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">
-              Print // {title}
+            <div className="font-mono text-sm text-primary">
+              Print: {title}
             </div>
             <DialogTitle className="font-display text-2xl font-extrabold text-foreground">
               Print the full word list.
