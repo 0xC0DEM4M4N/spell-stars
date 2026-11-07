@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ART_BY_PATH, PageArt } from "@/components/PageArt";
 import { useYearsConfig } from "@/lib/yearData";
 import { SPRING, revealOnScroll } from "@/lib/motion";
 
@@ -22,11 +23,12 @@ export const INFO_PAGES = [
  * `children` can be a function, which receives `{ totalYears }` from the
  * years config for copy that quotes it.
  */
-export function InfoPage({ path, title, description, eyebrow, heading, intro, children }) {
+export function InfoPage({ path, title, description, eyebrow, heading, intro, art, children }) {
   const { yearsConfig } = useYearsConfig();
   const totalYears = yearsConfig?.years.length;
   const totalWords = yearsConfig?.years.reduce((sum, y) => sum + (y.wordCount || 0), 0);
   const others = INFO_PAGES.filter((page) => page.to !== path);
+  const picture = art !== undefined ? art : ART_BY_PATH[path] ? <PageArt name={ART_BY_PATH[path]} /> : null;
 
   return (
     <div className="bg-grid-squares min-h-screen bg-background text-foreground">
@@ -48,13 +50,25 @@ export function InfoPage({ path, title, description, eyebrow, heading, intro, ch
           <Link to="/" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground transition-colors duration-300 hover:text-primary">
             <ArrowLeft className="h-3.5 w-3.5" /> Home
           </Link>
-          <div className="mt-8 font-mono text-xs uppercase tracking-[0.28em] text-primary">{eyebrow}</div>
-          <h1 className="mt-3 max-w-3xl type-section font-display text-4xl font-extrabold text-foreground sm:text-5xl" data-testid="info-page-title">
-            {heading}
-          </h1>
-          <p className="mt-5 max-w-2xl type-body text-base text-muted-foreground">{intro}</p>
+          <div className="mt-8 flex items-center justify-between gap-10">
+            <div className="min-w-0">
+              <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">{eyebrow}</div>
+              <h1 className="mt-3 max-w-3xl type-section font-display text-4xl font-extrabold text-foreground sm:text-5xl" data-testid="info-page-title">
+                {heading}
+              </h1>
+              <p className="mt-5 max-w-2xl type-body text-base text-muted-foreground">{intro}</p>
+            </div>
+            {picture && (
+              <div className="hidden shrink-0 lg:block" aria-hidden="true">
+                {picture}
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
+
+      {/* A clear gap between the header band and whatever the page starts with. */}
+      <div aria-hidden="true" className="h-8 sm:h-10" />
 
       {typeof children === "function" ? children({ totalYears }) : children}
 

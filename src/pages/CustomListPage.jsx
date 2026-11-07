@@ -4,11 +4,13 @@
 // lib/customLists.listToEntries), so this page reuses the same practice quiz,
 // word search and print sheets as the year pages. Practice is recorded exactly
 // as it is for a year, under the list's own id, so it travels in a backup.
+import { BackupBar } from '@/components/BackupBar';
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Grid2x2, Pencil, Puzzle, Sparkles, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PageArt } from "@/components/PageArt";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PracticeQuiz } from "@/components/PracticeQuiz";
 import { WordSearch } from "@/components/WordSearch";
@@ -20,6 +22,7 @@ import { ShareListDialog } from "@/components/ShareListDialog";
 import { LearnerGate } from "@/components/LearnerGate";
 import { useLearners } from "@/context/LearnerContext";
 import { useYearsConfig } from "@/lib/yearData";
+import { loadSeries, seriesForList } from "@/lib/series";
 import { CUSTOM_ID_RE, deleteList, getList, gridSettingsFor, listToEntries } from "@/lib/customLists";
 import { PROGRESS_VERSION, loadProgress, recordAttempt, saveProgress, todayISO } from "@/lib/srs";
 import { progressKey } from "@/lib/wordKey";
@@ -80,17 +83,17 @@ export default function CustomListPage() {
 
   if (!list) {
     return (
-      <Shell title="List not found">
+      <Shell title="Lesson not found">
         <main className="px-5 pb-16 pt-32 sm:px-8">
           <div className="mx-auto max-w-2xl text-center" data-testid="custom-list-missing">
-            <h1 className="type-section font-display text-3xl font-extrabold text-foreground">We can't find that list</h1>
+            <h1 className="type-section font-display text-3xl font-extrabold text-foreground">We can't find that lesson</h1>
             <p className="mt-4 type-body text-sm text-muted-foreground">
-              Lists are kept in the browser they were made in. If you made it on another device, open the save page there and bring it over,
+              Lessons are kept in the browser they were made in. If you made it on another device, open the save page there and bring it over,
               or make it again here.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link to="/custom" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
-                Make a list
+                Make a lesson
               </Link>
               <Link to="/sync" className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm font-semibold text-foreground hover:border-primary/50">
                 Restore a backup
@@ -102,6 +105,13 @@ export default function CustomListPage() {
     );
   }
 
+  const inSeries = (() => {
+    try {
+      return seriesForList(loadSeries(window.localStorage), list.id);
+    } catch (err) {
+      return [];
+    }
+  })();
   const accent = list.yearHint ? getYearAccent(list.yearHint) : DEFAULT_ACCENT;
   const practised = entries.filter((e) => {
     const state = progress.words[progressKey(e)];
@@ -135,14 +145,37 @@ export default function CustomListPage() {
       <div className="border-b px-6 pb-6 pt-24" style={{ borderColor: rgba(accent, 0.35), backgroundImage: `linear-gradient(180deg, ${rgba(accent, 0.08)}, transparent)` }}>
         <div className="mx-auto max-w-7xl">
           <Link to="/custom" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground transition-colors duration-300 hover:text-primary">
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" /> Your lists
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" /> Your lessons
           </Link>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent, boxShadow: `0 0 12px ${rgba(accent, 0.8)}` }} aria-hidden="true" />
-              <h1 className="type-section font-display text-3xl font-extrabold text-foreground" data-testid="custom-list-title">
-                {list.name}
-              </h1>
+            <div className="flex items-center gap-4">
+              <span className="hidden sm:block" aria-hidden="true">
+                <PageArt name="list" size={92} />
+              </span>
+              <div>
+              <div className="flex items-center gap-3">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent, boxShadow: `0 0 12px ${rgba(accent, 0.8)}` }} aria-hidden="true" />
+                <h1 className="type-section font-display text-3xl font-extrabold text-foreground" data-testid="custom-list-title">
+                  {list.name}
+                </h1>
+              </div>
+              {inSeries.length === 0 && (
+                <p className="mt-2 text-sm text-muted-foreground" data-testid="custom-list-series">
+                  In: <Link to="/series/custom" className="underline underline-offset-2 hover:text-primary">Custom lessons</Link>
+                </p>
+              )}
+              {inSeries.length > 0 && (
+                <p className="mt-2 text-sm text-muted-foreground" data-testid="custom-list-series">
+                  In series:{" "}
+                  {inSeries.map((x, i) => (
+                    <span key={x.id}>
+                      {i > 0 && ", "}
+                      <Link to={"/series/" + x.id} className="underline underline-offset-2 hover:text-primary">{x.name}</Link>
+                    </span>
+                  ))}
+                </p>
+              )}
+              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <PrintWeekMenu
@@ -171,7 +204,8 @@ export default function CustomListPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-7xl space-y-6 px-6 py-8">
+      <main className="mx-auto max-w-7xl space-y-6 px-6 pb-8 pt-10">
+        <BackupBar />
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" data-testid="custom-word-grid">
           {entries.map((entry, i) => (
             <motion.li
@@ -264,9 +298,9 @@ export default function CustomListPage() {
         <div className="border-t border-foreground/10 pt-6">
           {confirmingDelete ? (
             <span className="flex flex-wrap items-center gap-3 text-sm" role="alertdialog" aria-label={"Delete " + list.name}>
-              <span className="text-muted-foreground">Delete this list and its progress? This can't be undone.</span>
+              <span className="text-muted-foreground">Delete this lesson and its progress? This can't be undone.</span>
               <button type="button" onClick={handleDelete} className="rounded-lg bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground hover:opacity-90" data-testid="custom-confirm-delete">
-                Delete list
+                Delete lesson
               </button>
               <button type="button" onClick={() => setConfirmingDelete(false)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary/50">
                 Keep it
@@ -274,7 +308,7 @@ export default function CustomListPage() {
             </span>
           ) : (
             <button type="button" onClick={() => setConfirmingDelete(true)} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-destructive" data-testid="custom-delete">
-              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" /> Delete this list
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" /> Delete this lesson
             </button>
           )}
         </div>

@@ -81,7 +81,7 @@ export function ShareListDialog({ list, triggerClassName }) {
   const whatsappHref = "https://wa.me/?text=" + encodeURIComponent(message + " " + url);
   const emailHref =
     "mailto:?subject=" + encodeURIComponent("A spelling challenge for you") +
-    "&body=" + encodeURIComponent(message + "\n\n" + url + "\n\nOpen the link to add these words to your own lists.");
+    "&body=" + encodeURIComponent(message + "\n\n" + url + "\n\nOpen the link to add these words to your own lessons.");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -94,7 +94,7 @@ export function ShareListDialog({ list, triggerClassName }) {
         <DialogHeader>
           <DialogTitle className="font-display text-xl font-extrabold">Challenge someone!</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Send this link. When they open it they can add these {list.words.length} words to their own lists and try
+            Send this link. When they open it they can add these {list.words.length} words to their own lessons and try
             them for themselves. Only the words are shared, never your progress.
           </DialogDescription>
         </DialogHeader>
@@ -138,7 +138,7 @@ export function ShareListDialog({ list, triggerClassName }) {
 
           {!qrSource && (
             <p className="text-xs text-muted-foreground" data-testid="share-qr-too-big">
-              This list has too many words to fit in a QR code that scans easily. Use the link instead.
+              This lesson has too many words to fit in a QR code that scans easily. Use the link instead.
             </p>
           )}
           {qr && qr.status === "loading" && <p className="text-sm text-muted-foreground">Making the QR code…</p>}
@@ -175,7 +175,7 @@ export function ShareListDialog({ list, triggerClassName }) {
 
           {sentencesDropped && (
             <p className="text-xs text-muted-foreground">
-              This list is long, so the example sentences were left out to keep the link short. The words are all there.
+              This lesson is long, so the example sentences were left out to keep the link short. The words are all there.
             </p>
           )}
         </div>

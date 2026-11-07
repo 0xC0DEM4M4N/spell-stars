@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PageArt } from "@/components/PageArt";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getYearsConfig, getYearWords } from "@/lib/yearData";
 import { collectOrigins } from "@/lib/wordOrigins";
@@ -98,15 +99,22 @@ export default function WordOriginsPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-7xl px-5 pb-16 pt-28 sm:px-8">
-        <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Reference</div>
-        <h1 className="mt-3 type-section font-display text-3xl font-extrabold sm:text-4xl">Word origins</h1>
-        <p className="mt-3 max-w-3xl type-body text-sm text-muted-foreground">
-          Every word in every year, one row per word. Where a definition explains the word's origin, it is filled in
-          here; the other rows show just the meaning. Each row also shows its example sentence. The origins were written from general knowledge and have not yet
-          been checked against a dictionary, so tick each row as you confirm it. Ticks are saved in this browser only.
-        </p>
+        <div className="flex items-center justify-between gap-10">
+          <div className="min-w-0">
+          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Reference</div>
+          <h1 className="mt-3 type-section font-display text-3xl font-extrabold sm:text-4xl">Word origins</h1>
+          <p className="mt-3 max-w-3xl type-body text-sm text-muted-foreground">
+            Every word in every year, one row per word. Where a definition explains the word's origin, it is filled in
+            here; the other rows show just the meaning. Each row also shows its example sentence. The origins were written from general knowledge and have not yet
+            been checked against a dictionary, so tick each row as you confirm it. Ticks are saved in this browser only.
+          </p>
+          </div>
+          <div className="hidden shrink-0 lg:block" aria-hidden="true">
+            <PageArt name="origins" size={240} />
+          </div>
+        </div>
 
-        <div className="mt-6 flex flex-wrap items-end gap-3">
+        <div className="mt-10 flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-xs text-muted-foreground">
             Search
             <input

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import Lenis from "lenis";
 import "@/App.css";
@@ -10,9 +10,15 @@ import ForEducators from "@/pages/ForEducators";
 import Faq from "@/pages/Faq";
 import About from "@/pages/About";
 import SyncPage from "@/pages/SyncPage";
+import AccountPage from "@/pages/AccountPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import { CookieBanner } from "@/components/CookieBanner";
+import { AccountSyncRunner } from "@/lib/useAccount";
 import ProgressPage from "@/pages/ProgressPage";
 import CustomListsPage from "@/pages/CustomListsPage";
 import CustomListPage from "@/pages/CustomListPage";
+import RulesPage from "@/pages/RulesPage";
+import { SeriesIndexPage, SeriesPage } from "@/pages/SeriesPage";
 import SharedListPage from "@/pages/SharedListPage";
 import WordOriginsPage from "@/pages/WordOriginsPage";
 import DigitalJourney from "@/pages/DigitalJourney";
@@ -153,7 +159,13 @@ function AppShell() {
             {/* No link anywhere; password-gated (functions/api/feedback.js). */}
             <Route path="/admin/feedback" element={<AdminFeedbackPage />} />
             <Route path="/sync" element={<SyncPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/rules" element={<RulesPage />} />
+            <Route path="/build" element={<Navigate to="/rules" replace />} />
+            <Route path="/series" element={<SeriesIndexPage />} />
+            <Route path="/series/:seriesId" element={<SeriesPage />} />
             <Route path="/custom" element={<CustomListsPage />} />
             <Route path="/custom/:listId" element={<CustomListPage />} />
             <Route path="/shared" element={<SharedListPage />} />
@@ -161,6 +173,8 @@ function AppShell() {
             <Route path="/word-origins" element={<WordOriginsPage />} />
             <Route path="/:yearSlug" element={<YearPage />} />
           </Routes>
+          <AccountSyncRunner />
+          <CookieBanner />
           <Toaster position="bottom-right" />
           <AccessibilityMenu />
         </div>

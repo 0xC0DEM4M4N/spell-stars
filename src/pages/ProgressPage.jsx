@@ -10,6 +10,7 @@
 // load -- it only ever stamps a "first reached" date once).
 import { useEffect, useMemo } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PageArt } from "@/components/PageArt";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AnimalMedal } from "@/components/AnimalIcon";
 import { useLearners } from "@/context/LearnerContext";
@@ -146,22 +147,27 @@ export default function ProgressPage() {
 
   return (
     <Shell>
-      <div className="border-b border-foreground/10 px-6 pb-6 pt-28 sm:px-8">
-        <div className="mx-auto max-w-5xl">
+      <div className="border-b border-foreground/15 px-6 pb-6 pt-28 sm:px-8">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-8">
+          <div className="min-w-0">
           <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">My progress</div>
           <h1 className="mt-2 font-display text-3xl font-extrabold text-foreground sm:text-4xl" data-testid="progress-heading">
             {displayName(activeLearner)}'s progress
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            A running total of every correct answer, across every year and list this device has practised — it only ever goes up.
+            A running total of every correct answer, across every year and lesson this device has practised — it only ever goes up.
           </p>
           {hasMultipleLearners && (
             <LearnerSwitcher learners={learners} activeLearnerId={activeLearnerId} selectLearner={selectLearner} />
           )}
+          </div>
+          <div className="hidden shrink-0 md:block" aria-hidden="true">
+            <PageArt name="progress" size={220} />
+          </div>
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl space-y-8 px-6 py-8 sm:px-8">
+      <main className="mx-auto max-w-5xl space-y-8 px-6 pb-8 pt-10 sm:px-8">
         <StatusBanner status={status} />
 
         <div data-testid="badge-groups">

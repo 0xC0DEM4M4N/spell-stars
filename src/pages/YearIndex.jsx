@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   ArrowDown,
+  BookOpen,
+  Brain,
+  Layers,
+  PencilLine,
+  CalendarDays,
   ClipboardCheck,
+  GraduationCap,
+  Printer,
+  Timer,
+  Volume2,
   MessageCircleQuestion,
   Plus,
+  Search,
   Sparkles,
   Star,
 } from 'lucide-react';
@@ -15,6 +25,7 @@ import { TeaserLink } from '@/components/InfoPage';
 import { KeyFeatures } from '@/components/KeyFeatures';
 import { useYearsConfig } from '@/lib/yearData';
 import { loadLists } from '@/lib/customLists';
+import { CUSTOM_LESSONS_NAME, CUSTOM_LESSONS_PATH, loadSeries, orphanLessons, seriesLessons } from '@/lib/series';
 import { useTheme } from '@/context/ThemeContext';
 import { getYearAccent, getYearDepth, getYearInk, rgba } from '@/lib/yearTheme';
 import { PRESS, SPRING, revealOnScroll } from '@/lib/motion';
@@ -223,10 +234,111 @@ function readCustomLists() {
   }
 }
 
+const STRIP_ITEMS = [
+  {
+    icon: Timer,
+    title: '10 minutes a day',
+    body: 'Little and often beats cramming, so a short daily session is plenty.',
+  },
+  {
+    icon: Brain,
+    title: 'Practice that adapts',
+    body: 'Six boxes bring the words you got wrong back around sooner.',
+  },
+  {
+    icon: Volume2,
+    title: 'Hear it, then spell it',
+    body: 'Each word is read aloud in British English, slower for Reception.',
+  },
+  {
+    icon: Printer,
+    title: 'On screen or on paper',
+    body: 'Print word lists, handwriting sheets, word searches and crosswords.',
+  },
+];
+
+const STRIP_ROTATE_MS = 2500;
+
+// The four highlights under the hero. The filled card moves from one to the
+// next every few seconds. It stops while the pointer or keyboard focus is on
+// the strip, and stays put (on the first card) when reduce-motion is on.
+function FeatureStrip() {
+  const { reducedMotion } = useTheme();
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (reducedMotion || paused) return undefined;
+    const timer = setInterval(() => setActive((i) => (i + 1) % STRIP_ITEMS.length), STRIP_ROTATE_MS);
+    return () => clearInterval(timer);
+  }, [reducedMotion, paused]);
+
+  return (
+    <section
+      className="relative z-20 -mt-16 px-5 sm:-mt-20 sm:px-8"
+      aria-label="Highlights"
+      data-testid="feature-strip"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      <ul className="mx-auto grid max-w-7xl gap-2 rounded-[2rem] border border-foreground/10 bg-card p-3 shadow-2xl sm:grid-cols-2 lg:grid-cols-4">
+        {STRIP_ITEMS.map((item, i) => {
+          const on = i === active;
+          return (
+            <li
+              key={item.title}
+              onMouseEnter={() => setActive(i)}
+              onClick={() => setActive(i)}
+              data-active={on}
+              className={`rounded-3xl p-6 transition-colors duration-500 ease-out ${
+                on ? 'bg-primary text-primary-foreground' : 'text-card-foreground'
+              }`}
+            >
+              <span className="relative inline-flex">
+                <item.icon className="h-9 w-9" aria-hidden="true" />
+                <span
+                  className={`absolute -bottom-1 -right-2 h-3 w-3 rounded-full transition-colors duration-500 ${
+                    on ? 'bg-primary-foreground' : 'bg-primary'
+                  }`}
+                />
+              </span>
+              <h3 className="type-card mt-8 font-display text-xl font-medium">{item.title}</h3>
+              <p
+                className={`type-body mt-3 text-sm font-light transition-colors duration-500 ${
+                  on ? 'text-primary-foreground/85' : 'text-muted-foreground'
+                }`}
+              >
+                {item.body}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+// Accent for anything the visitor made themselves (series and lessons).
+const MADE_BY_YOU_ACCENT = '#8b5cf6';
+
+// The series this browser has saved; none if storage isn't available.
+function readSeries() {
+  try {
+    return loadSeries(window.localStorage);
+  } catch (err) {
+    return [];
+  }
+}
+
+const RULE_EXAMPLES = ['/ee/', '-le ending', 'kn-', '-ous', 'wr at the start', 'suffix'];
+
 export default function YearIndex() {
   const { status, yearsConfig, error } = useYearsConfig();
   const { theme } = useTheme();
   const [customLists] = useState(readCustomLists);
+  const [seriesList] = useState(readSeries);
 
   if (status === 'loading') {
     return <Centered>Loading…</Centered>;
@@ -245,6 +357,32 @@ export default function YearIndex() {
   );
   const teachingWeeks = yearsConfig.totalWeeks;
 
+  // Series are the top level. Lessons that are in no series go in one card.
+  const homeGroups = [
+    ...seriesList.map((series) => ({
+      key: series.id,
+      to: `/series/${series.id}`,
+      name: series.name,
+      label: 'Series',
+      Icon: Layers,
+      count: seriesLessons(series, customLists).length,
+      testId: `series-card-${series.id}`,
+    })),
+    ...(orphanLessons(seriesList, customLists).length > 0
+      ? [
+          {
+            key: 'custom-lessons',
+            to: CUSTOM_LESSONS_PATH,
+            name: CUSTOM_LESSONS_NAME,
+            label: 'Your lessons',
+            Icon: PencilLine,
+            count: orphanLessons(seriesList, customLists).length,
+            testId: 'custom-lessons-card',
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="bg-grid-squares min-h-screen bg-background text-foreground">
       {/* React 19 hoists title/meta/link tags rendered anywhere in the
@@ -262,14 +400,12 @@ export default function YearIndex() {
 
       {/* Hero */}
       {/* The hero is intentionally always dark-styled, independent of the
-          light/dark theme toggle -- the vivid brand cyan used in "ST☆RS"
-          only reads at ~2:1 contrast against a light background (fails
-          WCAG even for large text), so it needs a dark surface behind it
-          to stay both legible and vivid. Everything below the hero
-          follows the selected theme normally. */}
+          light/dark theme toggle -- the vivid brand cyan only reads at ~2:1
+          contrast against a light background, so it needs a dark surface
+          behind it. Everything below the hero follows the selected theme. */}
       <section
         id="top"
-        className="hero-grid relative overflow-hidden px-5 pb-8 pt-28 text-slate-50 sm:px-8 lg:pt-32"
+        className="hero-grid hero-lines relative overflow-hidden px-5 pb-28 pt-28 text-slate-50 sm:px-8 sm:pb-32 lg:pt-32"
         style={{ backgroundColor: '#05070d' }}
         data-testid="hero-section"
       >
@@ -292,56 +428,60 @@ export default function YearIndex() {
             </span>
           ))}
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="max-w-4xl">
-            <motion.div
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-6">
+          <div>
+            <motion.p
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING.reveal}
-              className="mb-8 inline-flex items-center gap-3 border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.28em] text-[#09c4dc]"
+              className="text-lg font-light text-slate-200 sm:text-xl"
             >
-              <Sparkles className="h-4 w-4" /> Reception – Year 6 // National
-              Curriculum aligned
-            </motion.div>
-            <h1 className="type-display font-display text-6xl font-extrabold uppercase text-slate-50 sm:text-7xl lg:text-8xl">
-              <span className="block overflow-hidden">
+              Your spelling practice partner
+            </motion.p>
+            <h1 className="type-display mt-4 font-display text-5xl font-light text-slate-50 sm:text-6xl lg:text-[5.25rem]">
+              {['Spell, practise', 'and shine with'].map((line, i) => (
+                <span key={line} className="block overflow-hidden">
+                  <motion.span
+                    className="block"
+                    initial={{ y: '112%' }}
+                    animate={{ y: 0 }}
+                    transition={{ ...SPRING.reveal, duration: 0.8, delay: i * 0.1 }}
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
+              <span className="block overflow-hidden pb-3">
                 <motion.span
-                  className="block"
+                  className="block text-[#09c4dc]"
                   initial={{ y: '112%' }}
                   animate={{ y: 0 }}
-                  transition={{ ...SPRING.reveal, duration: 0.8 }}
+                  transition={{ ...SPRING.reveal, duration: 0.8, delay: 0.2 }}
                 >
-                  SPELL
-                </motion.span>
-              </span>
-              <span className="block overflow-hidden">
-                <motion.span
-                  className="block pb-4 text-[#09c4dc]"
-                  initial={{ y: '112%' }}
-                  animate={{ y: 0 }}
-                  transition={{ ...SPRING.reveal, duration: 0.8, delay: 0.1 }}
-                >
-                  ST
-                  <Star
-                    className="inline-block h-[0.9em] w-[0.9em] text-amber-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.85)] pl-2"
-                    style={{ verticalAlign: '-0.1em' }}
-                    aria-hidden="true"
-                  />
-                  RS
+                  confidence
                 </motion.span>
               </span>
             </h1>
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...SPRING.reveal, delay: 0.35 }}
+              className="mt-6 max-w-xl text-base font-light leading-relaxed text-slate-200 sm:text-lg"
+            >
+              Progressive spelling practice for keen beans, from first letter
+              sounds in Reception through to Year 6, one week at a time.
+            </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ ...SPRING.reveal, delay: 0.35 }}
-              className="mt-6 flex flex-wrap items-center gap-4"
+              transition={{ ...SPRING.reveal, delay: 0.45 }}
+              className="mt-9 flex flex-wrap items-center gap-4"
             >
               <motion.a
                 href="#years"
                 whileHover={{ y: -3, transition: SPRING.settle }}
                 whileTap={{ ...PRESS, transition: SPRING.snappy }}
-                className="group inline-flex items-center gap-3 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition-colors duration-300 hover:bg-cyan-300"
+                className="group inline-flex items-center gap-3 rounded-full bg-cyan-400 px-8 py-4 text-base font-medium text-slate-950 transition-colors duration-300 hover:bg-cyan-300"
               >
                 Jump to your year{' '}
                 <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
@@ -350,22 +490,83 @@ export default function YearIndex() {
                 href="#features"
                 whileHover={{ y: -3, transition: SPRING.settle }}
                 whileTap={{ ...PRESS, transition: SPRING.snappy }}
-                className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-6 py-3 font-semibold text-cyan-200 transition-colors duration-300 hover:bg-cyan-300/10"
+                className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-8 py-4 text-base font-medium text-cyan-200 transition-colors duration-300 hover:bg-cyan-300/10"
                 data-testid="hero-features-link"
               >
                 What's included
               </motion.a>
             </motion.div>
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ ...SPRING.reveal, delay: 0.45 }}
-              className="mt-5 max-w-2xl border-l border-cyan-300/30 pl-5 font-mono text-sm text-slate-400"
+              transition={{ ...SPRING.reveal, delay: 0.55 }}
+              className="mt-12 flex items-center gap-4"
             >
-              Progressive spelling practice for keen beans — from first letter
-              sounds in Reception through to Year 6 spelling confidence, one
-              week at a time.
-            </motion.p>
+              <span
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-slate-900 ring-1 ring-white/15"
+                aria-hidden="true"
+              >
+                <Star className="h-6 w-6 fill-amber-400 text-amber-400" />
+              </span>
+              <div>
+                <div className="text-lg font-light text-slate-50">
+                  Free, with no login
+                </div>
+                <div className="text-sm font-light text-slate-300">
+                  Progress saves on your device, for every child who practises
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Floating stat cards around a glowing star */}
+          <div
+            className="relative grid grid-cols-1 gap-4 sm:grid-cols-3 lg:block lg:h-[30rem]"
+            data-testid="hero-stats"
+          >
+            <Star
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-1/2 hidden h-72 w-72 -translate-x-1/2 -translate-y-1/2 fill-amber-400 text-amber-400 opacity-90 drop-shadow-[0_0_60px_rgba(251,191,36,0.55)] lg:block"
+            />
+            {[
+              {
+                icon: BookOpen,
+                label: 'Spelling words',
+                value: `${totalWords.toLocaleString('en-GB')}+`,
+                pos: 'lg:right-0 lg:top-8',
+              },
+              {
+                icon: GraduationCap,
+                label: 'Year groups',
+                value: 'Reception–Yr6',
+                pos: 'lg:right-4 lg:top-[48%]',
+              },
+              {
+                icon: CalendarDays,
+                label: 'Teaching weeks',
+                value: String(teachingWeeks),
+                pos: 'lg:left-0 lg:bottom-4',
+              },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...SPRING.reveal, delay: 0.5 + i * 0.12 }}
+                className={`glass-card rounded-3xl p-5 lg:absolute lg:w-60 ${stat.pos}`}
+              >
+                <span className="relative inline-flex">
+                  <stat.icon className="h-7 w-7 text-slate-100" aria-hidden="true" />
+                  <span className="absolute -bottom-1 -right-1.5 h-2.5 w-2.5 rounded-full bg-cyan-400" />
+                </span>
+                <div className="mt-3 text-sm font-light text-slate-200">
+                  {stat.label}
+                </div>
+                <div className="mt-1 font-display text-xl font-semibold text-white sm:text-2xl lg:text-xl xl:text-2xl">
+                  {stat.value}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
         <div
@@ -374,42 +575,7 @@ export default function YearIndex() {
         />
       </section>
 
-      {/* Practice stats band */}
-      <section
-        className="relative w-full bg-cyan-400"
-        data-testid="practice-stats-band"
-      >
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-8 px-5 py-10 sm:grid-cols-4 sm:px-8 sm:py-12 text-sm">
-          {[
-            {
-              value: '10 min',
-              label:
-                'Recommended daily practice — little and often beats cramming',
-            },
-            {
-              value: '6',
-              label: 'SRS boxes — words you get wrong come back around sooner',
-            },
-            {
-              value: String(teachingWeeks),
-              label: 'Weeks mapped to the school year, term by term',
-            },
-            {
-              value: 'Reception\u2013Yr6',
-              label: 'Every year group covered, in one place',
-            },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <div className="font-display text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">
-                {stat.value}
-              </div>
-              <div className="mt-1 font-mono text-xs leading-snug text-slate-900/70">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FeatureStrip />
 
       {/* Why use it: right under the hero and stats, before the year picker. */}
       <KeyFeatures totalWords={totalWords} />
@@ -469,45 +635,54 @@ export default function YearIndex() {
               );
             })}
 
-            {/* The visitor's own lists sit with the years, then a way to add one. */}
-            {customLists.map((list, index) => {
-              const accent = list.yearHint
-                ? getYearAccent(list.yearHint)
-                : getYearAccent('year2');
+            {/* The visitor's series sit with the years, then one card holding any
+                lessons that are in no series, then a way to add more. */}
+            {homeGroups.map((group, index) => {
+              // Violet marks things the visitor made, so they stand apart from
+              // the built-in year cards.
+              const accent = MADE_BY_YOU_ACCENT;
+              const GroupIcon = group.Icon;
               return (
                 <motion.div
-                  key={list.id}
+                  key={group.key}
                   {...revealOnScroll(yearsConfig.years.length + index)}
                   whileHover={{ y: -4, transition: SPRING.settle }}
                   whileTap={{ ...PRESS, transition: SPRING.snappy }}
                 >
                   <Link
-                    to={`/custom/${list.id}`}
+                    to={group.to}
                     className="group relative block h-full overflow-hidden rounded-2xl border p-5 text-center transition-[filter] duration-300 hover:brightness-110"
                     style={{
                       backgroundColor: rgba(accent, 0.1),
                       borderColor: rgba(accent, 0.38),
                     }}
-                    data-testid={`custom-list-link-${list.id}`}
+                    data-testid={group.testId}
                   >
                     <span
                       className="absolute inset-x-0 top-0 h-[3px]"
                       style={{ backgroundColor: accent }}
                       aria-hidden="true"
                     />
+                    <span
+                      className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full"
+                      style={{ backgroundColor: rgba(accent, 0.18), color: accent }}
+                      aria-hidden="true"
+                    >
+                      <GroupIcon className="h-4 w-4" />
+                    </span>
                     <div className="type-card break-words font-display text-xl font-bold text-foreground">
-                      {list.name}
+                      {group.name}
                     </div>
                     <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                      Your list · {list.words.length}{' '}
-                      {list.words.length === 1 ? 'word' : 'words'}
+                      {group.label} · {group.count}{' '}
+                      {group.count === 1 ? 'lesson' : 'lessons'}
                     </div>
                   </Link>
                 </motion.div>
               );
             })}
             <motion.div
-              {...revealOnScroll(yearsConfig.years.length + customLists.length)}
+              {...revealOnScroll(yearsConfig.years.length + homeGroups.length)}
               whileHover={{ y: -4, transition: SPRING.settle }}
               whileTap={{ ...PRESS, transition: SPRING.snappy }}
             >
@@ -519,12 +694,103 @@ export default function YearIndex() {
                 <Plus className="h-9 w-9 text-primary" aria-hidden="true" />
 
                 <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                  Add your own list
+                  Add your own lesson
                 </div>
               </Link>
             </motion.div>
           </div>
         </div>
+      </section>
+
+      {/* Search by spelling rule: its own section, straight after the year picker. */}
+      <section
+        id="spelling-rules"
+        className="px-5 pb-16 sm:px-8"
+        aria-labelledby="spelling-rules-heading"
+        data-testid="spelling-rules-section"
+      >
+        <motion.div
+          {...revealOnScroll(0)}
+          className="holo-card relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] p-6 sm:p-10"
+        >
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+            <div>
+              <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">
+                Search by spelling rule
+              </div>
+              <h2
+                id="spelling-rules-heading"
+                className="mt-3 max-w-xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl"
+              >
+                Practise exactly what needs practising.
+              </h2>
+              <p className="mt-4 max-w-xl type-body text-base text-muted-foreground">
+                Every spelling rule from Reception to Year 6 in one list. Filter
+                by pattern or topic, pick the rules you want, and build a lesson
+                with practice, a word search, a crossword and print sheets.
+                Keep lessons together in a series, like “Child 1, Year 1”.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <Link
+                  to="/rules"
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  data-testid="spelling-rules-cta"
+                >
+                  <Search className="h-4 w-4" aria-hidden="true" />
+                  Browse all spelling rules
+                </Link>
+                <Link
+                  to="/series"
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
+                  data-testid="series-cta"
+                >
+                  Your series
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                Try a search
+              </div>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {RULE_EXAMPLES.map((example) => (
+                  <li key={example}>
+                    <Link
+                      to={`/rules?q=${encodeURIComponent(example)}`}
+                      className="inline-block rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 font-mono text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary/20"
+                    >
+                      {example}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {seriesList.length > 0 && (
+                <div className="mt-6" data-testid="home-series">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Your series
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {seriesList.slice(0, 4).map((series) => (
+                      <li key={series.id}>
+                        <Link
+                          to={`/series/${series.id}`}
+                          className="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary/50"
+                        >
+                          <span className="truncate">{series.name}</span>
+                          <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                            {series.listIds.length}{' '}
+                            {series.listIds.length === 1 ? 'lesson' : 'lessons'}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Where the long-form content went: one row of links, not seven sections. */}

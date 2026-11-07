@@ -174,11 +174,13 @@ export function LearnerMenu() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-1.5 font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground transition-colors duration-200 hover:border-primary/50 hover:text-primary"
+        className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary py-1.5 pl-1.5 pr-4 text-sm font-medium text-foreground transition-colors duration-200 hover:border-primary/50"
         aria-label="Who's practising"
         data-testid="learner-menu-button"
       >
-        <Users className="h-3.5 w-3.5" aria-hidden="true" />
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Users className="h-4 w-4" aria-hidden="true" />
+        </span>
         <span className="max-w-[6rem] truncate normal-case tracking-normal">{displayName(activeLearner)}</span>
       </button>
       <DialogContent className="max-w-md border-border bg-popover text-popover-foreground">

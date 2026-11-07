@@ -55,10 +55,10 @@ export const KEY_FEATURES = [
     id: "custom",
     big: true,
     icon: ListPlus,
-    title: "Your words, your list",
-    body: "Paste this week's school spellings and get a quiz, a word search, a crossword and print sheets for exactly those words. Lists stay on your device and travel with your backup.",
+    title: "Your words, your lesson",
+    body: "Paste this week's school spellings and get a quiz, a word search, a crossword and print sheets for exactly those words. Lessons stay on your device and travel with your backup.",
     to: "/custom",
-    cta: "Make a list",
+    cta: "Make a lesson",
   },
   {
     id: "years",
@@ -118,7 +118,7 @@ export const KEY_FEATURES = [
     id: "free",
     icon: BadgeCheck,
     title: "Free, with no sign-up",
-    body: "Nothing to pay for and nothing to log in to. Open a year and start.",
+    body: "Nothing to pay for, and no login needed. Open a year and start.",
   },
 ];
 
@@ -245,7 +245,11 @@ export const FAQS = [
   },
   {
     q: "Can I use the spellings my child's school sets?",
-    a: "Yes. Choose \"Make your own spelling list\" (in the footer, or the last card with the years on the home page), paste the words, and you get a practice quiz, a word search, a crossword and print sheets for exactly those words. Where a word is in our year lists it also gets a meaning and a sentence. Lists stay on your device and are included when you save a backup.",
+    a: "Yes. Choose \"Paste your own words\" in the footer (or the \"Add your own lesson\" card with the years on the home page), paste the words, and you get a practice quiz, a word search, a crossword and print sheets for exactly those words. Where a word is in our year lists it also gets a meaning and a sentence. Lessons stay on your device and are included when you save a backup. You can also build a lesson from spelling rules and keep lessons together in a series.",
+  },
+  {
+    q: "Can I install it as an app on my computer?",
+    a: "Yes. In Chrome or Edge, use the install icon at the right of the address bar (or the \"Install as an app\" link in the footer). On a Mac, Chrome puts \"Spell Stars\" in your Applications folder so it opens in its own window and you can keep it in the Dock. In Safari, choose File, then Add to Dock. Once you have opened a few pages, the app keeps working without a connection. Your lists, series and progress stay on that device and are separate from the ones in your browser, so save a backup from one and restore it in the other if you want them to match.",
   },
   {
     q: "What is the spaced-repetition system (SRS-lite)?",
@@ -253,7 +257,7 @@ export const FAQS = [
   },
   {
     q: "What does SPELL// STARS include?",
-    a: "Ready-made weekly lists for Reception to Year 6, and your own lists from any words you paste in. For each list there's a practice quiz (listen and spell, or guess from the meaning), a word search, a crossword and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
+    a: "Ready-made weekly lists for Reception to Year 6, and your own lessons, made from any words you paste in or from spelling rules. For each lesson there's a practice quiz (listen and spell, or guess from the meaning), a word search, a crossword and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
   },
   {
     q: "Is it dyslexia-friendly and accessible?",
@@ -269,7 +273,7 @@ export const FAQS = [
   },
   {
     q: "How do the crosswords work?",
-    a: "Each week's words make a crossword, and so does any list of your own. Every word gets a clue: by default the word's example sentence with the word blanked out, or you can switch to its meaning. Type into the grid, use the arrow keys or tap a clue to move about, and use Check, Reveal word or Reveal all if you get stuck. Press New puzzle for a fresh layout. You can print it too, and the printout has a second page with the answers. Where a term or a whole year has more than 15 words, each puzzle uses a different selection of them.",
+    a: "Each week's words make a crossword, and so does any lesson of your own. Every word gets a clue: by default the word's example sentence with the word blanked out, or you can switch to its meaning. Type into the grid, use the arrow keys or tap a clue to move about, and use Check, Reveal word or Reveal all if you get stuck. Press New puzzle for a fresh layout. You can print it too, and the printout has a second page with the answers. Where a term or a whole year has more than 15 words, each puzzle uses a different selection of them.",
   },
   {
     q: "Is it free?",
@@ -289,7 +293,7 @@ export const FAQS = [
   },
   {
     q: "How do I use it on another device, or back up progress?",
-    a: "Open \"Save or move progress\" and choose a backup file, a link or a QR code, then open it on the other device. Your own spelling lists come with it. You'll see what would change before anything is saved, and you can undo it for ten minutes afterwards. The link holds the progress itself rather than storing it on a server, so anyone who has the link can see which words have been practised — send it only to people you trust. Once there's a lot of progress it won't fit in a QR code, and for a whole year the backup file is the safest choice.",
+    a: "Open \"Save or move progress\" and choose a backup file, a link or a QR code, then open it on the other device. Your own lessons and series come with it. You'll see what would change before anything is saved, and you can undo it for ten minutes afterwards. The link holds the progress itself rather than storing it on a server, so anyone who has the link can see which words have been practised — send it only to people you trust. Once there's a lot of progress it won't fit in a QR code, and for a whole year the backup file is the safest choice.",
   },
   {
     q: "What happens if my child practises on two devices?",

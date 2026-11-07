@@ -37,7 +37,7 @@ export default function About() {
             can be used offline as well as online, and it's accessible to all.
           </p>
           <p>
-            You can share your progress or make your own spelling lists. But
+            You can share your progress or make your own lessons. But
             most of all, it's about enjoying words, challenging yourself and
             unlocking the world of words, at whatever your level.
           </p>
@@ -73,7 +73,7 @@ export default function About() {
           <TeaserLink
             to="/custom"
             label="Make your own spellings"
-            blurb="Build a list of any words and practise it the same way."
+            blurb="Build a lesson from any words and practise it the same way."
             index={1}
           />
         </div>

@@ -3,6 +3,24 @@
 // development banner's link to it) both read from this list.
 export const WHATS_NEW = [
   {
+    date: "2026-11-08",
+    title: "Install it as an app",
+    description:
+      "SPELL// STARS can now be installed on your computer, so it opens in its own window and keeps working offline once you have visited a few pages. In Chrome or Edge use the install icon in the address bar (or \"Install as an app\" in the footer); in Safari choose File, then Add to Dock.",
+  },
+  {
+    date: "2026-11-07",
+    title: "Choose individual words for a lesson",
+    description:
+      "On the spelling rules page, tap any word to add it to your lesson. Every word that fits a pattern is a tile you can pick, and each rule has a \"Choose words\" dropdown for that week's words. Chosen words always go in, and any rules you add fill the rest of the count. You can also type or paste your own words, one per line or separated by commas, and make a lesson from chosen or typed words alone.",
+  },
+  {
+    date: "2026-11-07",
+    title: "Search by spelling rule, lessons and series",
+    description:
+      "A new \"Search by spelling rule\" section on the home page opens a page listing every spelling rule from Reception to Year 6. Filter by pattern (/ee/, -le ending, kn-) or topic, pick one or more rules, and create a lesson with practice, a word search, a crossword and print sheets. Lessons can be grouped into a named series, such as \"Child 1, Year 1\", and series are included in backups.",
+  },
+  {
     date: "2026-09-27",
     title: "Under-development notice",
     description:
@@ -39,3 +57,10 @@ export const WHATS_NEW = [
       "Printable crosswords now end with a lined section for writing out all of the week's words before you start, with a tip to cross each one off as you use it in the grid \u2014 it makes the crossword a bit easier and gets in some extra writing practice.",
   },
 ];
+
+/** The newest date in the log, as YYYY-MM-DD (the site's "last updated"). */
+export const LAST_UPDATED = WHATS_NEW.reduce((latest, item) => (item.date > latest ? item.date : latest), "");
+
+/** "7 Nov 2026" from "2026-11-07". */
+export const formatShortDate = (iso) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });

@@ -2,11 +2,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { useScrolled } from '@/hooks/useScrolled';
 import { LearnerMenu } from '@/components/LearnerMenu';
+import { useAccount } from '@/lib/useAccount';
 
 // One header for every page. Home keeps the year picker one click away;
 // the long-form content lives on its own pages.
 const NAV = [
   { label: 'Spelling Lists', to: '/#years' },
+  { label: 'Spelling rules', to: '/rules' },
   { label: 'Features', to: '/#features' },
   { label: 'How it works', to: '/how-it-works' },
   { label: 'For educators', to: '/for-educators' },
@@ -18,6 +20,7 @@ const NAV = [
 export const SiteHeader = () => {
   const scrolled = useScrolled();
   const { pathname } = useLocation();
+  const account = useAccount();
 
   return (
     <header
@@ -44,7 +47,7 @@ export const SiteHeader = () => {
         </Link>
         <div className="flex items-center gap-3">
           <nav
-            className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground md:flex"
+            className="hidden items-center gap-7 text-sm font-light text-muted-foreground lg:flex"
             aria-label="Primary"
           >
             {NAV.map((item) => {
@@ -54,7 +57,7 @@ export const SiteHeader = () => {
                   key={item.to}
                   to={item.to}
                   aria-current={current ? 'page' : undefined}
-                  className={`transition-colors duration-300 hover:text-primary ${current ? 'text-primary' : ''}`}
+                  className={`relative py-1 transition-colors duration-300 hover:text-foreground ${current ? 'font-medium text-foreground after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-primary' : ''}`}
                 >
                   {item.label}
                 </Link>
@@ -64,6 +67,15 @@ export const SiteHeader = () => {
           {/* "My progress" now lives inside the learner switcher below --
               there isn't room for its own pill at every header width, and
               it belongs next to "who's practising" anyway. */}
+          {account.enabled && account.ready && (
+            <Link
+              to="/account"
+              className="hidden rounded-full border border-border bg-muted/40 px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 lg:inline-block"
+              data-testid="header-account-link"
+            >
+              {account.user ? 'Account' : 'Sign in'}
+            </Link>
+          )}
           <LearnerMenu />
         </div>
       </div>

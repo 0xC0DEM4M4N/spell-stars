@@ -5,6 +5,7 @@
 // localStorage-like `storage`, so it can be tested without a browser.
 
 import { CUSTOM_LISTS_KEY, MAX_LISTS } from "./customLists";
+import { MAX_SERIES, SERIES_KEY } from "./series";
 import {
   LEARNERS_KEY,
   LEARNER_PROGRESS_KEY_RE,
@@ -35,7 +36,7 @@ function compareLists(a, b) {
   return ja === jb ? 0 : ja < jb ? -1 : 1;
 }
 
-function mergeLists(localLists, incomingLists, mode) {
+function mergeLists(localLists, incomingLists, mode, max = MAX_LISTS) {
   const counts = { added: 0, updated: 0, unchanged: 0, removed: 0, skipped: 0 };
   if (mode === "replace") {
     const have = new Map(localLists.map((l) => [l.id, l]));
@@ -53,7 +54,7 @@ function mergeLists(localLists, incomingLists, mode) {
   for (const l of incomingLists) {
     const index = lists.findIndex((m) => m.id === l.id);
     if (index === -1) {
-      if (lists.length >= MAX_LISTS) counts.skipped++;
+      if (lists.length >= max) counts.skipped++;
       else {
         lists.push({ ...l });
         counts.added++;
@@ -307,6 +308,7 @@ export function mergeSnapshots(local, incoming, options = {}) {
     skippedYears: [],
     settingsChanged: [],
     lists: { added: 0, updated: 0, unchanged: 0, removed: 0, skipped: 0 },
+    series: { added: 0, updated: 0, unchanged: 0, removed: 0, skipped: 0 },
     learners: [],
     learnersSkipped: skipped,
     badgesChanged: false,
@@ -370,6 +372,11 @@ export function mergeSnapshots(local, incoming, options = {}) {
   out.lists = merged.lists;
   out.listsChanged = merged.counts.added + merged.counts.updated + merged.counts.removed > 0;
 
+  const mergedSeries = mergeLists(local.series || [], incoming.series || [], mode, MAX_SERIES);
+  summary.series = mergedSeries.counts;
+  out.series = mergedSeries.lists;
+  out.seriesChanged = mergedSeries.counts.added + mergedSeries.counts.updated + mergedSeries.counts.removed > 0;
+
   const settings = {};
   if (copySettings) {
     for (const name of SETTING_NAMES) {
@@ -397,6 +404,7 @@ export function isNoOp(result) {
   return (
     s.added === 0 && s.updated === 0 && s.removed === 0 &&
     !result.listsChanged &&
+    !result.seriesChanged &&
     result.removedYears.length === 0 &&
     l.roster === null &&
     Object.values(l.removedYears).every((slugs) => slugs.length === 0) &&
@@ -434,6 +442,7 @@ export function keysToChange(result) {
     ...(l.roster !== null ? [LEARNERS_KEY] : []),
     ...Object.keys(result.settings).map(settingStorageKey),
     ...(result.listsChanged ? [CUSTOM_LISTS_KEY] : []),
+    ...(result.seriesChanged ? [SERIES_KEY] : []),
     ...badgeKeys,
   ];
 }
@@ -448,7 +457,7 @@ export function createBackup(storage, keys, now = Date.now()) {
 const BADGES_KEY_RE = /^spellstars\.(?:l-[a-z0-9]{4,12}\.)?badges$/;
 
 function isKnownKey(key) {
-  if (key === CUSTOM_LISTS_KEY || key === LEARNERS_KEY) return true;
+  if (key === CUSTOM_LISTS_KEY || key === SERIES_KEY || key === LEARNERS_KEY) return true;
   if (PROGRESS_KEY_RE.test(key) || LEARNER_PROGRESS_KEY_RE.test(key) || BADGES_KEY_RE.test(key)) return true;
   return SETTING_NAMES.some((n) => settingStorageKey(n) === key);
 }
@@ -526,6 +535,7 @@ export function applyMergeResult(storage, result, now = Date.now()) {
       storage.setItem(settingStorageKey(name), value);
     }
     if (result.listsChanged) storage.setItem(CUSTOM_LISTS_KEY, JSON.stringify(result.lists));
+    if (result.seriesChanged) storage.setItem(SERIES_KEY, JSON.stringify(result.series));
     return { ok: true };
   } catch (err) {
     try {

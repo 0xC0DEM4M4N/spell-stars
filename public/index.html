@@ -113,7 +113,6 @@
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
-        <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -128,16 +127,28 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PNJLH4KESR"></script>
+        <!-- Google Analytics is loaded only if the visitor has said yes in the cookie
+             banner (src/lib/consent.js stores the answer in localStorage under
+             "spellstars.analytics"). Until then nothing is sent to Google. -->
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        // page_location is set without the "#..." part: the /sync page can carry
-        // a person's saved progress there, and it must not be sent to Google.
-        gtag('config', 'G-PNJLH4KESR', { page_location: location.origin + location.pathname + location.search });
+        window.spellStarsLoadAnalytics = function () {
+          if (window.__spellStarsGa) return;
+          window.__spellStarsGa = true;
+          window["ga-disable-G-PNJLH4KESR"] = false;
+          var s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=G-PNJLH4KESR";
+          document.head.appendChild(s);
+          gtag("js", new Date());
+          // page_location is set without the "#..." part: the /sync page can carry
+          // a person's saved progress there, and it must not be sent to Google.
+          gtag("config", "G-PNJLH4KESR", { page_location: location.origin + location.pathname + location.search });
+        };
+        try {
+          if (localStorage.getItem("spellstars.analytics") === "granted") window.spellStarsLoadAnalytics();
+        } catch (e) {}
         </script>
 
         <!-- Cloudflare Web Analytics -->

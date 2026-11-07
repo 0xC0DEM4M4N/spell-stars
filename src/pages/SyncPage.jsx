@@ -240,8 +240,8 @@ function SaveCard({ yearLabel }) {
             ' and your ' +
               plural(
                 state.snapshot.lists.length,
-                'custom list',
-                'custom lists',
+                'lesson',
+                'lessons',
               )}
           {learners.length > 1 &&
             ', and everyone’s name shown above'}
@@ -442,19 +442,32 @@ function PreviewSummary({ result, yearLabel }) {
           s.lists.skipped >
           0 && (
           <p data-testid="sync-preview-lists">
-            <strong className="text-foreground">Custom lists:</strong>{' '}
+            <strong className="text-foreground">Lessons:</strong>{' '}
             {[
-              s.lists.added && plural(s.lists.added, 'new list', 'new lists'),
+              s.lists.added && plural(s.lists.added, 'new lesson', 'new lessons'),
               s.lists.updated &&
-                plural(s.lists.updated, 'list', 'lists') + ' updated',
+                plural(s.lists.updated, 'lesson', 'lessons') + ' updated',
               s.lists.removed &&
-                plural(s.lists.removed, 'list', 'lists') + ' removed',
+                plural(s.lists.removed, 'lesson', 'lessons') + ' removed',
               s.lists.unchanged &&
-                plural(s.lists.unchanged, 'list', 'lists') +
+                plural(s.lists.unchanged, 'lesson', 'lessons') +
                   ' already the same',
               s.lists.skipped &&
-                plural(s.lists.skipped, 'list', 'lists') +
+                plural(s.lists.skipped, 'lesson', 'lessons') +
                   ' not added (a device keeps up to 20)',
+            ]
+              .filter(Boolean)
+              .join(', ')}
+          </p>
+        )}
+      {s.series &&
+        s.series.added + s.series.updated + s.series.removed > 0 && (
+          <p data-testid="sync-preview-series">
+            <strong className="text-foreground">Series:</strong>{' '}
+            {[
+              s.series.added && plural(s.series.added, 'new series', 'new series'),
+              s.series.updated && plural(s.series.updated, 'series', 'series') + ' updated',
+              s.series.removed && plural(s.series.removed, 'series', 'series') + ' removed',
             ]
               .filter(Boolean)
               .join(', ')}

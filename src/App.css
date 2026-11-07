@@ -12,6 +12,37 @@
     radial-gradient(circle at 65% 85%, rgba(251, 191, 36, 0.12), transparent 34%);
 }
 
+.hero-lines {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at 18% 15%, rgba(6, 182, 212, 0.28), transparent 32%),
+    radial-gradient(circle at 82% 8%, rgba(236, 72, 153, 0.14), transparent 26%),
+    radial-gradient(circle at 65% 85%, rgba(251, 191, 36, 0.12), transparent 34%);
+  background-size: 160px 160px, 160px 160px, auto, auto, auto;
+}
+
+/* Frosted card used for the hero stats. */
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+[data-theme="highContrast"] .glass-card {
+  background-color: #000;
+  border-color: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card {
+    background-color: #0b1220;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 .hero-mask-line {
   display: block;
   overflow: hidden;

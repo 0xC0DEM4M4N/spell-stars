@@ -10,7 +10,7 @@ export default function HowItWorks() {
       title="How SPELL// STARS works"
       description="How a SPELL// STARS spelling session works: typed practice with audio, spaced repetition, year-scaled word searches, definitions and example sentences, matched to the UK National Curriculum."
       eyebrow="How it works"
-      heading="One app, every year, no forks."
+      heading="One app for every year group."
       intro="Practise a week's words, hear them read aloud, and let spaced repetition bring back the ones that are still shaky. Everything follows the year group you pick."
     >
       <Section

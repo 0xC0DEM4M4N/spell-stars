@@ -8,7 +8,7 @@ export default function Faq() {
     <InfoPage
       path="/faq"
       title="Spelling practice FAQs"
-      description="Answers about SPELL// STARS: what's included, year groups covered, dyslexia-friendly and accessibility options, read-aloud, custom lists, curriculum alignment, spaced repetition, where progress is saved and how to move it to another device."
+      description="Answers about SPELL// STARS: what's included, year groups covered, dyslexia-friendly and accessibility options, read-aloud, your own lessons, curriculum alignment, spaced repetition, where progress is saved and how to move it to another device."
       eyebrow="FAQs"
       heading="Good to know."
       intro="Quick answers about what's included, accessibility, year groups, practice time, the curriculum, and how progress is saved, backed up and moved between devices."

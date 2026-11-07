@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { PrintTermListButton } from "@/components/PrintTermListButton";
 import { SPRING } from "@/lib/motion";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PageArt } from "@/components/PageArt";
 import { BackupReminder } from "@/components/BackupReminder";
 import { LearnerGate } from "@/components/LearnerGate";
 import { useLearners } from "@/context/LearnerContext";
@@ -241,7 +242,10 @@ export default function YearPage() {
 
       <div className="border-b px-6 pb-6 pt-24" style={{ borderColor: rgba(accent, 0.35), backgroundImage: `linear-gradient(180deg, ${rgba(accent, 0.08)}, transparent)` }}>
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <span className="hidden sm:block" aria-hidden="true">
+              <PageArt name="year" size={92} />
+            </span>
             <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent, boxShadow: `0 0 12px ${rgba(accent, 0.8)}` }} aria-hidden="true" />
             <h1 className="type-section font-display text-3xl font-extrabold text-foreground" data-testid="year-page-title">
               {yearMeta.label}
@@ -272,6 +276,9 @@ export default function YearPage() {
           </div>
         </div>
       </div>
+
+      {/* A clear gap between the header band and the page's content. */}
+      <div aria-hidden="true" className="h-6" />
 
       {scope !== "day" && !explainerDismissed && (
         <div className="border-b border-foreground/10 bg-foreground/[0.03] px-6 py-4" data-testid="scope-explainer">

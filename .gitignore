@@ -80,3 +80,6 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/
+# Local settings (account keys etc.)
+.env.local
+.env.*.local

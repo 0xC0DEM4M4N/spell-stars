@@ -15,6 +15,7 @@
 import { z } from "zod";
 import { PROGRESS_VERSION } from "./srs";
 import { MAX_LISTS, listSchema, loadLists } from "./customLists";
+import { MAX_SERIES, loadSeries, seriesSchema } from "./series";
 import {
   LEARNER_PROGRESS_KEY_RE,
   MAIN_LEARNER_ID,
@@ -158,6 +159,8 @@ export const snapshotSchema = z.object({
   // Custom spelling lists (see customLists.js). Backups made before lists
   // existed have none, which reads as an empty set.
   lists: z.array(listSchema).max(MAX_LISTS).default([]),
+  // Series of lessons (see series.js). Older backups have none.
+  series: z.array(seriesSchema).max(MAX_SERIES).default([]),
   // Named learners (see learners.js). Backups made before learners existed
   // have none, which reads as one unnamed learner.
   learners: learnersSchema,
@@ -295,6 +298,7 @@ export function readLocalSnapshot(storage = window.localStorage, now = new Date(
       progress,
       settings,
       lists: loadLists(storage),
+      series: loadSeries(storage),
       learners: readLocalLearners(storage),
       badges: cleanBadges(loadBadges(storage, MAIN_LEARNER_ID)),
     },
@@ -308,6 +312,7 @@ const yearsHaveWords = (progress) => Object.values(progress || {}).some((y) => O
 export function isEmptySnapshot(snapshot) {
   return (
     (snapshot.lists || []).length === 0 &&
+    (snapshot.series || []).length === 0 &&
     (snapshot.learners || []).length === 0 &&
     !yearsHaveWords(snapshot.progress)
   );

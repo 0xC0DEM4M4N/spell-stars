@@ -37,10 +37,10 @@ export default function SharedListPage() {
         <div className="mx-auto max-w-2xl text-center" data-testid="shared-invalid">
           <h1 className="type-section font-display text-3xl font-extrabold text-foreground">That link isn't working</h1>
           <p className="mt-4 type-body text-sm text-muted-foreground">
-            It may have been cut short when it was sent. Ask for it to be sent again, or make a list of your own.
+            It may have been cut short when it was sent. Ask for it to be sent again, or make a lesson of your own.
           </p>
           <Link to="/custom" className="mt-6 inline-block rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
-            Make a list
+            Make a lesson
           </Link>
         </div>
       </Shell>
@@ -63,7 +63,7 @@ export default function SharedListPage() {
       }
       navigate("/custom/" + list.id, { replace: true });
     } catch (err) {
-      setError("Something went wrong saving the list. Please try again.");
+      setError("Something went wrong saving the lesson. Please try again.");
       setSaving(false);
     }
   };
@@ -76,7 +76,7 @@ export default function SharedListPage() {
           Someone has challenged you!
         </h1>
         <p className="mt-4 type-body text-base text-muted-foreground">
-          {shared.words.length} {shared.words.length === 1 ? "word" : "words"} to learn. Add them to your own lists to
+          {shared.words.length} {shared.words.length === 1 ? "word" : "words"} to learn. Add them to your own lessons to
           practise, play a word search and print them. Nothing is saved until you add them.
         </p>
 
@@ -90,7 +90,7 @@ export default function SharedListPage() {
 
         <div className="mt-8">
           <label htmlFor="shared-list-name" className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            List name
+            Lesson name
           </label>
           <input
             id="shared-list-name"

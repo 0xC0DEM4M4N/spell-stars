@@ -7,6 +7,7 @@
 // under `spellstars.customLists`; progress for a list is kept exactly like a
 // year's, under `spellstars.<list id>.progress`.
 
+import { notifyLessonsChanged, recordDeletion } from "./deletions";
 import { z } from "zod";
 import { normaliseWord, withWordKeys } from "./wordKey";
 import { removeProgressForSlug } from "./learners";
@@ -231,9 +232,10 @@ export function loadLists(storage = window.localStorage) {
 export function saveLists(storage, lists) {
   try {
     storage.setItem(CUSTOM_LISTS_KEY, JSON.stringify(lists));
+    notifyLessonsChanged();
     return { ok: true };
   } catch (err) {
-    return { ok: false, error: "Couldn't save the list. The device may be out of storage space." };
+    return { ok: false, error: "Couldn't save the lesson. The device may be out of storage space." };
   }
 }
 
@@ -244,11 +246,11 @@ export function getList(storage, id) {
 /** Adds a list, or replaces the one with the same id. */
 export function upsertList(storage, list) {
   const parsed = listSchema.safeParse(list);
-  if (!parsed.success) return { ok: false, error: "That list isn't valid." };
+  if (!parsed.success) return { ok: false, error: "That lesson isn't valid." };
   const lists = loadLists(storage);
   const index = lists.findIndex((l) => l.id === list.id);
   if (index === -1 && lists.length >= MAX_LISTS) {
-    return { ok: false, error: "You can keep up to " + MAX_LISTS + " lists. Delete one to make room." };
+    return { ok: false, error: "You can keep up to " + MAX_LISTS + " lessons. Delete one to make room." };
   }
   if (index === -1) lists.push(parsed.data);
   else lists[index] = parsed.data;
@@ -259,6 +261,7 @@ export function upsertList(storage, list) {
  * whoever is active right now. */
 export function deleteList(storage, id) {
   const lists = loadLists(storage).filter((l) => l.id !== id);
+  recordDeletion(storage, id);
   const out = saveLists(storage, lists);
   if (CUSTOM_ID_RE.test(id)) removeProgressForSlug(storage, id);
   return out;

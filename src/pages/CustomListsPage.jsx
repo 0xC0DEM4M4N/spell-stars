@@ -8,6 +8,20 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Pencil, Trash2, X } from 'lucide-react';
 import { InfoPage } from '@/components/InfoPage';
+import { BackupBar } from '@/components/BackupBar';
+import {
+  CUSTOM_LESSONS_NAME,
+  MAX_SERIES,
+  MAX_SERIES_NAME,
+  addListToSeries,
+  createSeries,
+  loadSeries,
+  orphanLessons,
+  removeListFromSeries,
+  seriesForList,
+  seriesLessons,
+  upsertSeries,
+} from '@/lib/series';
 import { getYearsConfig, getYearWords, useYearsConfig } from '@/lib/yearData';
 import { normaliseWord } from '@/lib/wordKey';
 import {
@@ -33,7 +47,16 @@ const field =
   'mt-2 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
-const DEFAULT_NAME = 'My spelling list';
+const DEFAULT_NAME = 'My lesson';
+const NEW_SERIES = '__new__';
+
+const readSeries = () => {
+  try {
+    return loadSeries(window.localStorage);
+  } catch (err) {
+    return [];
+  }
+};
 
 const readLists = () => {
   try {
@@ -46,7 +69,7 @@ const readLists = () => {
 // ── The form ───────────────────────────────────────────────────────────
 
 /** Re-mounted (via `key`) whenever the list being edited changes. */
-function ListEditor({ editing, lists, years, onSaved }) {
+function ListEditor({ editing, lists, allSeries, initialSeries, years, onSaved }) {
   const [text, setText] = useState(() =>
     editing ? wordsToText(editing.words) : '',
   );
@@ -54,6 +77,14 @@ function ListEditor({ editing, lists, years, onSaved }) {
   const [yearHint, setYearHint] = useState(
     () => (editing && editing.yearHint) || '',
   );
+  const [seriesChoice, setSeriesChoice] = useState(() => {
+    if (editing) {
+      const current = seriesForList(allSeries, editing.id)[0];
+      return current ? current.id : '';
+    }
+    return allSeries.some((s) => s.id === initialSeries) ? initialSeries : '';
+  });
+  const [newSeriesName, setNewSeriesName] = useState('');
   const [removed, setRemoved] = useState(() => new Set()); // word keys taken out with the chips
   const [fillMeanings, setFillMeanings] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -73,6 +104,8 @@ function ListEditor({ editing, lists, years, onSaved }) {
     removed.has(normaliseWord(w.word)),
   );
   const listFull = !editing && lists.length >= MAX_LISTS;
+  const seriesFull =
+    seriesChoice === NEW_SERIES && allSeries.length >= MAX_SERIES;
 
   const removeWord = (word) =>
     setRemoved((prev) => new Set(prev).add(normaliseWord(word)));
@@ -84,7 +117,7 @@ function ListEditor({ editing, lists, years, onSaved }) {
     });
 
   async function save() {
-    if (!words.length || listFull || saving) return;
+    if (!words.length || listFull || seriesFull || saving) return;
     setSaving(true);
     setError('');
 
@@ -132,13 +165,42 @@ function ListEditor({ editing, lists, years, onSaved }) {
       setSaving(false);
       return;
     }
+
+    // File the lesson in the chosen series (or none), taking it out of any
+    // series it was in before.
+    const storage = window.localStorage;
+    const previousSeries = seriesForList(allSeries, list.id).map((s) => s.id);
+    previousSeries
+      .filter((id) => id !== seriesChoice)
+      .forEach((id) => removeListFromSeries(storage, id, list.id));
+    let filed = { ok: true };
+    if (seriesChoice === NEW_SERIES) {
+      filed = upsertSeries(
+        storage,
+        createSeries({
+          name: newSeriesName,
+          listIds: [list.id],
+          existingIds: allSeries.map((s) => s.id),
+        }),
+      );
+    } else if (seriesChoice && !previousSeries.includes(seriesChoice)) {
+      filed = addListToSeries(storage, seriesChoice, list.id);
+    }
+    if (!filed.ok) {
+      setError(
+        'Your lesson is saved, but we could not add it to the series. ' +
+          (filed.error || ''),
+      );
+      setSaving(false);
+      return;
+    }
     onSaved(list);
   }
 
   return (
     <div className={card} data-testid="custom-editor">
       <h2 className="type-card font-display text-xl font-bold text-foreground">
-        {editing ? 'Edit “' + editing.name + '”' : 'Make a list'}
+        {editing ? 'Edit “' + editing.name + '”' : 'Make a lesson'}
       </h2>
 
       <label
@@ -224,9 +286,9 @@ function ListEditor({ editing, lists, years, onSaved }) {
           )}
           {overCap > 0 && (
             <li className="text-warning" data-testid="custom-over-cap">
-              A list holds up to {MAX_WORDS} words, so the last{' '}
+              A lesson holds up to {MAX_WORDS} words, so the last{' '}
               {plural(overCap, 'word was', 'words were')} left off. Make a
-              second list for them.
+              second lesson for them.
             </li>
           )}
           {parsed.ignored.length > 0 && (
@@ -267,7 +329,7 @@ function ListEditor({ editing, lists, years, onSaved }) {
             htmlFor="custom-name"
             className="block text-sm font-semibold text-foreground"
           >
-            List name
+            Lesson name
           </label>
           <input
             id="custom-name"
@@ -312,6 +374,59 @@ function ListEditor({ editing, lists, years, onSaved }) {
         </div>
       </div>
 
+      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+        <div>
+          <label
+            htmlFor="custom-series"
+            className="block text-sm font-semibold text-foreground"
+          >
+            Put it in a series
+          </label>
+          <select
+            id="custom-series"
+            value={seriesChoice}
+            onChange={(e) => setSeriesChoice(e.target.value)}
+            className={field}
+            aria-describedby="custom-series-help"
+            data-testid="custom-series-select"
+          >
+            <option value="">{CUSTOM_LESSONS_NAME} (no series)</option>
+            {allSeries.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+            <option value={NEW_SERIES}>New series…</option>
+          </select>
+          <p
+            id="custom-series-help"
+            className="mt-2 text-xs text-muted-foreground"
+          >
+            A series keeps lessons together, like “Child 1, Year 1”.
+          </p>
+        </div>
+        {seriesChoice === NEW_SERIES && (
+          <div>
+            <label
+              htmlFor="custom-new-series"
+              className="block text-sm font-semibold text-foreground"
+            >
+              Series name
+            </label>
+            <input
+              id="custom-new-series"
+              type="text"
+              value={newSeriesName}
+              maxLength={MAX_SERIES_NAME}
+              onChange={(e) => setNewSeriesName(e.target.value)}
+              placeholder="Child 1, Year 1"
+              className={field}
+              data-testid="custom-new-series"
+            />
+          </div>
+        )}
+      </div>
+
       <label className="mt-5 flex items-start gap-2.5 text-sm text-foreground">
         <input
           type="checkbox"
@@ -324,7 +439,7 @@ function ListEditor({ editing, lists, years, onSaved }) {
           Add meanings and sentences where we have them
           <span className="block text-xs text-muted-foreground">
             For words that are in our year lists. This switches on "Guess from
-            the meaning" and fills the printed list.
+            the meaning" and fills the printed sheets.
           </span>
         </span>
       </label>
@@ -333,6 +448,12 @@ function ListEditor({ editing, lists, years, onSaved }) {
         <p className="mt-5 text-sm text-warning" role="status">
           You have {MAX_LISTS} lists already, which is the most this browser
           keeps. Delete one below to make room.
+        </p>
+      )}
+      {seriesFull && (
+        <p className="mt-5 text-sm text-warning" role="status">
+          You have {MAX_SERIES} series already. Pick one of them, or delete one
+          first.
         </p>
       )}
       {error && (
@@ -349,11 +470,11 @@ function ListEditor({ editing, lists, years, onSaved }) {
         <button
           type="button"
           onClick={save}
-          disabled={!words.length || listFull || saving}
+          disabled={!words.length || listFull || seriesFull || saving}
           className={buttonPrimary}
           data-testid="custom-save"
         >
-          {saving ? 'Saving…' : editing ? 'Save changes' : 'Save and open list'}
+          {saving ? 'Saving…' : editing ? 'Save changes' : 'Save and open lesson'}
         </button>
         {editing && (
           <Link
@@ -371,93 +492,129 @@ function ListEditor({ editing, lists, years, onSaved }) {
 
 // ── Saved lists ────────────────────────────────────────────────────────
 
-function SavedLists({ lists, onDelete }) {
+function SavedLists({ lists, allSeries, onDelete }) {
   const [confirming, setConfirming] = useState(null);
 
   if (!lists.length) return null;
+
+  // Series first, then the lessons that are in no series.
+  const groups = [
+    ...allSeries
+      .map((series) => ({
+        key: series.id,
+        title: series.name,
+        to: '/series/' + series.id,
+        isSeries: true,
+        items: seriesLessons(series, lists),
+      }))
+      .filter((g) => g.items.length > 0),
+    {
+      key: 'custom',
+      title: CUSTOM_LESSONS_NAME,
+      to: '/series/custom',
+      isSeries: false,
+      items: orphanLessons(allSeries, lists),
+    },
+  ].filter((g) => g.items.length > 0);
+
+  const row = (list) => (
+    <li
+      key={list.id}
+      className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3"
+      data-testid={'custom-saved-' + list.id}
+    >
+      <Link
+        to={'/custom/' + list.id}
+        className="group flex min-w-[10rem] flex-1 items-center gap-2 text-foreground"
+      >
+        <span>
+          <span className="block font-semibold group-hover:text-primary">
+            {list.name}
+          </span>
+          <span className="block text-xs text-muted-foreground">
+            {plural(list.words.length, 'word', 'words')}
+          </span>
+        </span>
+        <ArrowRight
+          className="h-4 w-4 shrink-0 text-primary transition-transform duration-300 group-hover:translate-x-1"
+          aria-hidden="true"
+        />
+      </Link>
+      {confirming === list.id ? (
+        <span
+          className="flex flex-wrap items-center gap-2 text-sm"
+          role="alertdialog"
+          aria-label={'Delete ' + list.name}
+        >
+          <span className="text-muted-foreground">
+            Delete it and its progress?
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setConfirming(null);
+              onDelete(list);
+            }}
+            className="rounded-lg bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground hover:opacity-90"
+            data-testid={'custom-confirm-delete-' + list.id}
+          >
+            Delete
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirming(null)}
+            className={buttonQuiet}
+          >
+            Keep
+          </button>
+        </span>
+      ) : (
+        <span className="flex items-center gap-2">
+          <Link
+            to={'/custom?edit=' + list.id}
+            className={buttonQuiet}
+            aria-label={'Edit ' + list.name}
+          >
+            <Pencil className="h-3.5 w-3.5" aria-hidden="true" /> Edit
+          </Link>
+          <button
+            type="button"
+            onClick={() => setConfirming(list.id)}
+            className={buttonQuiet}
+            aria-label={'Delete ' + list.name}
+            data-testid={'custom-delete-' + list.id}
+          >
+            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" /> Delete
+          </button>
+        </span>
+      )}
+    </li>
+  );
+
   return (
     <div className={card} data-testid="custom-saved-lists">
       <h2 className="type-card font-display text-xl font-bold text-foreground">
-        Your lists
+        Your lessons
       </h2>
       <p className="mt-1 type-body text-xs text-muted-foreground">
-        Kept in this browser. Back them up with your progress on the save page.
+        Kept in this browser, grouped by series. Back them up with your
+        progress on the save page.
       </p>
-      <ul className="mt-4 divide-y divide-foreground/10">
-        {lists.map((list) => (
-          <li
-            key={list.id}
-            className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3"
-            data-testid={'custom-saved-' + list.id}
-          >
-            <Link
-              to={'/custom/' + list.id}
-              className="group flex min-w-[10rem] flex-1 items-center gap-2 text-foreground"
-            >
-              <span>
-                <span className="block font-semibold group-hover:text-primary">
-                  {list.name}
-                </span>
-                <span className="block text-xs text-muted-foreground">
-                  {plural(list.words.length, 'word', 'words')}
-                </span>
-              </span>
-              <ArrowRight
-                className="h-4 w-4 shrink-0 text-primary transition-transform duration-300 group-hover:translate-x-1"
-                aria-hidden="true"
-              />
+      {groups.map((group) => (
+        <section key={group.key} className="mt-5" data-testid={'custom-group-' + group.key}>
+          <h3 className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <Link to={group.to} className="hover:text-primary">
+              {group.isSeries ? 'Series · ' : ''}
+              {group.title}
             </Link>
-            {confirming === list.id ? (
-              <span
-                className="flex flex-wrap items-center gap-2 text-sm"
-                role="alertdialog"
-                aria-label={'Delete ' + list.name}
-              >
-                <span className="text-muted-foreground">
-                  Delete it and its progress?
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setConfirming(null);
-                    onDelete(list);
-                  }}
-                  className="rounded-lg bg-destructive px-3 py-1.5 text-xs font-semibold text-destructive-foreground hover:opacity-90"
-                  data-testid={'custom-confirm-delete-' + list.id}
-                >
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirming(null)}
-                  className={buttonQuiet}
-                >
-                  Keep
-                </button>
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Link
-                  to={'/custom?edit=' + list.id}
-                  className={buttonQuiet}
-                  aria-label={'Edit ' + list.name}
-                >
-                  <Pencil className="h-3.5 w-3.5" aria-hidden="true" /> Edit
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setConfirming(list.id)}
-                  className={buttonQuiet}
-                  aria-label={'Delete ' + list.name}
-                  data-testid={'custom-delete-' + list.id}
-                >
-                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" /> Delete
-                </button>
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
+            <span aria-hidden="true">·</span>
+            <span>{plural(group.items.length, 'lesson', 'lessons')}</span>
+          </h3>
+          <ul className="mt-1 divide-y divide-foreground/10">
+            {group.items.map(row)}
+          </ul>
+        </section>
+      ))}
     </div>
   );
 }
@@ -469,6 +626,7 @@ export default function CustomListsPage() {
   const [params] = useSearchParams();
   const { yearsConfig } = useYearsConfig();
   const [lists, setLists] = useState(readLists);
+  const [allSeries] = useState(readSeries);
 
   const editId = params.get('edit');
   const editing = editId ? lists.find((l) => l.id === editId) || null : null;
@@ -482,21 +640,28 @@ export default function CustomListsPage() {
   return (
     <InfoPage
       path="/custom"
-      title="Make your own spelling list"
+      title="Make your own lesson"
       description="Paste this week's spellings and get a practice quiz, a word search and print sheets for exactly those words. Free, no sign-up, and nothing leaves your device."
-      eyebrow="Your words, your list"
-      heading="Make your own spelling list"
+      eyebrow="Your words, your lesson"
+      heading="Make your own lesson"
       intro="Paste this week's spellings from school, a child's tricky words or a topic. You get a practice quiz, a word search and print sheets for exactly those words. No sign-up, and the list stays on this device."
     >
       <section className="px-5 pb-10 sm:px-8">
         <div className="mx-auto max-w-3xl space-y-6">
+          <BackupBar />
+          <p className="type-body text-sm text-muted-foreground" data-testid="custom-build-hint">
+            Want words for a spelling rule instead, like /ee/ or -le endings?{' '}
+            <Link to="/rules" className="underline underline-offset-2 hover:text-primary">
+              Search by spelling rule
+            </Link>
+          </p>
           {editId && !editing && (
             <p
               className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-muted-foreground"
               role="status"
               data-testid="custom-edit-missing"
             >
-              We couldn't find that list on this device, so you can start a new
+              We couldn't find that lesson on this device, so you can start a new
               one here.
             </p>
           )}
@@ -504,13 +669,15 @@ export default function CustomListsPage() {
             key={editing ? editing.id : 'new'}
             editing={editing}
             lists={lists}
+            allSeries={allSeries}
+            initialSeries={params.get('series')}
             years={yearsConfig ? yearsConfig.years : []}
             onSaved={(list) => navigate('/custom/' + list.id)}
           />
-          <SavedLists lists={lists} onDelete={handleDelete} />
+          <SavedLists lists={lists} allSeries={allSeries} onDelete={handleDelete} />
           <p className="type-body text-xs text-muted-foreground">
-            Good to know: lists are stored in this browser, and browsers can
-            clear stored data. The save page includes your lists in a backup
+            Good to know: lessons are stored in this browser, and browsers can
+            clear stored data. The save page includes your lessons in a backup
             file, link or QR code, so you can keep a copy or open them on
             another device.{' '}
             <Link
