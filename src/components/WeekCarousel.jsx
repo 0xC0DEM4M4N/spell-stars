@@ -401,6 +401,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                 )}
               </AnimatePresence>
             </div>
+            {wide && <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} />}
           </div>
 
           <div
@@ -423,8 +424,12 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
               />
             ))}
           </div>
+          {!wide && (
+            <div className="min-w-0">
+              <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} />
+            </div>
+          )}
         </div>
-        <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} />
       </div>
       <PracticeQuiz words={weekData.words} onAttempt={onAttempt} ttsRate={caps.ttsRate} open={quizOpen} onOpenChange={setQuizOpen} />
     </motion.article>
