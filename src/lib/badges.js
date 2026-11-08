@@ -152,7 +152,7 @@ export function computeStatus(points) {
 
 /** The key a status is recorded under in `statusReached` (galaxy levels
  * each get their own key, so "You've reached Galaxy ×2!" can fire once). */
-function statusReachedKey(status) {
+export function statusReachedKey(status) {
   return status.key === GALAXY_TIER.key ? "galaxy-" + status.level : status.key;
 }
 
@@ -291,6 +291,25 @@ export function recordCompletion(storage, learnerId, { activity, errors = 0, sec
 
   saveBadges(storage, learnerId, data);
   return { data, unlocked };
+}
+
+/**
+ * Undoes one earlier recordCompletion() — used when a logged offline step
+ * is unticked. Winds the lifetime counters back, and removes only the
+ * badges (`badgeIds`) that completion itself unlocked, so anything earned
+ * some other way is left alone. `clean` must match the `errors === 0` the
+ * completion was recorded with.
+ */
+export function undoCompletion(storage, learnerId, { activity, clean = false, badgeIds = [], statusKey = null } = {}) {
+  const data = loadBadges(storage, learnerId);
+  if (activity === "crossword" || activity === "wordsearch") {
+    data.counters[activity] = Math.max(0, (data.counters[activity] || 0) - 1);
+    if (clean) data.counters.gold = Math.max(0, (data.counters.gold || 0) - 1);
+  }
+  for (const id of badgeIds) delete data.earned[id];
+  if (statusKey) delete data.statusReached[statusKey];
+  saveBadges(storage, learnerId, data);
+  return data;
 }
 
 /**

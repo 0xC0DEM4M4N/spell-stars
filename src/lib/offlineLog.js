@@ -26,12 +26,13 @@
 //   }
 //
 // Each (learner, year, week, step) is only ever applied once — see
-// markOfflineStep(). Unticking a step in the UI only changes how it looks;
-// it never calls back into this module to retract anything already
-// awarded, same "it only goes up" principle as badges.js.
+// markOfflineStep(). Unticking a step calls unmarkOfflineStep(), which
+// takes back exactly what that tick awarded (counters, the badges and
+// status it unlocked) and hands back the word states from before it, so
+// the caller can restore them. The tick can then be made again.
 
 import { MAIN_LEARNER_ID } from "./learners";
-import { recordCompletion, checkStatus } from "./badges";
+import { recordCompletion, checkStatus, undoCompletion, statusReachedKey } from "./badges";
 
 const todayISO = (now) => (now || new Date()).toISOString().slice(0, 10);
 
@@ -116,7 +117,7 @@ export function getWeekLog(data, yearSlug, week) {
  * (or false) and the step still counts towards that activity's lifetime
  * milestone — it just isn't a "gold" run.
  */
-export function markOfflineStep(storage, learnerId, { yearSlug, week, stepId, cleanRun = false, now } = {}) {
+export function markOfflineStep(storage, learnerId, { yearSlug, week, stepId, cleanRun = false, prev, now } = {}) {
   const step = OFFLINE_STEPS.find((s) => s.id === stepId);
   if (!step || !yearSlug || !week) return { applied: false, unlocked: [], status: null };
 
@@ -128,8 +129,6 @@ export function markOfflineStep(storage, learnerId, { yearSlug, week, stepId, cl
   }
 
   const dateISO = todayISO(now);
-  data.weeks[key] = { ...weekLog, [stepId]: { done: true, date: dateISO, cleanRun: step.activity ? !!cleanRun : null } };
-  saveOfflineLog(storage, learnerId, data);
 
   let unlocked = [];
   if (step.activity) {
@@ -139,5 +138,52 @@ export function markOfflineStep(storage, learnerId, { yearSlug, week, stepId, cl
 
   const status = checkStatus(storage, learnerId, { now });
 
+  data.weeks[key] = {
+    ...weekLog,
+    [stepId]: {
+      done: true,
+      date: dateISO,
+      cleanRun: step.activity ? !!cleanRun : null,
+      // What this tick awarded, so unmarkOfflineStep() can take it back.
+      awarded: {
+        badges: unlocked.map((b) => b.id),
+        statusKey: status.justReached ? statusReachedKey(status.status) : null,
+        prev: prev || {},
+      },
+    },
+  };
+  saveOfflineLog(storage, learnerId, data);
+
   return { applied: true, unlocked, status };
+}
+
+/**
+ * Takes back a ticked step. Returns `{ undone, prev }`: `prev` maps each
+ * word's progress key to its state from before the tick (null = never
+ * practised), for the caller to restore through revertAttempt(). Does
+ * nothing (`undone: false`) if the step wasn't ticked.
+ */
+export function unmarkOfflineStep(storage, learnerId, { yearSlug, week, stepId } = {}) {
+  const step = OFFLINE_STEPS.find((s) => s.id === stepId);
+  if (!step || !yearSlug || !week) return { undone: false, prev: {} };
+  const data = loadOfflineLog(storage, learnerId);
+  const key = weekLogKey(yearSlug, week);
+  const entry = data.weeks[key] && data.weeks[key][stepId];
+  if (!entry || !entry.done) return { undone: false, prev: {} };
+
+  const awarded = entry.awarded || {};
+  if (step.activity) {
+    undoCompletion(storage, learnerId, {
+      activity: step.activity,
+      clean: !!entry.cleanRun,
+      badgeIds: awarded.badges || [],
+      statusKey: awarded.statusKey || null,
+    });
+  }
+  const rest = { ...data.weeks[key] };
+  delete rest[stepId];
+  if (Object.keys(rest).length) data.weeks[key] = rest;
+  else delete data.weeks[key];
+  saveOfflineLog(storage, learnerId, data);
+  return { undone: true, prev: awarded.prev || {} };
 }

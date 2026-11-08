@@ -114,6 +114,29 @@ export function recordAttempt(progress, wordId, correct, todayISOStr) {
   return { ...progress, words: { ...progress.words, [wordId]: nextState } };
 }
 
+/** Pure updater — undoes one earlier recordAttempt() for a word, given the
+ * word's state from just before that attempt (`prev`, or null/undefined if
+ * the word had never been practised). If nothing has been practised on the
+ * word since, its exact earlier state comes back. If it has, only the
+ * counts are wound back by one attempt, so later practice isn't lost. */
+export function revertAttempt(progress, wordId, prev, wasCorrect = true) {
+  const cur = progress.words[wordId];
+  if (!cur) return progress;
+  const words = { ...progress.words };
+  const prevAttempts = prev ? prev.attempts : 0;
+  if (cur.attempts === prevAttempts + 1) {
+    if (prev) words[wordId] = prev;
+    else delete words[wordId];
+  } else {
+    words[wordId] = {
+      ...cur,
+      attempts: Math.max(0, cur.attempts - 1),
+      correctCount: Math.max(0, cur.correctCount - (wasCorrect ? 1 : 0)),
+    };
+  }
+  return { ...progress, words };
+}
+
 function shuffledCopy(arr) {
   const copy = arr.slice();
   for (let i = copy.length - 1; i > 0; i--) {

@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronLeft, ChevronRight, ClipboardCheck, Info, Signature, Sparkles, Target } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ChevronRight, ClipboardCheck, Info, Signature, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WordSearch } from "./WordSearch";
 import { Crossword } from "./Crossword";
@@ -11,9 +11,10 @@ import { PrintWeekMenu } from "./PrintWeekMenu";
 import { formatWeekCommencing } from "@/lib/weekDates";
 import { SPRING } from "@/lib/motion";
 import { progressKey } from "@/lib/wordKey";
+import { loadProgress } from "@/lib/srs";
 import { useTheme } from "@/context/ThemeContext";
 import { useLearners } from "@/context/LearnerContext";
-import { OFFLINE_STEPS, getWeekLog, loadOfflineLog, markOfflineStep } from "@/lib/offlineLog";
+import { OFFLINE_STEPS, getWeekLog, loadOfflineLog, markOfflineStep, unmarkOfflineStep } from "@/lib/offlineLog";
 
 // Renders sentence text with the spelling word highlighted in bold cyan
 function HighlightWord({ text, word }) {
@@ -143,7 +144,7 @@ function useReportHeight(ref, onMeasure, week, wide) {
 // is only ever applied once; after that, clicking a row only changes how
 // it looks, never re-applies anything (same "it only goes up" principle
 // as badges.js).
-function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
+function OfflineRoutine({ yearSlug, week, words, onAttempt, onRevert }) {
   const { activeLearnerId } = useLearners();
 
   const readLog = () => getWeekLog(loadOfflineLog(window.localStorage, activeLearnerId), yearSlug, week);
@@ -157,6 +158,7 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
   const [cleanRun, setCleanRun] = useState({});
   const [justUnlocked, setJustUnlocked] = useState([]);
   const [justReached, setJustReached] = useState(null);
+  const [open, setOpen] = useState(false);
 
   // A different learner (or, in principle, a different week landing on
   // the same mounted card) has its own log — re-read rather than keep
@@ -175,9 +177,25 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
 
   const handleTick = (step) => {
     if (applied[step.id]) {
-      // Already applied for real — this only changes how the row looks.
-      setChecked((prev) => ({ ...prev, [step.id]: !prev[step.id] }));
+      // Unticking takes the whole tick back: the words' progress, the
+      // badge counters, and any badge or status it unlocked.
+      const { undone, prev } = unmarkOfflineStep(window.localStorage, activeLearnerId, { yearSlug, week, stepId: step.id });
+      if (undone) {
+        if (onRevert) onRevert(prev);
+        setApplied((p) => ({ ...p, [step.id]: false }));
+        setChecked((p) => ({ ...p, [step.id]: false }));
+        setCleanRun((p) => ({ ...p, [step.id]: false }));
+        setJustUnlocked([]);
+        setJustReached(null);
+      }
       return;
+    }
+    // Remember each word's state from before this tick so it can be undone.
+    const before = loadProgress(yearSlug, activeLearnerId).words;
+    const prev = {};
+    for (const entry of words) {
+      const k = progressKey(entry);
+      prev[k] = before[k] || null;
     }
     for (const entry of words) onAttempt(progressKey(entry), true);
     const result = markOfflineStep(window.localStorage, activeLearnerId, {
@@ -185,6 +203,7 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
       week,
       stepId: step.id,
       cleanRun: !!cleanRun[step.id],
+      prev,
     });
     setApplied((prev) => ({ ...prev, [step.id]: true }));
     setChecked((prev) => ({ ...prev, [step.id]: true }));
@@ -193,11 +212,23 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
   };
 
   return (
-    <div className="mt-8 border-t border-foreground/10 pt-6" onClick={(e) => e.stopPropagation()} data-testid={`offline-routine-week-${week}`}>
-      <div className="mb-3 flex items-center gap-2 font-mono text-sm text-primary">
-        <ClipboardCheck className="h-4 w-4" /> Offline routine
-      </div>
-      <div className="space-y-2">
+    <div className="mt-8" onClick={(e) => e.stopPropagation()} data-testid={`offline-routine-week-${week}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls={`offline-panel-week-${week}`}
+        className="flex w-full items-center gap-3 rounded-xl border border-foreground/10 bg-foreground/[0.03] px-4 py-3 text-left transition-colors duration-200 hover:bg-foreground/[0.06]"
+        data-testid={`offline-routine-toggle-week-${week}`}
+      >
+        <ClipboardCheck className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-foreground">Working offline?</span>
+          <span className="block text-sm text-muted-foreground">Track your progress here</span>
+        </span>
+        <ChevronDown className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      <div id={`offline-panel-week-${week}`} hidden={!open} className="mt-3 space-y-2">
         {OFFLINE_STEPS.map((step) => {
           const isDone = checked[step.id];
           return (
@@ -264,7 +295,7 @@ function OfflineRoutine({ yearSlug, week, words, onAttempt }) {
   );
 }
 
-const WeekCard = memo(function WeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onMeasure, capabilities, yearSlug }) {
+const WeekCard = memo(function WeekCard({ weekData, active, current, wide, innerWidth, isDragging, onSelectWeek, onAttempt, onRevert, onMeasure, capabilities, yearSlug }) {
   const measureRef = useRef(null);
   useReportHeight(measureRef, onMeasure, weekData.week, wide);
   // pinnedWord is the sticky choice (click, or tabbing onto a chip -- a
@@ -401,7 +432,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                 )}
               </AnimatePresence>
             </div>
-            {wide && <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} />}
+            {wide && <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} onRevert={onRevert} />}
           </div>
 
           <div
@@ -426,7 +457,7 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
           </div>
           {!wide && (
             <div className="min-w-0">
-              <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} />
+              <OfflineRoutine yearSlug={yearSlug} week={weekData.week} words={weekData.words} onAttempt={onAttempt} onRevert={onRevert} />
             </div>
           )}
         </div>
@@ -519,7 +550,7 @@ const LetterWeekCard = memo(function LetterWeekCard({ weekData, active, current,
  * swiping to a week sets it as current, since there's no calendar-driven
  * "true" current week to keep separate from it.
  */
-export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, onAttempt, capabilities, yearSlug }) => {
+export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, onAttempt, onRevert, capabilities, yearSlug }) => {
   // The card track runs the full width of the page, while the week strip,
   // summary banner and arrows stay in the centred content column. The
   // column wrapper is measured so the active card always rests exactly on
@@ -721,6 +752,7 @@ export const WeekCarousel = ({ weeks, currentWeek, selectedWeek, onSelectWeek, o
               isDragging,
               onSelectWeek,
               onAttempt,
+              onRevert,
               onMeasure: handleMeasure,
               capabilities,
               yearSlug,

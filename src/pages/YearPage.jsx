@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useYearData, useYearsConfig } from "@/lib/yearData";
 import { resolveScopePool, buildWeeksForYear, SCOPES, SESSION_COUNT_OPTIONS, termForWeek } from "@/lib/scope";
-import { loadProgress, saveProgress, withCurrentWeek, recordAttempt, selectSessionWords, todayISO, migrateProgress } from "@/lib/srs";
+import { loadProgress, saveProgress, withCurrentWeek, recordAttempt, revertAttempt, selectSessionWords, todayISO, migrateProgress } from "@/lib/srs";
 import { isScopeExplainerDismissed, dismissScopeExplainer } from "@/lib/scopePrefs";
 import { WeekCarousel } from "@/components/WeekCarousel";
 import { PracticeQuiz } from "@/components/PracticeQuiz";
@@ -190,6 +190,17 @@ export default function YearPage() {
     });
   };
 
+  // Undoes the attempts a ticked offline step recorded. `prev` maps each
+  // word's progress key to its state from before the tick.
+  const handleRevert = (prev) => {
+    setProgress((current) => {
+      let next = current;
+      for (const [wordId, state] of Object.entries(prev || {})) next = revertAttempt(next, wordId, state);
+      saveProgress(yearSlug, next, activeLearnerId);
+      return next;
+    });
+  };
+
   // One-time conversion of saved progress from slot ids to word keys, run
   // as soon as this year's word data is available. A no-op after the first
   // time (and for anyone with no saved progress).
@@ -306,6 +317,7 @@ export default function YearPage() {
             currentWeek={currentWeek}
             onSelectWeek={setCurrentWeek}
             onAttempt={handleAttempt}
+            onRevert={handleRevert}
             capabilities={capabilities}
             yearSlug={yearSlug}
           />
@@ -340,7 +352,7 @@ export default function YearPage() {
   );
 }
 
-function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt, capabilities, yearSlug }) {
+function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt, onRevert, capabilities, yearSlug }) {
   const weeks = buildWeeksForYear(words, totalWeeks);
   if (!weeks.length) {
     return (
@@ -359,6 +371,7 @@ function DayScopeView({ words, totalWeeks, currentWeek, onSelectWeek, onAttempt,
       selectedWeek={currentWeek}
       onSelectWeek={onSelectWeek}
       onAttempt={onAttempt}
+      onRevert={onRevert}
       capabilities={capabilities}
       yearSlug={yearSlug}
     />

@@ -3,6 +3,7 @@ import {
   getWeekLog,
   loadOfflineLog,
   markOfflineStep,
+  unmarkOfflineStep,
   offlineLogKeyFor,
   saveOfflineLog,
 } from "../offlineLog";
@@ -148,5 +149,40 @@ describe("OFFLINE_STEPS", () => {
   test("only the two puzzle steps carry a badges.js activity", () => {
     const withActivity = OFFLINE_STEPS.filter((s) => s.activity).map((s) => s.id);
     expect(withActivity.sort()).toEqual(["crossword", "wordsearch"]);
+  });
+});
+
+describe("unmarkOfflineStep", () => {
+  const args = { yearSlug: "year3", week: 2 };
+
+  test("takes a tick back so it can be made again", () => {
+    markOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "verbal", prev: { a: null } });
+    const result = unmarkOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "verbal" });
+    expect(result).toEqual({ undone: true, prev: { a: null } });
+    expect(getWeekLog(loadOfflineLog(store(), MAIN_LEARNER_ID), "year3", 2)).toEqual({});
+    expect(markOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "verbal" }).applied).toBe(true);
+  });
+
+  test("winds back counters and removes the badge that tick unlocked", () => {
+    markOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "wordsearch", cleanRun: true });
+    expect(loadBadges(store(), MAIN_LEARNER_ID).earned["gold-star"]).toBeTruthy();
+    unmarkOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "wordsearch" });
+    const badges = loadBadges(store(), MAIN_LEARNER_ID);
+    expect(badges.earned["gold-star"]).toBeUndefined();
+    expect(badges.counters.wordsearch).toBe(0);
+    expect(badges.counters.gold).toBe(0);
+  });
+
+  test("leaves a badge earned some other way alone", () => {
+    markOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "wordsearch", cleanRun: true });
+    markOfflineStep(store(), MAIN_LEARNER_ID, { yearSlug: "year3", week: 3, stepId: "crossword", cleanRun: true });
+    unmarkOfflineStep(store(), MAIN_LEARNER_ID, { yearSlug: "year3", week: 3, stepId: "crossword" });
+    const badges = loadBadges(store(), MAIN_LEARNER_ID);
+    expect(badges.earned["gold-star"]).toBeTruthy();
+    expect(badges.counters.gold).toBe(1);
+  });
+
+  test("is a no-op when the step was never ticked", () => {
+    expect(unmarkOfflineStep(store(), MAIN_LEARNER_ID, { ...args, stepId: "verbal" }).undone).toBe(false);
   });
 });
