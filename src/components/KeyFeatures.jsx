@@ -21,7 +21,7 @@ function FeatureTile({ feature, index, context }) {
         <Icon className={big ? "h-7 w-7" : "h-5 w-5"} />
       </span>
       <h3 className={`mt-5 type-card font-display font-extrabold text-foreground ${big ? "text-2xl" : "text-lg"}`}>{feature.title}</h3>
-      <p className={`mt-2 type-body text-muted-foreground ${big ? "text-base" : "text-sm"}`}>{resolveBody(feature, context)}</p>
+      <p className={`mt-2 type-body text-foreground/80 ${big ? "text-base" : "text-sm"}`}>{resolveBody(feature, context)}</p>
       {feature.to && (
         <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-primary">
           {feature.cta}
@@ -32,8 +32,8 @@ function FeatureTile({ feature, index, context }) {
   );
 
   const shape = big
-    ? "border-primary/40 bg-primary/10 p-6 sm:p-7"
-    : "border-foreground/10 bg-foreground/[0.03] p-5";
+    ? "border-primary/40 bg-card p-6 shadow-sm sm:p-7"
+    : "border-border bg-card p-5 shadow-sm";
   const base = `group relative flex h-full flex-col rounded-3xl border ${shape}`;
 
   return (
@@ -69,7 +69,7 @@ function CarouselCard({ feature, context, focused }) {
         <Icon className="h-5 w-5" />
       </span>
       <h3 className="mt-5 type-card font-display text-lg font-extrabold text-foreground">{feature.title}</h3>
-      <p className="mt-2 type-body text-sm text-muted-foreground">{resolveBody(feature, context)}</p>
+      <p className="mt-2 type-body text-sm text-foreground/80">{resolveBody(feature, context)}</p>
       {feature.to && (
         <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-primary">
           {feature.cta}
@@ -203,10 +203,27 @@ function FeatureCarousel({ features, context }) {
  * their own words) get the big tiles; the rest follow in a tighter grid.
  * The copy lives in content/siteContent.js.
  */
-export function KeyFeatures({ totalWords }) {
+export function KeyFeatures({ totalWords, show = "tiles" }) {
   const context = { totalWords };
   const big = KEY_FEATURES.filter((f) => f.big);
   const rest = KEY_FEATURES.filter((f) => !f.big);
+
+  // The home page shows just the rotating strip of smaller cards; the big
+  // tiles and the longer pitch live on How it works.
+  if (show === "carousel") {
+    return (
+      <section
+        id="whats-included"
+        aria-label="What's included"
+        className="relative overflow-hidden px-5 py-10 sm:px-8"
+        data-testid="key-features-carousel-section"
+      >
+        <div className="relative mx-auto max-w-7xl">
+          <FeatureCarousel features={rest} context={context} />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -220,7 +237,7 @@ export function KeyFeatures({ totalWords }) {
         className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl"
       />
       <div className="relative mx-auto max-w-7xl">
-        <div className="font-mono text-xs text-primary">Why Spell Stars</div>
+        <div className="font-mono text-xs text-primary">What's included</div>
         <h2 id="key-features-heading" className="mt-3 max-w-5xl type-display font-display text-4xl font-extrabold text-foreground sm:text-5xl lg:text-6xl">
           {KEY_FEATURES_HEADING.map((line) => (
             <span key={line} className="block">
@@ -236,22 +253,20 @@ export function KeyFeatures({ totalWords }) {
           ))}
         </ul>
 
-        <FeatureCarousel features={rest} context={context} />
-
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="#years"
+          <Link
+            to="/#years"
             className="group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             data-testid="key-features-years-link"
           >
-            Pick your year <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" aria-hidden="true" />
-          </a>
+            Choose your year <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" aria-hidden="true" />
+          </Link>
           <Link
-            to="/custom"
+            to="/make?tab=words"
             className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 font-semibold text-foreground transition-colors hover:border-primary/60 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             data-testid="key-features-custom-link"
           >
-            Or use your own words
+            Make your own lesson
           </Link>
         </div>
       </div>

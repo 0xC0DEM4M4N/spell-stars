@@ -92,7 +92,7 @@ export default function CustomListPage() {
               or make it again here.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Link to="/custom" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+              <Link to="/make?tab=words" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
                 Make a lesson
               </Link>
               <Link to="/sync" className="rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-sm font-semibold text-foreground hover:border-primary/50">
@@ -130,7 +130,7 @@ export default function CustomListPage() {
 
   const handleDelete = () => {
     deleteList(window.localStorage, list.id);
-    navigate("/custom", { replace: true });
+    navigate("/make?tab=words", { replace: true });
   };
 
   const sheet = {
@@ -144,7 +144,7 @@ export default function CustomListPage() {
     <Shell title={list.name}>
       <div className="border-b px-6 pb-6 pt-24" style={{ borderColor: rgba(accent, 0.35), backgroundImage: `linear-gradient(180deg, ${rgba(accent, 0.08)}, transparent)` }}>
         <div className="mx-auto max-w-7xl">
-          <Link to="/custom" className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground transition-colors duration-300 hover:text-primary">
+          <Link to="/make?tab=words" className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground transition-colors duration-300 hover:text-primary">
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" /> Your lessons
           </Link>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
@@ -189,7 +189,7 @@ export default function CustomListPage() {
                 triggerClassName="inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
               />
               <Link
-                to={"/custom?edit=" + list.id}
+                to={"/make?tab=words&edit=" + list.id}
                 className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
                 data-testid="custom-edit-link"
               >

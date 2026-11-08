@@ -305,6 +305,7 @@ export const ART_BY_PATH = {
   "/feedback": "feedback",
   "/custom": "custom",
   "/rules": "rules",
+  "/make": "rules",
   "/series": "series",
   "/sync": "sync",
   "/whats-new": "updates",

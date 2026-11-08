@@ -7,7 +7,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Pencil, Trash2, X } from 'lucide-react';
-import { InfoPage } from '@/components/InfoPage';
 import { BackupBar } from '@/components/BackupBar';
 import {
   CUSTOM_LESSONS_NAME,
@@ -621,7 +620,7 @@ function SavedLists({ lists, allSeries, onDelete }) {
 
 // ── Page ───────────────────────────────────────────────────────────────
 
-export default function CustomListsPage() {
+export function CustomBuilder() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { yearsConfig } = useYearsConfig();
@@ -634,27 +633,13 @@ export default function CustomListsPage() {
   const handleDelete = (list) => {
     deleteList(window.localStorage, list.id);
     setLists(readLists());
-    if (editId === list.id) navigate('/custom', { replace: true });
+    if (editId === list.id) navigate('/make?tab=words', { replace: true });
   };
 
   return (
-    <InfoPage
-      path="/custom"
-      title="Make your own lesson"
-      description="Paste this week's spellings and get a practice quiz, a word search and print sheets for exactly those words. Free, no sign-up, and nothing leaves your device."
-      eyebrow="Your words, your lesson"
-      heading="Make your own lesson"
-      intro="Paste this week's spellings from school, a child's tricky words or a topic. You get a practice quiz, a word search and print sheets for exactly those words. No sign-up, and the list stays on this device."
-    >
+    <>
       <section className="px-5 pb-10 sm:px-8">
         <div className="mx-auto max-w-3xl space-y-6">
-          <BackupBar />
-          <p className="type-body text-sm text-muted-foreground" data-testid="custom-build-hint">
-            Want words for a spelling rule instead, like /ee/ or -le endings?{' '}
-            <Link to="/rules" className="underline underline-offset-2 hover:text-primary">
-              Search by spelling rule
-            </Link>
-          </p>
           {editId && !editing && (
             <p
               className="rounded-xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-muted-foreground"
@@ -689,6 +674,6 @@ export default function CustomListsPage() {
           </p>
         </div>
       </section>
-    </InfoPage>
+    </>
   );
 }

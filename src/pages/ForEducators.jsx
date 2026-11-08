@@ -19,17 +19,19 @@ export default function ForEducators() {
             id="for-educators"
             testId="for-educators-section"
             eyebrow="In the classroom and at home"
+            art="calendar"
             title="Curriculum-led, at your pace."
             intro={`Every one of the ${totalYears ?? "seven"} year lists follows its own statutory or phonics sequence — Letters and Sounds graphemes for Reception, then the National Curriculum's English Appendix 1 word lists from Year 1 onward — ordered so each week builds on the rule or pattern before it, term by term across the school year.`}
             className="py-10"
           >
-            <CardGrid items={EDUCATOR_NOTES} cols={4} />
+            <CardGrid items={EDUCATOR_NOTES} cols={3} />
           </Section>
 
           <Section
             id="offline-routine"
             testId="offline-routine-section"
             eyebrow="Beyond the screen"
+            art="pencil"
             title={HANDOFF_TITLE}
             intro={HANDOFF_COPY}
           >

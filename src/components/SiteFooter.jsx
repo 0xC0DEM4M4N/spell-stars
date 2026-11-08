@@ -52,7 +52,7 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
           {totalWords != null && teachingWeeks != null
             ? ` · ${totalWords.toLocaleString()} words · ${teachingWeeks} teaching weeks a year.`
             : '.'}{' '}
-          Progressive spelling practice for keen beans.
+          Free weekly spelling practice for UK primary schools.
         </p>
       </div>
 
@@ -152,35 +152,12 @@ export const SiteFooter = ({ totalWords, teachingWeeks }) => (
             </li>
             <li>
               <Link
-                to="/rules"
-                className="group inline-flex items-start gap-1.5 transition-colors duration-300 hover:text-primary"
-                data-testid="footer-build-link"
-              >
-                <Search className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>Search by spelling rule</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/rules"
+                to="/make"
                 className="group inline-flex items-start gap-1.5 transition-colors duration-300 hover:text-primary"
                 data-testid="footer-lessons-link"
               >
                 <BookOpenCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>Create your own lessons</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/custom"
-                className="group inline-flex items-start gap-1.5 transition-colors duration-300 hover:text-primary"
-                data-testid="footer-custom-link"
-              >
-                <ListPlus
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0"
-                  aria-hidden="true"
-                />
-                <span>Paste your own words</span>
+                <span>Make a lesson</span>
               </Link>
             </li>
             <InstallAppItem />

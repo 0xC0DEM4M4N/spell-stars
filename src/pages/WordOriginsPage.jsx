@@ -12,6 +12,8 @@ import { getYearsConfig, getYearWords } from "@/lib/yearData";
 import { collectOrigins } from "@/lib/wordOrigins";
 
 const CHECKED_KEY = "spellstars.originsChecked";
+const PAGE_SIZE = 100;
+const LETTERS = "abcdefghijklmnopqrstuvwxyz".split("");
 
 const readChecked = () => {
   try {
@@ -36,6 +38,8 @@ export default function WordOriginsPage() {
   const [show, setShow] = useState("all"); // all | with | without
   const [hideChecked, setHideChecked] = useState(false);
   const [checked, setChecked] = useState(readChecked);
+  const [letter, setLetter] = useState("all");
+  const [limit, setLimit] = useState(PAGE_SIZE);
 
   useEffect(() => {
     let cancelled = false;
@@ -85,11 +89,17 @@ export default function WordOriginsPage() {
       if (show === "without" && r.language) return false;
       if (language !== "all" && r.language !== language) return false;
       if (year !== "all" && !r.years.includes(year)) return false;
+      if (letter !== "all" && !r.word.toLowerCase().startsWith(letter)) return false;
       if (hideChecked && checked.has(r.word.toLowerCase())) return false;
       if (!q) return true;
       return (r.word + " " + r.origin + " " + r.meaning + " " + r.sentence).toLowerCase().includes(q);
     });
-  }, [rows, query, language, year, show, hideChecked, checked]);
+  }, [rows, query, language, year, show, hideChecked, checked, letter]);
+  // Back to the first page whenever the filters change.
+  useEffect(() => {
+    setLimit(PAGE_SIZE);
+  }, [query, language, year, show, hideChecked, letter]);
+  const lettersPresent = useMemo(() => new Set((rows || []).map((r) => r.word.toLowerCase().charAt(0))), [rows]);
   const withOrigin = useMemo(() => (rows || []).filter((r) => r.language).length, [rows]);
 
   return (
@@ -158,6 +168,24 @@ export default function WordOriginsPage() {
           </label>
         </div>
 
+        <nav aria-label="Jump to a letter" className="mt-4 flex flex-wrap gap-1.5" data-testid="origins-letters">
+          {["all", ...LETTERS].map((l) => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLetter(l)}
+              disabled={l !== "all" && !lettersPresent.has(l)}
+              aria-pressed={letter === l}
+              className={
+                "min-w-9 rounded-full border px-2.5 py-1 text-sm font-semibold uppercase transition-colors disabled:opacity-30 " +
+                (letter === l ? "border-primary bg-primary/15 text-primary" : "border-border bg-muted/30 text-foreground hover:border-primary/50")
+              }
+            >
+              {l === "all" ? "All" : l}
+            </button>
+          ))}
+        </nav>
+
         <p className="mt-4 font-mono text-xs text-muted-foreground" role="status" data-testid="origins-count">
           {rows
             ? shown.length + " of " + rows.length + " words · " + withOrigin + " with an origin · " + checked.size + " checked"
@@ -183,7 +211,7 @@ export default function WordOriginsPage() {
                 </tr>
               </thead>
               <tbody>
-                {shown.map((r) => {
+                {shown.slice(0, limit).map((r) => {
                   const done = checked.has(r.word.toLowerCase());
                   return (
                     <tr key={r.word} className={"border-t border-foreground/10 align-top " + (done ? "bg-success/10" : "")}>
@@ -218,6 +246,18 @@ export default function WordOriginsPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        )}
+        {rows && shown.length > limit && (
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setLimit((n) => n + PAGE_SIZE)}
+              className="rounded-xl border border-border bg-muted/40 px-5 py-2.5 text-sm font-semibold text-foreground hover:border-primary/50"
+              data-testid="origins-more"
+            >
+              Show {Math.min(PAGE_SIZE, shown.length - limit)} more ({shown.length - limit} left)
+            </button>
           </div>
         )}
       </main>

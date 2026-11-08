@@ -6,14 +6,9 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://spell-stars.pages.dev/custom</loc>
+    <loc>https://spell-stars.pages.dev/make</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://spell-stars.pages.dev/rules</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://spell-stars.pages.dev/reception</loc>

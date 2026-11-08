@@ -186,7 +186,7 @@ function SignedIn({ account }) {
                   {' '}
                   Brought over {plural(last.lessonsGained, 'lesson', 'lessons')} and{' '}
                   {plural(last.seriesGained, 'series', 'series')} from your account.{' '}
-                  <Link to="/custom" className="underline underline-offset-2 hover:text-primary">
+                  <Link to="/make?tab=words" className="underline underline-offset-2 hover:text-primary">
                     See your lessons
                   </Link>
                 </>

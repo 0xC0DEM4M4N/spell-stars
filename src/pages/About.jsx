@@ -51,6 +51,7 @@ export default function About() {
         id="what-we-believe"
         testId="about-beliefs-section"
         eyebrow="What it stands for"
+        art="heart"
         title="Words, on screen and on paper, for everyone."
       >
         <CardGrid items={ABOUT_PILLARS} cols={3} />
@@ -60,6 +61,7 @@ export default function About() {
         id="get-started"
         testId="about-start-section"
         eyebrow="Ready?"
+        art="star"
         title="Pick a year and start."
         className="py-10"
       >
@@ -71,7 +73,7 @@ export default function About() {
             index={0}
           />
           <TeaserLink
-            to="/custom"
+            to="/make?tab=words"
             label="Make your own spellings"
             blurb="Build a lesson from any words and practise it the same way."
             index={1}

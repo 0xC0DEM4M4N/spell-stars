@@ -15,9 +15,8 @@ import PrivacyPage from "@/pages/PrivacyPage";
 import { CookieBanner } from "@/components/CookieBanner";
 import { AccountSyncRunner } from "@/lib/useAccount";
 import ProgressPage from "@/pages/ProgressPage";
-import CustomListsPage from "@/pages/CustomListsPage";
+import MakeLessonPage from "@/pages/MakeLessonPage";
 import CustomListPage from "@/pages/CustomListPage";
-import RulesPage from "@/pages/RulesPage";
 import { SeriesIndexPage, SeriesPage } from "@/pages/SeriesPage";
 import SharedListPage from "@/pages/SharedListPage";
 import WordOriginsPage from "@/pages/WordOriginsPage";
@@ -59,6 +58,15 @@ const HEADER_OFFSET = -80;
 // the next wheel/touch event can snap the page straight back to the
 // old spot. Keyed on location.key so clicking a link to the page
 // you're already on (the logo on the home page) still scrolls.
+// The old /rules and /custom addresses now open the one "Make a lesson" page
+// on the matching tab, keeping any ?q=, ?series= or ?edit= they came with.
+function RedirectToMake({ tab }) {
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  params.set("tab", tab);
+  return <Navigate to={"/make?" + params.toString()} replace />;
+}
+
 function ScrollToTop({ lenisRef }) {
   const { pathname, hash, key } = useLocation();
   const navigate = useNavigate();
@@ -162,11 +170,12 @@ function AppShell() {
             <Route path="/account" element={<AccountPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/progress" element={<ProgressPage />} />
-            <Route path="/rules" element={<RulesPage />} />
-            <Route path="/build" element={<Navigate to="/rules" replace />} />
+            <Route path="/make" element={<MakeLessonPage />} />
+            <Route path="/rules" element={<RedirectToMake tab="rules" />} />
+            <Route path="/build" element={<RedirectToMake tab="rules" />} />
             <Route path="/series" element={<SeriesIndexPage />} />
             <Route path="/series/:seriesId" element={<SeriesPage />} />
-            <Route path="/custom" element={<CustomListsPage />} />
+            <Route path="/custom" element={<RedirectToMake tab="words" />} />
             <Route path="/custom/:listId" element={<CustomListPage />} />
             <Route path="/shared" element={<SharedListPage />} />
             {/* Hidden reference page: no link anywhere, not in the sitemap. */}

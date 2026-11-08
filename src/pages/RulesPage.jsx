@@ -10,7 +10,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, ChevronRight, Plus, Search, Shuffle, X } from 'lucide-react';
-import { InfoPage } from '@/components/InfoPage';
 import { BackupBar } from '@/components/BackupBar';
 import { getYearsConfig, getYearWords } from '@/lib/yearData';
 import { MAX_LISTS, MAX_NAME_LENGTH, MAX_TEXT_LENGTH, MAX_WORDS, createList, loadLists, parseWordList, upsertList } from '@/lib/customLists';
@@ -51,6 +50,7 @@ const COUNTS = [5, 10, 15, 20, 30, 50];
 const EXAMPLES = ['/ee/', '-le ending', 'kn-', '-ous', 'wr at the start', 'suffix'];
 const NO_ENTRIES = [];
 const NEW_SERIES = '__new__';
+const RULES_PER_PAGE = 10; // rules shown per year group before "Show more"
 
 const weeksText = (weeks) => (!weeks.length ? '' : (weeks.length === 1 ? 'Week ' : 'Weeks ') + weeks.join(', '));
 
@@ -103,7 +103,7 @@ const safe = (read) => {
   }
 };
 
-export default function RulesPage() {
+export function RulesBuilder() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const lessonRef = useRef(null);
@@ -118,6 +118,7 @@ export default function RulesPage() {
   const [removed, setRemoved] = useState(() => new Set());
   const [picked, setPicked] = useState([]); // words chosen one by one
   const [showAllWords, setShowAllWords] = useState(false);
+  const [expandedYears, setExpandedYears] = useState(() => new Set()); // year groups opened past the first page
   const [ownText, setOwnText] = useState(''); // words typed or pasted in
   const [ownRemoved, setOwnRemoved] = useState(() => new Set());
   const [name, setName] = useState('');
@@ -270,17 +271,9 @@ export default function RulesPage() {
   const filtering = !!parsed;
 
   return (
-    <InfoPage
-      path="/rules"
-      title="Search by spelling rule"
-      description="Every spelling rule from Reception to Year 6 in one place. Filter them, build a lesson from the rules you choose, and group lessons into a series."
-      eyebrow="Spelling rules"
-      heading="Search by spelling rule"
-      intro="Every spelling rule across the year groups, in one list. Filter by pattern, like /ee/ or -le ending, or by topic. Pick the rules you want, build a lesson, and keep your lessons together in a series."
-    >
+    <>
       <section className={'px-5 sm:px-8 ' + (hasLesson ? 'pb-28' : 'pb-10')}>
         <div className="mx-auto max-w-3xl space-y-6">
-          <BackupBar />
           {/* ── The lesson being built ─────────────────────────── */}
           <div ref={lessonRef} className={card + ' scroll-mt-24'} data-testid="rule-session">
             <h2 className="type-card font-display text-xl font-bold text-foreground">Your lesson</h2>
@@ -526,14 +519,31 @@ export default function RulesPage() {
                       No weekly rule matches{found && found.words.length ? ', but the words above fit the pattern' : ''}. Try another spelling, or all years.
                     </p>
                   )}
+                  {grouped.length > 1 && (
+                    <nav aria-label="Jump to a year group" className="mt-3 flex flex-wrap gap-2" data-testid="rule-jump">
+                      {grouped.map((g) => (
+                        <button
+                          key={g.slug}
+                          type="button"
+                          onClick={() => {
+                            const el = document.getElementById('rules-section-' + g.slug);
+                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }}
+                          className={chip(false)}
+                        >
+                          {yearLabel[g.slug] || g.slug}
+                        </button>
+                      ))}
+                    </nav>
+                  )}
                   <div className="mt-3 space-y-6" data-testid="rule-points">
                     {grouped.map((g) => (
-                      <section key={g.slug} aria-labelledby={'rules-' + g.slug}>
+                      <section key={g.slug} id={'rules-section-' + g.slug} className="scroll-mt-24" aria-labelledby={'rules-' + g.slug}>
                         <h4 id={'rules-' + g.slug} className="font-mono text-xs text-primary">
                           {yearLabel[g.slug] || g.slug} · {plural(g.points.length, 'rule', 'rules')}
                         </h4>
                         <ul className="mt-1 divide-y divide-foreground/10">
-                          {g.points.map((p) => (
+                          {(expandedYears.has(g.slug) ? g.points : g.points.slice(0, RULES_PER_PAGE)).map((p) => (
                             <li key={p.key} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3">
                               <div className="min-w-[10rem] flex-1">
                                 <div className="font-semibold text-foreground">{p.focus}</div>
@@ -554,6 +564,25 @@ export default function RulesPage() {
                             </li>
                           ))}
                         </ul>
+                        {g.points.length > RULES_PER_PAGE && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedYears((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(g.slug)) next.delete(g.slug);
+                                else next.add(g.slug);
+                                return next;
+                              })
+                            }
+                            className={buttonQuiet + ' mt-2'}
+                            data-testid={'rule-more-' + g.slug}
+                          >
+                            {expandedYears.has(g.slug)
+                              ? 'Show fewer'
+                              : 'Show ' + (g.points.length - RULES_PER_PAGE) + ' more'}
+                          </button>
+                        )}
                       </section>
                     ))}
                   </div>
@@ -582,7 +611,7 @@ export default function RulesPage() {
           </div>
         </div>
       )}
-    </InfoPage>
+    </>
   );
 }
 

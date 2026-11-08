@@ -2,8 +2,12 @@ import { InfoPage, TeaserLink } from "@/components/InfoPage";
 import { CardGrid, Section, StepRow } from "@/components/InfoBlocks";
 import { SESSION_STEPS, VOCAB_CARDS } from "@/content/siteContent";
 import { JOURNEY_LEDE } from "@/content/journeys";
+import { KeyFeatures } from "@/components/KeyFeatures";
+import { useYearsConfig } from "@/lib/yearData";
 
 export default function HowItWorks() {
+  const { yearsConfig } = useYearsConfig();
+  const totalWords = yearsConfig ? yearsConfig.years.reduce((sum, y) => sum + (y.wordCount || 0), 0) : 0;
   return (
     <InfoPage
       path="/how-it-works"
@@ -17,6 +21,7 @@ export default function HowItWorks() {
         id="how-it-works"
         testId="how-it-works-section"
         eyebrow="Two journeys"
+        art="journeys"
         title="Practise on screen, then off it."
         intro={JOURNEY_LEDE}
         className="py-10"
@@ -31,6 +36,7 @@ export default function HowItWorks() {
         id="how-a-session-works"
         testId="how-a-session-works-section"
         eyebrow="How a session works"
+        art="steps"
         title="Five steps, aligned to what school is already teaching."
       >
         <StepRow items={SESSION_STEPS} />
@@ -40,11 +46,14 @@ export default function HowItWorks() {
         id="beyond-spelling"
         testId="beyond-spelling-section"
         eyebrow="More than spelling"
+        art="book"
         title="Understand the word, not just its letters."
         intro="Spelling a word correctly is only half the job — every word in SPELL// STARS is built to broaden vocabulary too."
       >
         <CardGrid items={VOCAB_CARDS} cols={3} />
       </Section>
+
+      <KeyFeatures totalWords={totalWords} />
     </InfoPage>
   );
 }

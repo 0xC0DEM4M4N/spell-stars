@@ -123,7 +123,7 @@ export function SeriesIndexPage() {
             {error && <p className="mt-3 text-sm text-destructive" role="alert">{error}</p>}
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <button type="submit" disabled={!name.trim() || full} className={buttonPrimary}>Create series</button>
-              <Link to="/rules" className={buttonQuiet}>Make a lesson from spelling rules</Link>
+              <Link to="/make" className={buttonQuiet}>Make a lesson from spelling rules</Link>
             </div>
           </form>
 
@@ -237,7 +237,7 @@ function SeriesDetail({ seriesId }) {
             )}
 
             <div className="mt-5 flex flex-wrap items-end gap-3">
-              <Link to={'/rules?series=' + series.id} className={buttonPrimary} data-testid="series-new-lesson">
+              <Link to={'/make?series=' + series.id} className={buttonPrimary} data-testid="series-new-lesson">
                 <Plus className="mr-1 inline h-4 w-4" aria-hidden="true" /> New lesson from spelling rules
               </Link>
             </div>
@@ -347,7 +347,7 @@ function CustomLessons() {
             )}
             {error && <p className="mt-4 text-sm text-destructive" role="alert">{error}</p>}
             <div className="mt-5 flex flex-wrap gap-3">
-              <Link to="/rules" className={buttonPrimary}>
+              <Link to="/make" className={buttonPrimary}>
                 <Plus className="mr-1 inline h-4 w-4" aria-hidden="true" /> New lesson from spelling rules
               </Link>
               <Link to="/series" className={buttonQuiet}>All series</Link>

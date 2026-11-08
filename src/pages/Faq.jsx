@@ -25,7 +25,7 @@ export default function Faq() {
                       {item.q}
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="pb-5 pl-7 text-sm leading-relaxed text-muted-foreground">
+                  <AccordionContent className="pb-5 pl-7 text-base leading-relaxed text-foreground/80">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>

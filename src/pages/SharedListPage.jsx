@@ -39,7 +39,7 @@ export default function SharedListPage() {
           <p className="mt-4 type-body text-sm text-muted-foreground">
             It may have been cut short when it was sent. Ask for it to be sent again, or make a lesson of your own.
           </p>
-          <Link to="/custom" className="mt-6 inline-block rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+          <Link to="/make?tab=words" className="mt-6 inline-block rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
             Make a lesson
           </Link>
         </div>

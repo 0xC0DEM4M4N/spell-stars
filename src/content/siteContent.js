@@ -28,9 +28,9 @@ import {
 // The "why use it" tiles on the home page (components/KeyFeatures.jsx). Only
 // say here what the site does today: each line is checked against the code.
 // `big` tiles lead the grid. `body` may be a function of { totalWords }.
-export const KEY_FEATURES_HEADING = ["All the spelling practice.", "None of the sign-up."]; // one line each
+export const KEY_FEATURES_HEADING = ["What you get, free."]; // one line each
 export const KEY_FEATURES_LEDE =
-  "Free for Reception to Year 6. It remembers where each child got to, works with any word list, and is built to be easy to read for everyone.";
+  "Free for Reception to Year 6. Progress is remembered on each device, you can use any word list, and the text is easy to read for everyone.";
 
 export const KEY_FEATURES = [
   {
@@ -38,7 +38,7 @@ export const KEY_FEATURES = [
     big: true,
     icon: Save,
     title: "Progress saves itself",
-    body: "Every word you practise is remembered on this device. Close the tab, come back tomorrow, and the words that need another go are waiting. Sharing a device? Add a name for each child and their progress stays apart. No login.",
+    body: "Every word you practise is remembered on this device. Close the tab, come back tomorrow, and the words that need another go are waiting. Sharing a device? Add a name for each child and their progress stays apart. You don't need an account.",
     to: "/how-it-works",
     cta: "See how a session works",
   },
@@ -46,10 +46,10 @@ export const KEY_FEATURES = [
     id: "sync",
     big: true,
     icon: QrCode,
-    title: "Take it to another device",
-    body: "Save a backup as a file, a link or a QR code and open it on any other device. See what will change first, and undo it for ten minutes. Still no account.",
+    title: "Use it on more than one device",
+    body: "Two ways. Sign in with the same email address on each device, and your lessons and series are there on all of them; for that we store your email address and your lessons. If you would rather we stored nothing, save a QR code, a link or a file and open it on the other device. That takes a few more steps, but it works just as well, and it carries your practice progress too.",
     to: "/sync",
-    cta: "Save or move progress",
+    cta: "See both ways",
   },
   {
     id: "custom",
@@ -57,7 +57,7 @@ export const KEY_FEATURES = [
     icon: ListPlus,
     title: "Your words, your lesson",
     body: "Paste this week's school spellings and get a quiz, a word search, a crossword and print sheets for exactly those words. Lessons stay on your device and travel with your backup.",
-    to: "/custom",
+    to: "/make?tab=words",
     cta: "Make a lesson",
   },
   {
@@ -117,8 +117,8 @@ export const KEY_FEATURES = [
   {
     id: "free",
     icon: BadgeCheck,
-    title: "Free, with no sign-up",
-    body: "Nothing to pay for, and no login needed. Open a year and start.",
+    title: "Free, and no account needed",
+    body: "Nothing to pay for. Open a year and start. An account is optional, for using your lessons on more than one device.",
   },
 ];
 
@@ -248,6 +248,10 @@ export const FAQS = [
     a: "Yes. Choose \"Paste your own words\" in the footer (or the \"Add your own lesson\" card with the years on the home page), paste the words, and you get a practice quiz, a word search, a crossword and print sheets for exactly those words. Where a word is in our year lists it also gets a meaning and a sentence. Lessons stay on your device and are included when you save a backup. You can also build a lesson from spelling rules and keep lessons together in a series.",
   },
   {
+    q: "Can I use it with a curriculum outside the UK?",
+    a: "Yes. The ready-made lists are based on the UK curriculum, but you can make your own lessons from any words you choose, or from spelling rules, and group them into series, for example one per child or one per term. Your own lessons get the same practice, word search, crossword and print sheets. Words are read aloud in British English by default; in the listening settings you can pick another voice that is installed on your device.",
+  },
+  {
     q: "Can I install it as an app on my computer?",
     a: "Yes. In Chrome or Edge, use the install icon at the right of the address bar (or the \"Install as an app\" link in the footer). On a Mac, Chrome puts \"Spell Stars\" in your Applications folder so it opens in its own window and you can keep it in the Dock. In Safari, choose File, then Add to Dock. Once you have opened a few pages, the app keeps working without a connection. Your lists, series and progress stay on that device and are separate from the ones in your browser, so save a backup from one and restore it in the other if you want them to match.",
   },
@@ -277,11 +281,11 @@ export const FAQS = [
   },
   {
     q: "Is it free?",
-    a: "Yes. There's nothing to pay for and nothing to sign up to.",
+    a: "Yes. There's nothing to pay for.",
   },
   {
     q: "Do I need an account?",
-    a: "No. There's nothing to sign up for or log in to — open a year and start. Progress is kept in the browser on the device you practise on.",
+    a: "No. Open a year and start, and progress is kept in the browser on the device you practise on. An account is optional: sign in with the same email address on each device and your lessons and series are there on all of them. For that we store your email address and your lessons. If you would rather we stored nothing, a QR code, a link or a file moves everything, including practice progress, with a few more steps.",
   },
   {
     q: "Where is my child's progress saved?",
@@ -364,6 +368,6 @@ export const ABOUT_PILLARS = [
   {
     icon: Accessibility,
     title: "Open to everyone",
-    body: "Free, no sign-up, and built to be easy to read and use whatever your needs, with options for text size, colour, dyslexia-friendly type and reduced motion.",
+    body: "Free, no account needed, and built to be easy to read and use whatever your needs, with options for text size, colour, dyslexia-friendly type and reduced motion.",
   },
 ];

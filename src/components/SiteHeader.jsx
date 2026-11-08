@@ -10,8 +10,8 @@ import { useAccount } from '@/lib/useAccount';
 // the long-form content lives on its own pages.
 const NAV = [
   { label: 'Spelling Lists', to: '/#years' },
-  { label: 'Spelling rules', to: '/rules' },
-  { label: 'Features', to: '/#features' },
+  { label: 'Make a lesson', to: '/make' },
+  { label: 'What\'s included', to: '/how-it-works#features' },
   { label: 'How it works', to: '/how-it-works' },
   { label: 'For educators', to: '/for-educators' },
   { label: 'FAQs', to: '/faq' },
@@ -22,10 +22,7 @@ const NAV = [
 // Below the large breakpoint the inline links are hidden, so phones and
 // tablets get the same destinations in a menu, plus the places a family
 // uses most (own lessons, progress, account).
-const MENU_EXTRAS = [
-  { label: 'Make your own lesson', to: '/custom' },
-  { label: 'My progress', to: '/progress' },
-];
+const MENU_EXTRAS = [{ label: 'My progress', to: '/progress' }];
 
 const MobileMenu = ({ account, pathname }) => {
   const [open, setOpen] = useState(false);
@@ -42,7 +39,7 @@ const MobileMenu = ({ account, pathname }) => {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-secondary text-foreground transition-colors hover:border-primary/50 lg:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-secondary text-foreground transition-colors hover:border-primary/50 xl:hidden"
           aria-label="Open menu"
           data-testid="mobile-menu-button"
         >
@@ -90,7 +87,7 @@ export const SiteHeader = () => {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
         <Link
           to="/"
-          className="font-display text-lg font-extrabold tracking-tight text-foreground"
+          className="shrink-0 whitespace-nowrap font-display text-lg font-extrabold tracking-tight text-foreground"
           aria-label="SPELL// STARS home"
         >
           SPELL<span className="text-primary">//</span>
@@ -104,9 +101,9 @@ export const SiteHeader = () => {
             RS
           </span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 whitespace-nowrap">
           <nav
-            className="hidden items-center gap-7 text-sm font-light text-muted-foreground lg:flex"
+            className="hidden items-center gap-6 whitespace-nowrap text-sm font-light text-muted-foreground xl:flex"
             aria-label="Primary"
           >
             {NAV.map((item) => {
@@ -129,7 +126,7 @@ export const SiteHeader = () => {
           {account.enabled && account.ready && (
             <Link
               to="/account"
-              className="hidden rounded-full border border-border bg-muted/40 px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 lg:inline-block"
+              className="hidden rounded-full border border-border bg-muted/40 px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 xl:inline-block"
               data-testid="header-account-link"
             >
               {account.user ? 'Account' : 'Sign in'}

@@ -4,15 +4,11 @@ import { Link } from 'react-router-dom';
 import {
   ArrowDown,
   BookOpen,
-  Brain,
   Layers,
   PencilLine,
   CalendarDays,
   ClipboardCheck,
   GraduationCap,
-  Printer,
-  Timer,
-  Volume2,
   MessageCircleQuestion,
   Plus,
   Search,
@@ -234,104 +230,6 @@ function readCustomLists() {
   }
 }
 
-const STRIP_ITEMS = [
-  {
-    icon: Timer,
-    title: '10 minutes a day',
-    body: 'Little and often beats cramming, so a short daily session is plenty.',
-  },
-  {
-    icon: Brain,
-    title: 'Practice that adapts',
-    body: 'Six boxes bring the words you got wrong back around sooner.',
-  },
-  {
-    icon: Volume2,
-    title: 'Hear it, then spell it',
-    body: 'Each word is read aloud in British English, slower for Reception.',
-  },
-  {
-    icon: Printer,
-    title: 'On screen or on paper',
-    body: 'Print word lists, handwriting sheets, word searches and crosswords.',
-  },
-];
-
-const STRIP_ROTATE_MS = 2500;
-
-// The four highlights under the hero. The filled card moves from one to the
-// next every few seconds. It stops while the pointer or keyboard focus is on
-// the strip, and stays put (on the first card) when reduce-motion is on.
-function FeatureStrip() {
-  const { reducedMotion } = useTheme();
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (reducedMotion || paused) return undefined;
-    const timer = setInterval(() => setActive((i) => (i + 1) % STRIP_ITEMS.length), STRIP_ROTATE_MS);
-    return () => clearInterval(timer);
-  }, [reducedMotion, paused]);
-
-  return (
-    <section
-      className="relative z-20 -mt-16 px-5 sm:-mt-20 sm:px-8"
-      aria-label="Highlights"
-      data-testid="feature-strip"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-    >
-      <ul className="mx-auto grid max-w-7xl gap-2 rounded-[2rem] border border-foreground/10 bg-card p-3 shadow-2xl sm:grid-cols-2 lg:grid-cols-4">
-        {STRIP_ITEMS.map((item, i) => {
-          const on = i === active;
-          return (
-            <li
-              key={item.title}
-              onMouseEnter={() => setActive(i)}
-              onClick={() => setActive(i)}
-              data-active={on}
-              className={`relative rounded-3xl p-6 transition-colors duration-700 ease-in-out ${
-                on ? 'text-primary-foreground' : 'text-card-foreground'
-              }`}
-            >
-              {/* One highlight that glides from card to card, rather than each
-                  card fading its own background in and out. */}
-              {on && (
-                <motion.span
-                  layoutId="feature-strip-highlight"
-                  className="absolute inset-0 rounded-3xl bg-primary"
-                  transition={
-                    reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 26, mass: 0.9 }
-                  }
-                  aria-hidden="true"
-                />
-              )}
-              <span className="relative z-10 inline-flex">
-                <item.icon className="h-9 w-9" aria-hidden="true" />
-                <span
-                  className={`absolute -bottom-1 -right-2 h-3 w-3 rounded-full transition-colors duration-700 ease-in-out ${
-                    on ? 'bg-primary-foreground' : 'bg-primary'
-                  }`}
-                />
-              </span>
-              <h3 className="type-card relative z-10 mt-8 font-display text-xl font-medium">{item.title}</h3>
-              <p
-                className={`type-body relative z-10 mt-3 text-sm font-light transition-colors duration-700 ease-in-out ${
-                  on ? 'text-primary-foreground/85' : 'text-muted-foreground'
-                }`}
-              >
-                {item.body}
-              </p>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-  );
-}
-
 // Accent for anything the visitor made themselves (series and lessons).
 const MADE_BY_YOU_ACCENT = '#8b5cf6';
 
@@ -417,7 +315,7 @@ export default function YearIndex() {
           behind it. Everything below the hero follows the selected theme. */}
       <section
         id="top"
-        className="hero-grid hero-lines relative overflow-hidden px-5 pb-28 pt-28 text-slate-50 sm:px-8 sm:pb-32 lg:pt-32"
+        className="hero-grid hero-lines relative overflow-hidden px-5 pb-16 pt-28 text-slate-50 sm:px-8 sm:pb-20 lg:pt-32"
         style={{ backgroundColor: '#05070d' }}
         data-testid="hero-section"
       >
@@ -448,10 +346,10 @@ export default function YearIndex() {
               transition={SPRING.reveal}
               className="text-lg font-light text-slate-200 sm:text-xl"
             >
-              Your spelling practice partner
+              Spelling for UK primary schools
             </motion.p>
-            <h1 className="type-display mt-4 font-display text-5xl font-light text-slate-50 sm:text-6xl lg:text-[5.25rem]">
-              {['Spell, practise', 'and shine with'].map((line, i) => (
+            <h1 className="type-display mt-4 font-display text-5xl font-light text-slate-50 sm:text-6xl lg:text-[4.25rem]">
+              {['Weekly spelling lists,'].map((line, i) => (
                 <span key={line} className="block overflow-hidden">
                   <motion.span
                     className="block"
@@ -470,7 +368,7 @@ export default function YearIndex() {
                   animate={{ y: 0 }}
                   transition={{ ...SPRING.reveal, duration: 0.8, delay: 0.2 }}
                 >
-                  confidence
+                  Reception to Year 6
                 </motion.span>
               </span>
             </h1>
@@ -480,8 +378,9 @@ export default function YearIndex() {
               transition={{ ...SPRING.reveal, delay: 0.35 }}
               className="mt-6 max-w-xl text-base font-light leading-relaxed text-slate-200 sm:text-lg"
             >
-              Progressive spelling practice for keen beans, from first letter
-              sounds in Reception through to Year 6, one week at a time.
+              Choose a year and practise this week's words. Hear each word, type
+              it, then try a word search or crossword. The lists follow the
+              National Curriculum.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -495,18 +394,21 @@ export default function YearIndex() {
                 whileTap={{ ...PRESS, transition: SPRING.snappy }}
                 className="group inline-flex items-center gap-3 rounded-full bg-cyan-400 px-8 py-4 text-base font-medium text-slate-950 transition-colors duration-300 hover:bg-cyan-300"
               >
-                Jump to your year{' '}
+                Choose your year{' '}
                 <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
               </motion.a>
-              <motion.a
-                href="#features"
+              <motion.div
                 whileHover={{ y: -3, transition: SPRING.settle }}
                 whileTap={{ ...PRESS, transition: SPRING.snappy }}
-                className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-8 py-4 text-base font-medium text-cyan-200 transition-colors duration-300 hover:bg-cyan-300/10"
-                data-testid="hero-features-link"
               >
-                What's included
-              </motion.a>
+                <Link
+                  to="/how-it-works"
+                  className="inline-flex items-center gap-3 rounded-full border border-cyan-300/40 px-8 py-4 text-base font-medium text-cyan-200 transition-colors duration-300 hover:bg-cyan-300/10"
+                  data-testid="hero-features-link"
+                >
+                  How it works
+                </Link>
+              </motion.div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 18 }}
@@ -522,10 +424,10 @@ export default function YearIndex() {
               </span>
               <div>
                 <div className="text-lg font-light text-slate-50">
-                  Free, with no login
+                  Free, and no login
                 </div>
                 <div className="text-sm font-light text-slate-300">
-                  Progress saves on your device, for every child who practises
+                  Progress is saved on this device. An account is optional.
                 </div>
               </div>
             </motion.div>
@@ -533,7 +435,7 @@ export default function YearIndex() {
 
           {/* Floating stat cards around a glowing star */}
           <div
-            className="relative grid grid-cols-1 gap-4 sm:grid-cols-3 lg:block lg:h-[30rem]"
+            className="relative hidden gap-4 sm:grid sm:grid-cols-3 lg:block lg:h-[30rem]"
             data-testid="hero-stats"
           >
             <Star
@@ -550,7 +452,7 @@ export default function YearIndex() {
               {
                 icon: GraduationCap,
                 label: 'Year groups',
-                value: 'Reception–Yr6',
+                value: 'Reception to Year 6',
                 pos: 'lg:right-4 lg:top-[48%]',
               },
               {
@@ -587,11 +489,6 @@ export default function YearIndex() {
         />
       </section>
 
-      <FeatureStrip />
-
-      {/* Why use it: right under the hero and stats, before the year picker. */}
-      <KeyFeatures totalWords={totalWords} />
-
       {/* Year grid */}
       <section
         id="years"
@@ -603,8 +500,13 @@ export default function YearIndex() {
             Choose a year
           </div>
           <h2 className="mt-3 type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
-            Pick up where you are.
+            Choose your year group
           </h2>
+          <p className="mt-3 max-w-2xl type-body text-base text-muted-foreground">
+            Each year has a word list for every teaching week, from{' '}
+            {Math.min(...yearsConfig.years.map((y) => y.wordsPerWeek))} to{' '}
+            {Math.max(...yearsConfig.years.map((y) => y.wordsPerWeek))} words a week.
+          </p>
           <div className="mt-8 grid auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {yearsConfig.years.map((year, index) => {
               const accent = getYearAccent(year.slug);
@@ -699,7 +601,7 @@ export default function YearIndex() {
               whileTap={{ ...PRESS, transition: SPRING.snappy }}
             >
               <Link
-                to="/custom"
+                to="/make"
                 className="group flex h-full flex-col items-center justify-center rounded-2xl border border-dashed border-foreground/50 p-5 text-center transition-colors duration-300 hover:border-primary/60 hover:bg-primary/5"
                 data-testid="add-custom-list-card"
               >
@@ -714,7 +616,11 @@ export default function YearIndex() {
         </div>
       </section>
 
-      {/* Search by spelling rule: its own section, straight after the year picker. */}
+      {/* A taster of what's included, after the year picker so the picker
+          stays directly under the hero. The full list is on How it works. */}
+      <KeyFeatures totalWords={totalWords} show="carousel" />
+
+      {/* Search by spelling rule: its own section, after the features. */}
       <section
         id="spelling-rules"
         className="px-5 pb-16 sm:px-8"
@@ -734,22 +640,21 @@ export default function YearIndex() {
                 id="spelling-rules-heading"
                 className="mt-3 max-w-xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl"
               >
-                Practise exactly what needs practising.
+                Practise one spelling rule at a time.
               </h2>
               <p className="mt-4 max-w-xl type-body text-base text-muted-foreground">
-                Every spelling rule from Reception to Year 6 in one list. Filter
-                by pattern or topic, pick the rules you want, and build a lesson
-                with practice, a word search, a crossword and print sheets.
-                Keep lessons together in a series, like “Child 1, Year 1”.
+                Choose the rules a child finds hard, such as /ee/ or -le endings,
+                and make a lesson from just those words. Each lesson comes with
+                practice, a word search, a crossword and print sheets.
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link
-                  to="/rules"
+                  to="/make"
                   className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   data-testid="spelling-rules-cta"
                 >
                   <Search className="h-4 w-4" aria-hidden="true" />
-                  Browse all spelling rules
+                  Make a lesson
                 </Link>
                 <Link
                   to="/series"
@@ -769,7 +674,7 @@ export default function YearIndex() {
                 {RULE_EXAMPLES.map((example) => (
                   <li key={example}>
                     <Link
-                      to={`/rules?q=${encodeURIComponent(example)}`}
+                      to={`/make?tab=rules&q=${encodeURIComponent(example)}`}
                       className="inline-block rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 font-mono text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary/20"
                     >
                       {example}
@@ -813,10 +718,10 @@ export default function YearIndex() {
       >
         <div className="mx-auto max-w-7xl">
           <div className="font-mono text-xs text-primary">
-            New here?
+            More about Spell Stars
           </div>
           <h2 className="mt-3 max-w-2xl type-section font-display text-3xl font-extrabold text-foreground sm:text-4xl">
-            Find out more.
+            Using it at home or in class
           </h2>
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <TeaserLink
@@ -824,14 +729,14 @@ export default function YearIndex() {
               to="/how-it-works"
               icon={Sparkles}
               label="How it works"
-              blurb="Typed practice, word searches and a spaced-repetition engine, in five steps."
+              blurb="What a practice session looks like, step by step."
             />
             <TeaserLink
               index={1}
               to="/for-educators"
               icon={ClipboardCheck}
               label="For educators & parents"
-              blurb="Curriculum sequencing, pacing, differentiation and an offline routine."
+              blurb="How the weekly lists are planned, and how to use them at home or in class."
             />
             <TeaserLink
               index={2}
