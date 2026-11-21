@@ -43,6 +43,22 @@ the rules in `schema.sql`, so never put the *service role* key in the site.
 - Check the privacy wording on `/account` and the About page, because the site
   will now hold email addresses.
 
+## Optional: dictation sentences written by an AI
+
+This doesn't use Supabase except to check someone is signed in. It runs on
+Cloudflare (Workers AI, free allowance of 10,000 Neurons a day) and is set up
+in the Cloudflare Pages dashboard, not here. The steps are at the top of
+`functions/api/dictation.js`: add a Workers AI binding called `AI`, a KV
+namespace called `DICTATION_KV`, and the environment variables `SUPABASE_URL`
+and `SUPABASE_ANON_KEY`; build the site with `REACT_APP_DICTATION_AI=true`.
+
+How it behaves: for a built-in week, every set of sentences ever written is
+saved and given to the next person who asks, so the AI is only used when
+someone has seen every saved set and wants another. Lessons of your own are not
+stored on the server. A new set needs a sign-in and is limited per person per
+day. Only the words, the year group and the language reach the AI. Say on the
+privacy page that lesson words go to an AI service when someone uses the button.
+
 ## Later: the paywall
 
 Every account gets a `profiles` row with `plan = 'free'`. A payment webhook

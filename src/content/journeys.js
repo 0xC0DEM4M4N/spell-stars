@@ -21,8 +21,8 @@ export const JOURNEYS = {
       },
       {
         icon: "grid",
-        title: "Word search and crossword",
-        body: "Grids scaled to the year — small, with no diagonals, for the youngest years; bigger, with backwards and diagonal placements, once reading fluency catches up. Or a crossword made from the same words, with a clue for each one.",
+        title: "Word search, crossword and dictation",
+        body: "Grids scaled to the year — small, with no diagonals, for the youngest years; bigger, with backwards and diagonal placements, once reading fluency catches up. Or a crossword made from the same words, with a clue for each one. Or a dictation: sentences read aloud, covered until they have been spoken.",
       },
       {
         icon: "book",

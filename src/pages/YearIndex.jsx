@@ -303,7 +303,7 @@ export default function YearIndex() {
       </title>
       <meta
         name="description"
-        content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches, crosswords and phonics games matched to the National Curriculum, for Reception through to Year 6."
+        content="Free weekly spelling practice for UK primary schools. Interactive word lists, spelling quizzes, word searches, crosswords, dictation and phonics games matched to the National Curriculum, for Reception through to Year 6."
       />
       <link rel="canonical" href="https://spell-stars.pages.dev/" />
       <SiteHeader />
@@ -379,7 +379,7 @@ export default function YearIndex() {
               className="mt-6 max-w-xl text-base font-light leading-relaxed text-slate-200 sm:text-lg"
             >
               Choose a year and practise this week's words. Hear each word, type
-              it, then try a word search or crossword. The lists follow the
+              it, then try a word search, crossword or dictation. The lists follow the
               National Curriculum.
             </motion.p>
             <motion.div
@@ -645,7 +645,7 @@ export default function YearIndex() {
               <p className="mt-4 max-w-xl type-body text-base text-muted-foreground">
                 Choose the rules a child finds hard, such as /ee/ or -le endings,
                 and make a lesson from just those words. Each lesson comes with
-                practice, a word search, a crossword and print sheets.
+                practice, a word search, a crossword, a dictation and print sheets.
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link

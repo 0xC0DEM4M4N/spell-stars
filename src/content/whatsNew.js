@@ -3,6 +3,12 @@
 // development banner's link to it) both read from this list.
 export const WHATS_NEW = [
   {
+    date: "2026-11-21",
+    title: "Dictation",
+    description:
+      "Every week, and every lesson of your own, now has a Dictation next to the word search and crossword. The site reads a sentence aloud, at a slow, steady or normal speed, and the sentence stays covered until it has been read, so a child writes first and checks after. The sentences are made from that lesson's own words: very short for Reception, a short sentence in Year 1, a full sentence in Year 2, then longer ones, up to two or three words joined into one sentence by Year 6. Press New sentences for a different set, and choose another language for the voice (Welsh, French, Spanish, German or Italian). Where the site has it switched on, there is also a Write with AI button: sentences an AI writes for a week are kept and shared, so the next person gets them straight away.",
+  },
+  {
     date: "2026-11-08",
     title: "Install it as an app",
     description:

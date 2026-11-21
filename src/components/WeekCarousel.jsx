@@ -5,6 +5,7 @@ import { Check, ChevronDown, ChevronLeft, ChevronRight, ClipboardCheck, Info, Si
 import { Button } from "@/components/ui/button";
 import { WordSearch } from "./WordSearch";
 import { Crossword } from "./Crossword";
+import { Dictation } from "./Dictation";
 import { PracticeQuiz } from "./PracticeQuiz";
 import { FindTheLetter } from "./FindTheLetter";
 import { PrintWeekMenu } from "./PrintWeekMenu";
@@ -360,6 +361,13 @@ const WeekCard = memo(function WeekCard({ weekData, active, current, wide, inner
                   words={weekData.words}
                   title={`Week ${String(weekData.week).padStart(2, "0")}`}
                   focus={weekData.focus}
+                />
+                <Dictation
+                  words={weekData.words}
+                  title={`Week ${String(weekData.week).padStart(2, "0")}`}
+                  focus={weekData.focus}
+                  yearSlug={yearSlug}
+                  shared={{ yearSlug, week: weekData.week }}
                 />
                 <PrintWeekMenu weekData={weekData} capabilities={capabilities} />
               </div>

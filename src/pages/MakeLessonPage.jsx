@@ -1,6 +1,6 @@
 // /make: the one place to make a lesson. Two ways in, as tabs on one page:
 // pick spelling rules, or type or paste your own words. Either way the result
-// is an ordinary lesson with practice, a word search, a crossword and print
+// is an ordinary lesson with practice, a word search, a crossword, a dictation and print
 // sheets. (/rules and /custom redirect here.)
 import { useSearchParams } from 'react-router-dom';
 import { InfoPage } from '@/components/InfoPage';
@@ -29,10 +29,10 @@ export default function MakeLessonPage() {
     <InfoPage
       path="/make"
       title="Make a lesson"
-      description="Make a spelling lesson from spelling rules or from your own words. Each lesson has practice, a word search, a crossword and print sheets. Free, no account needed, and kept on your device unless you sign in."
+      description="Make a spelling lesson from spelling rules or from your own words. Each lesson has practice, a word search, a crossword, a dictation and print sheets. Free, no account needed, and kept on your device unless you sign in."
       eyebrow="Make a lesson"
       heading="Make a lesson"
-      intro="Choose spelling rules, or type in the words your child has been given. Each lesson comes with practice, a word search, a crossword and print sheets. It stays on this device unless you sign in to use it elsewhere."
+      intro="Choose spelling rules, or type in the words your child has been given. Each lesson comes with practice, a word search, a crossword, a dictation and print sheets. It stays on this device unless you sign in to use it elsewhere."
     >
       <section className="px-5 pb-6 sm:px-8">
         <div className="mx-auto max-w-3xl space-y-4">

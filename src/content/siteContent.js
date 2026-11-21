@@ -1,5 +1,6 @@
 import {
   Accessibility,
+  AudioLines,
   BadgeCheck,
   BookOpen,
   Brain,
@@ -56,7 +57,7 @@ export const KEY_FEATURES = [
     big: true,
     icon: ListPlus,
     title: "Your words, your lesson",
-    body: "Paste this week's school spellings and get a quiz, a word search, a crossword and print sheets for exactly those words. Lessons stay on your device and travel with your backup.",
+    body: "Paste this week's school spellings and get a quiz, a word search, a crossword, a dictation and print sheets for exactly those words. Lessons stay on your device and travel with your backup.",
     to: "/make?tab=words",
     cta: "Make a lesson",
   },
@@ -85,6 +86,12 @@ export const KEY_FEATURES = [
     icon: Grid2x2,
     title: "Word searches and crosswords",
     body: "Word searches that fit the year, small and upright for the youngest children and bigger with diagonal and backwards words for older ones. Or solve a crossword made from the week's words, with clues from each word's sentence or meaning. Play on screen, or print one.",
+  },
+  {
+    id: "dictation",
+    icon: AudioLines,
+    title: "Dictation",
+    body: "Press Listen and a sentence is read aloud, slowly, steadily or at normal speed. It stays covered until it has been read, so a child writes first and checks after. The sentences use that week's own words: very short for Reception, getting longer each year. You can ask for new ones, and choose another language.",
   },
   {
     id: "paper",
@@ -129,6 +136,11 @@ export const FEATURES = [
     body: "Type each spelling, hear it read aloud, get instant feedback — with a spaced-repetition engine underneath, so words you got wrong come back sooner than ones you've nailed.",
   },
   {
+    icon: AudioLines,
+    title: "Dictation",
+    body: "The site reads short sentences aloud at a speed you choose, and each one is only shown once it has been read. The sentences are built from the week's own words and get longer with the year group, from a few words in Reception to a full line by Year 6. Press New sentences for a different set.",
+  },
+  {
     icon: Grid2x2,
     title: "Word search and crossword",
     body: "A wordsearch scaled to the year — small grids with no diagonals for the youngest years, bigger grids with backwards and diagonal placements once reading fluency catches up. Or a crossword built from the same words, with a clue for each one.",
@@ -164,7 +176,7 @@ export const SESSION_STEPS = [
   {
     step: "04",
     title: "Reinforce with a word search or crossword",
-    body: "A wordsearch grid scaled to the year group — small and upright for the youngest years, bigger with backwards and diagonal words once reading fluency catches up. Or a crossword made from the week's words, where each clue is the word's example sentence with the word left blank, or its meaning. Print either one, or play it on screen.",
+    body: "A wordsearch grid scaled to the year group — small and upright for the youngest years, bigger with backwards and diagonal words once reading fluency catches up. Or a crossword made from the week's words, where each clue is the word's example sentence with the word left blank, or its meaning. Print either one, or play it on screen. For writing practice, try Dictation: the site reads a sentence made from the week's words, and the child writes it before it is shown.",
   },
   {
     step: "05",
@@ -261,7 +273,7 @@ export const FAQS = [
   },
   {
     q: "What does SPELL// STARS include?",
-    a: "Ready-made weekly lists for Reception to Year 6, and your own lessons, made from any words you paste in or from spelling rules. For each lesson there's a practice quiz (listen and spell, or guess from the meaning), a word search, a crossword and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
+    a: "Ready-made weekly lists for Reception to Year 6, and your own lessons, made from any words you paste in or from spelling rules. For each lesson there's a practice quiz (listen and spell, or guess from the meaning), a word search, a crossword, a dictation and print sheets. Progress is saved as you go and can be backed up or moved to another device. There are dyslexia-friendly and high-contrast themes, three text sizes and a reduce-motion switch. It's free, with no account.",
   },
   {
     q: "Is it dyslexia-friendly and accessible?",
@@ -269,7 +281,7 @@ export const FAQS = [
   },
   {
     q: "Can it read the words aloud?",
-    a: "Yes. Practice reads each word using your device's built-in voice, set to British English, and slower for Reception. You can replay it as often as you like. If a browser has no speech support the button says so, and \"Guess from the meaning\" works without sound for words that have a definition.",
+    a: "Yes. Practice reads each word using your device's built-in voice, set to British English, and slower for Reception. You can replay it as often as you like. Dictation reads whole sentences too, at a slow, steady or normal speed. If a browser has no speech support the button says so, and \"Guess from the meaning\" works without sound for words that have a definition.",
   },
   {
     q: "I can't hear the words in practice mode — what should I check?",
@@ -278,6 +290,18 @@ export const FAQS = [
   {
     q: "How do the crosswords work?",
     a: "Each week's words make a crossword, and so does any lesson of your own. Every word gets a clue: by default the word's example sentence with the word blanked out, or you can switch to its meaning. Type into the grid, use the arrow keys or tap a clue to move about, and use Check, Reveal word or Reveal all if you get stuck. Press New puzzle for a fresh layout. You can print it too, and the printout has a second page with the answers. Where a term or a whole year has more than 15 words, each puzzle uses a different selection of them.",
+  },
+  {
+    q: "How does dictation work?",
+    a: "Open Dictation on any week, or on a lesson of your own. You'll see a few covered blocks. Press Listen on one and the site reads the sentence aloud, at the speed you choose: Slow, Steady or Normal. Write it down, and when it has finished reading the sentence is shown so you can check it. Press Again to hear it once more, or New sentences for a different set. Every sentence uses words from that lesson, and they get longer with the year group: very short for Reception (when words begin, later in the year), a short sentence for Year 1, a full sentence from Year 2, and two or three of the week's words in one longer sentence by Years 5 and 6.",
+  },
+  {
+    q: "Can dictation be in another language?",
+    a: "Yes. Choose a language in the dictation window (British or American English, Welsh, French, Spanish, German or Italian) and the sentences are read in a voice for that language, if your device has one installed. The sentences come from each word's own example sentence, so for a lesson of your own in another language, add an example sentence after each word, like this: bonjour | Bonjour, comment ça va ? Without one, a simple sentence such as \"Le mot est bonjour.\" is read instead.",
+  },
+  {
+    q: "Does dictation use AI?",
+    a: "Not unless you choose it. The usual sentences are built on your device from each word's example sentence, so nothing is sent anywhere. Where the site has it switched on, there's also a \"Write with AI\" button. For a week from the ready-made lists, the first person to press it gets a new set written by an AI, and it is kept. Everyone after gets that set straight away, then the next saved one when they press again, and a new one is only written once every saved set has been seen. Asking for a new set needs you to be signed in, with a daily limit. For a lesson of your own, the sets are written for you and kept on your device only. Only the words, the year group and the language are sent, never names or progress. Every sentence is checked to make sure it uses the lesson's words, and the usual sentences stay if anything goes wrong. It's worth reading AI sentences through before you use them.",
   },
   {
     q: "Is it free?",
