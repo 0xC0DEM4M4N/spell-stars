@@ -251,7 +251,7 @@ function cleanLines(lines, entries) {
  * where error is "signin" (a new set needs a signed-in person), "limit" (they
  * have used today's allowance) or "failed".
  */
-export async function fetchAiSet({ token, n, shared, entries, yearSlug, yearLabel, language, avoid = [], fetcher }) {
+export async function fetchAiSet({ token, n, shared, entries, yearSlug, yearLabel, coveredWeek, language, avoid = [], fetcher }) {
   const doFetch = fetcher || (typeof fetch === "function" ? fetch : null);
   if (!doFetch) return { error: "failed" };
   try {
@@ -264,6 +264,7 @@ export async function fetchAiSet({ token, n, shared, entries, yearSlug, yearLabe
         yearSlug,
         yearLabel,
         avoid,
+        ...(Number.isInteger(coveredWeek) ? { coveredWeek } : {}),
         ...(shared
           ? { shared: { yearSlug: shared.yearSlug, week: shared.week } }
           : { words: [...new Set((entries || []).filter((e) => e && e.word).map((e) => e.word))] }),
@@ -286,7 +287,7 @@ export async function fetchAiSet({ token, n, shared, entries, yearSlug, yearLabe
  * from the server. Returns `{ lines, fromDevice }` or `{ error }`.
  */
 export async function getNextAiSet(
-  { shared, entries, yearSlug, yearLabel, language, token },
+  { shared, entries, yearSlug, yearLabel, coveredWeek, language, token },
   { storage = window.localStorage, fetcher } = {},
 ) {
   const key = aiCacheKey({ shared, entries, yearSlug, language });
@@ -309,6 +310,7 @@ export async function getNextAiSet(
     entries,
     yearSlug,
     yearLabel,
+    coveredWeek,
     language,
     avoid,
     fetcher,

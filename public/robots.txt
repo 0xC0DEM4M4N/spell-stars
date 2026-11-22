@@ -3,4 +3,4 @@ Allow: /
 Disallow: /sync
 Disallow: /custom/
 
-Sitemap: https://spell-stars.pages.dev/sitemap.xml
+Sitemap: https://spell-stars.hannahredmond.co.uk/sitemap.xml

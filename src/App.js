@@ -25,6 +25,7 @@ import OfflineJourney from "@/pages/OfflineJourney";
 import WhatsNewPage from "@/pages/WhatsNewPage";
 import FeedbackPage from "@/pages/FeedbackPage";
 import AdminFeedbackPage from "@/pages/AdminFeedbackPage";
+import AdminDictationPage from "@/pages/AdminDictationPage";
 import { Toaster } from "@/components/ui/sonner";
 import { AccessibilityMenu } from "@/components/AccessibilityMenu";
 import { UnderDevelopmentBanner, UNDER_DEVELOPMENT } from "@/components/UnderDevelopmentBanner";
@@ -166,6 +167,7 @@ function AppShell() {
             <Route path="/feedback" element={<FeedbackPage />} />
             {/* No link anywhere; password-gated (functions/api/feedback.js). */}
             <Route path="/admin/feedback" element={<AdminFeedbackPage />} />
+            <Route path="/admin/dictation" element={<AdminDictationPage />} />
             <Route path="/sync" element={<SyncPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />

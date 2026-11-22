@@ -36,7 +36,7 @@ export function InfoPage({ path, title, description, eyebrow, heading, intro, ar
           unmount -- see YearIndex.jsx. */}
       <title>{`${title} | SPELL// STARS`}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={`https://spell-stars.pages.dev${path}`} />
+      <link rel="canonical" href={`https://spell-stars.hannahredmond.co.uk${path}`} />
 
       <SiteHeader />
 

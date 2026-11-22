@@ -3,7 +3,7 @@
 // been spoken, so the child can check what they wrote. Sentences are made from
 // the lesson's own words (see lib/dictation.js).
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AudioLines, Eye, EyeOff, RefreshCw, Sparkles, Volume2 } from "lucide-react";
+import { AudioLines, Eye, EyeOff, RefreshCw, Volume2, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -66,7 +66,7 @@ function chooseVoice(voices, voiceURI, lang) {
 
 // `shared` ({ yearSlug, week }) is set for a built-in week only, so its AI
 // sentences are kept for everyone; anything else is kept on this device.
-export function Dictation({ words, title = "", focus = "", yearSlug, yearLabel = "", shared = null, trigger }) {
+export function Dictation({ words, title = "", focus = "", yearSlug, yearLabel = "", shared = null, coveredWeek = null, trigger }) {
   const [open, setOpen] = useState(false);
   const [prefs, setPrefs] = useState(loadDictationPrefs);
   const [lines, setLines] = useState([]);
@@ -163,6 +163,7 @@ export function Dictation({ words, title = "", focus = "", yearSlug, yearLabel =
       entries: words,
       yearSlug,
       yearLabel: yearLabel || labelFromSlug(yearSlug),
+      coveredWeek,
       language: language.id,
       token,
     });
@@ -341,7 +342,7 @@ export function Dictation({ words, title = "", focus = "", yearSlug, yearLabel =
                     className="gap-1.5 rounded-full"
                     data-testid="dictation-ai"
                   >
-                    <Sparkles className="h-4 w-4" aria-hidden="true" /> {aiBusy ? "Getting…" : usedAi ? "Another AI set" : "Write with AI"}
+                    <WandSparkles className="h-4 w-4" aria-hidden="true" /> {aiBusy ? "Getting…" : usedAi ? "Another AI story" : "Write an AI story"}
                   </Button>
                 )}
                 <Button type="button" variant="ghost" size="sm" onClick={toggleAll} className="ml-auto gap-1.5 rounded-full" data-testid="dictation-toggle-all">

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { InfoPage } from '@/components/InfoPage';
 import { accountsConfigured } from '@/lib/supabaseClient';
 
-const UPDATED = '7 November 2026';
+const UPDATED = '21 November 2026';
 
 const card = 'holo-card relative rounded-2xl p-5 sm:p-6';
 const h2 = 'type-card font-display text-xl font-bold text-foreground';
@@ -13,12 +13,16 @@ const p = 'mt-2 type-body text-sm leading-relaxed text-muted-foreground';
 const ul = 'mt-3 list-disc space-y-1.5 pl-5 type-body text-sm leading-relaxed text-muted-foreground';
 const link = 'underline underline-offset-2 hover:text-primary';
 
+// Matches the dictation "Write with AI" button, which only exists when the
+// site has been built with this switched on (see functions/api/dictation.js).
+const aiDictationOn = process.env.REACT_APP_DICTATION_AI === 'true';
+
 export default function PrivacyPage() {
   return (
     <InfoPage
       path="/privacy"
       title="Privacy"
-      description="What SPELL// STARS keeps on your device, what an optional account stores, and what the site's analytics collect."
+      description="What SPELL// STARS keeps on your device, what an optional account stores, what the optional AI dictation button sends, and what the site's analytics collect."
       eyebrow="Your data"
       heading="Privacy, in plain English"
       intro="Most of what you do on SPELL// STARS stays on your own device. This page says what is kept, where, and what you can do about it."
@@ -82,6 +86,40 @@ export default function PrivacyPage() {
               . That removes your email and everything we stored. Lessons on your own devices stay.
             </p>
           </div>
+
+          {aiDictationOn && (
+            <div className={card} data-testid="privacy-ai">
+              <h2 className={h2}>Dictation and AI sentences</h2>
+              <p className={p}>
+                Dictation reads sentences aloud using your device's own voice, and that stays on your device. The optional{' '}
+                <strong>Write an AI story</strong> button is different: when you press it, the lesson's words are sent to an AI
+                service (Cloudflare's Workers AI) that writes the sentences.
+              </p>
+              <ul className={ul}>
+                <li>
+                  What is sent: the lesson's <strong>words</strong>, the year group and the language. Never a name,
+                  progress, or your email address.
+                </li>
+                <li>
+                  For a week from the ready-made lists, the words are the week's own word list. The sentences that come
+                  back are kept on our server and shown to other people who open the same week, so you may be given
+                  sentences written for someone else. They are not linked to who asked.
+                </li>
+                <li>
+                  For a lesson of your own, the words you typed are sent to the AI. The sentences that come back are kept
+                  on your device only, not on our server.
+                </li>
+                <li>
+                  Asking for a new set needs you to be signed in. We check your sign-in, and keep a count of how many sets
+                  you have asked for that day, tied to your account, for two days, to keep within a daily limit.
+                </li>
+              </ul>
+              <p className={p}>
+                Please don't use a child's name or other personal details as a spelling word if you use this button. AI
+                sentences can be wrong or oddly worded, so read them before you use them.
+              </p>
+            </div>
+          )}
 
           <div className={card}>
             <h2 className={h2}>The feedback form</h2>

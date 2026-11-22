@@ -249,7 +249,7 @@ export default function YearPage() {
           index.html's defaults again on unmount -- see YearIndex.jsx. */}
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
-      <link rel="canonical" href={`https://spell-stars.pages.dev/${yearSlug}`} />
+      <link rel="canonical" href={`https://spell-stars.hannahredmond.co.uk/${yearSlug}`} />
       <SiteHeader />
 
       <div className="border-b px-6 pb-6 pt-24" style={{ borderColor: rgba(accent, 0.35), backgroundImage: `linear-gradient(180deg, ${rgba(accent, 0.08)}, transparent)` }}>
@@ -520,6 +520,7 @@ function PooledScopeView({
 
             <WordListPreview words={termWords} testIdPrefix="term-word-list" accent={accent} phase={regenPhase} />
             <ScopeActionCards
+              currentWeek={currentWeek}
               words={termWords}
               capabilities={capabilities}
               yearLabel={yearLabel}
@@ -563,6 +564,7 @@ function PooledScopeView({
 
           <WordListPreview words={allWords} testIdPrefix="all-word-list" accent={accent} phase={regenPhase} />
           <ScopeActionCards
+              currentWeek={currentWeek}
             words={allWords}
             capabilities={capabilities}
             yearLabel={yearLabel}
@@ -701,7 +703,7 @@ function WordListPreview({ words, testIdPrefix, accent, phase = "idle" }) {
 
 // Card-style choice between the two things you can do with a resolved
 // word list: search for them in a grid, or get tested on spelling them.
-function ScopeActionCards({ words, capabilities, yearLabel, yearSlug, accent, onStartPractice }) {
+function ScopeActionCards({ words, capabilities, yearLabel, yearSlug, accent, onStartPractice, currentWeek }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="scope-action-cards">
       <WordSearch
@@ -751,6 +753,7 @@ function ScopeActionCards({ words, capabilities, yearLabel, yearSlug, accent, on
         focus={words[0]?.focus || ""}
         yearSlug={yearSlug}
         yearLabel={yearLabel}
+        coveredWeek={currentWeek}
         trigger={
           <button
             type="button"

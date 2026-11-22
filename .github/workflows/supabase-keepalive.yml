@@ -1,0 +1,46 @@
+# Stops the free Supabase project being paused for inactivity.
+#
+# Supabase pauses free projects after a week of low activity, and a page load
+# doesn't count: it has to be a real database request. Every few days this asks
+# the database for one row of `profiles` through the public API. Row-level
+# security means it gets an empty list back, which is fine; the query still runs.
+#
+# Setup: repo Settings -> Secrets and variables -> Actions -> New repository secret
+#   SUPABASE_URL       e.g. https://abcdxyz.supabase.co
+#   SUPABASE_ANON_KEY  the anon / public key (the same one the site is built with)
+# Then Actions tab -> "Supabase keep-alive" -> Run workflow, to check it works.
+#
+# GitHub switches off scheduled workflows in a repo with no activity for 60 days;
+# if that happens, re-enable it from the Actions tab (or push any commit).
+
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "17 6 */3 * *" # every 3 days, 06:17 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Query the database
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "Add the SUPABASE_URL and SUPABASE_ANON_KEY repository secrets." >&2
+            exit 1
+          fi
+          status=$(curl -sS -o /tmp/out.json -w "%{http_code}" --retry 3 --retry-delay 10 \
+            "${SUPABASE_URL%/}/rest/v1/profiles?select=user_id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "HTTP $status"
+          # A 200 means the query ran (an empty list is expected). Anything else, such
+          # as a paused project, fails the job so GitHub emails you.
+          [ "$status" = "200" ]

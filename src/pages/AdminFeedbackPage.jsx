@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Trash2, RefreshCw, Lightbulb, Bug, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -99,9 +100,14 @@ export default function AdminFeedbackPage() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-display text-2xl font-bold">Feedback ({entries.length})</h1>
-          <Button variant="outline" size="sm" onClick={() => load(password)} data-testid="admin-refresh">
-            <RefreshCw className="h-3.5 w-3.5" /> Refresh
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link to="/admin/dictation" className="text-sm text-muted-foreground underline hover:text-primary">
+              Dictation AI
+            </Link>
+            <Button variant="outline" size="sm" onClick={() => load(password)} data-testid="admin-refresh">
+              <RefreshCw className="h-3.5 w-3.5" /> Refresh
+            </Button>
+          </div>
         </div>
 
         {entries.length === 0 ? (

@@ -14,8 +14,8 @@ lessons and series sync; practice progress stays on the device.
    creates the tables, the "only your own row" rules, a `plan` column for a
    future paywall, and the "delete my account" function.
 3. **Authentication → URL configuration**
-   - Site URL: your live address (for example `https://spell-stars.pages.dev`).
-   - Redirect URLs: add `https://spell-stars.pages.dev/account` and
+   - Site URL: your live address (for example `https://spell-stars.hannahredmond.co.uk`).
+   - Redirect URLs: add `https://spell-stars.hannahredmond.co.uk/account` and
      `http://localhost:3000/account`.
 4. **Authentication → Email templates → Magic link**: add the code to the
    message so people can type it on another device, for example
@@ -42,6 +42,17 @@ the rules in `schema.sql`, so never put the *service role* key in the site.
   SES) so links arrive reliably.
 - Check the privacy wording on `/account` and the About page, because the site
   will now hold email addresses.
+
+## Keeping the free project awake
+
+Supabase pauses free projects after about a week of low activity, and page loads
+don't count. `.github/workflows/supabase-keepalive.yml` queries the database
+every 3 days. Add two repository secrets (GitHub: Settings -> Secrets and
+variables -> Actions): `SUPABASE_URL` and `SUPABASE_ANON_KEY`, then run the
+workflow once from the Actions tab to check for a green tick. If it ever goes
+red, the project has probably been paused: restore it in the Supabase dashboard.
+GitHub stops scheduled workflows after 60 days with no repo activity; re-enable
+it from the Actions tab if that happens. Not guaranteed by Supabase, but free.
 
 ## Optional: dictation sentences written by an AI
 

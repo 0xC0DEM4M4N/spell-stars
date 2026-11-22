@@ -87,7 +87,7 @@ export function printHeader({ eyebrow, title, topic, meta }) {
 <header class="site-header">
   <div class="brand-block">
     <div class="logo">SPELL<span class="accent">//</span><span class="accent">ST</span>${STAR_SVG}<span class="accent">RS</span></div>
-    <div class="tagline">Free UK primary spelling practice &middot; spell-stars.pages.dev</div>
+    <div class="tagline">Free UK primary spelling practice &middot; spell-stars.hannahredmond.co.uk</div>
   </div>
   <div class="sheet-badge">
     <h1 class="badge-title">${escapeHtml(title)}</h1>
