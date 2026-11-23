@@ -3,12 +3,13 @@
 // been spoken, so the child can check what they wrote. Sentences are made from
 // the lesson's own words (see lib/dictation.js).
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AudioLines, Eye, EyeOff, RefreshCw, Volume2, WandSparkles } from "lucide-react";
+import { AudioLines, Eye, EyeOff, Printer, RefreshCw, Volume2, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/sonner";
 import { useVoiceSettings } from "@/context/VoiceSettingsContext";
+import { buildDictationSheet, openPrintWindow } from "@/lib/printSheets";
 import { accountsConfigured, getSupabase } from "@/lib/supabaseClient";
 import {
   LANGUAGES,
@@ -119,6 +120,12 @@ export function Dictation({ words, title = "", focus = "", yearSlug, yearLabel =
     setLines(buildDictation(words, { yearSlug, language: next.language }).lines);
     setRevealed(new Set());
     setUsedAi(false);
+  };
+
+  // Prints what is on screen: a page to write on, and a teacher's copy.
+  const printDictation = () => {
+    stopSpeaking();
+    openPrintWindow(buildDictationSheet({ title: title || "Dictation", topic: focus, meta: language.label, lines }));
   };
 
   const speak = (line) => {
@@ -345,6 +352,9 @@ export function Dictation({ words, title = "", focus = "", yearSlug, yearLabel =
                     <WandSparkles className="h-4 w-4" aria-hidden="true" /> {aiBusy ? "Getting…" : usedAi ? "Another AI story" : "Write an AI story"}
                   </Button>
                 )}
+                <Button type="button" variant="outline" size="sm" onClick={printDictation} disabled={lines.length === 0} className="gap-1.5 rounded-full" data-testid="dictation-print">
+                  <Printer className="h-4 w-4" aria-hidden="true" /> Print
+                </Button>
                 <Button type="button" variant="ghost" size="sm" onClick={toggleAll} className="ml-auto gap-1.5 rounded-full" data-testid="dictation-toggle-all">
                   {allShown ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                   {allShown ? "Cover all" : "Show all"}

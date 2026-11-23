@@ -215,6 +215,52 @@ ${printFooter("Look, cover, write, check — then compare.")}`;
   return { style, body };
 }
 
+// Dictation: a page for the child (numbered lines to write on, no sentences)
+// and a page for the adult to read from, with the lesson's words picked out.
+// `lines` is what the Dictation dialog shows: [{ text, words }].
+function dictationSection({ title, topic, meta, lines = [] }) {
+  const rulesFor = (text) => (String(text).split(/\s+/).length > 14 ? 3 : 2);
+  const rows = lines
+    .map((line, i) => `
+    <li>
+      <span class="dn">${i + 1}</span>
+      <div class="dlines">${'<span class="dline"></span>'.repeat(rulesFor(line.text))}</div>
+    </li>`)
+    .join("");
+  const teacher = lines
+    .map((line, i) => {
+      const marked = (line.words || []).reduce((html, w) => {
+        const re = new RegExp(`\\b(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})\\b`, "i");
+        return html.replace(re, '<strong class="hl">$1</strong>');
+      }, escapeHtml(line.text));
+      return `<li><span class="dn">${i + 1}</span><p class="dtext">${marked}</p></li>`;
+    })
+    .join("");
+
+  const style = `
+.dict-list{list-style:none;margin-top:18px}
+.dict-list li{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.dn{flex-shrink:0;width:28px;height:28px;border-radius:999px;border:1.5px solid var(--primary-deep);color:var(--primary-deep);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums}
+.dlines{flex:1}
+.dline{display:block;height:34px;border-bottom:1px dotted var(--dot)}
+.dtext{flex:1;font-size:16px;line-height:1.5;letter-spacing:.005em;margin-top:2px}
+.dict-name{display:flex;gap:32px;margin-top:16px;font-size:11px;font-weight:600}
+.dict-name span{flex:1;border-bottom:1px dotted var(--dot);padding-bottom:2px}
+.dict-note{margin-top:14px;font-size:11px;color:var(--muted);line-height:1.5}
+.hl{font-weight:800;color:var(--primary-deep);text-decoration:underline;text-underline-offset:2px}
+`;
+  const body = `${printHeader({ eyebrow: "Dictation", title, topic, meta })}
+<div class="dict-name"><span>Name:</span><span>Date:</span></div>
+<p class="dict-note">Listen to each sentence, then write it on the lines. Check your spelling when you have finished.</p>
+<ol class="dict-list">${rows}</ol>
+${printFooter(`${lines.length} sentence${lines.length === 1 ? "" : "s"}`)}`;
+  const answers = `${printHeader({ eyebrow: "Dictation: teacher's copy", title, topic, meta })}
+<p class="dict-note">Read each sentence aloud slowly and clearly, in chunks if needed, and read it once more at the end. The lesson words are underlined.</p>
+<ol class="dict-list">${teacher}</ol>
+${printFooter("Teacher's copy")}`;
+  return { style, body, extraPages: [answers] };
+}
+
 // Wordsearch grid with the word bank listed alongside it, rather than
 // underneath — easier to scan while hunting on paper.
 function wordSearchSection({ title, topic, meta, words, gridSize, gridDirections, gridLetterCase }) {
@@ -351,6 +397,12 @@ export function buildWritingPracticeSheet(opts) {
 export function buildWordSearchSheet(opts) {
   const { style, body } = wordSearchSection(opts);
   return wrapDocument(`Word search – ${opts.title}`, style, `<div class="sheet-page">${body}</div>`);
+}
+
+export function buildDictationSheet(opts) {
+  const { style, body, extraPages = [] } = dictationSection(opts);
+  const pages = [body, ...extraPages].map((html) => `<div class="sheet-page">${html}</div>`).join("");
+  return wrapDocument(`Dictation – ${opts.title}`, style, pages);
 }
 
 export function buildCrosswordSheet(opts) {

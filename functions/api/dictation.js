@@ -68,19 +68,21 @@ function lengthAdvice(yearSlug, wordsPerLine) {
   return "one sentence of 11 to 16 words";
 }
 
-// Checks the token belongs to a signed-in person, and returns their id.
+// Checks the token belongs to a signed-in person. Returns { id } or { reason },
+// where reason says why not (shown in the response, to help with setup).
 async function signedInUser(request, env) {
   const token = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
-  if (!token || !env.SUPABASE_URL) return null;
+  if (!token) return { reason: "no_token" };
+  if (!env.SUPABASE_URL) return { reason: "SUPABASE_URL_not_set" };
   try {
     const res = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
       headers: { Authorization: `Bearer ${token}`, apikey: env.SUPABASE_ANON_KEY || "" },
     });
-    if (!res.ok) return null;
+    if (!res.ok) return { reason: `supabase_rejected_${res.status}` };
     const user = await res.json();
-    return user && user.id ? String(user.id) : null;
+    return user && user.id ? { id: String(user.id) } : { reason: "supabase_no_user" };
   } catch {
-    return null;
+    return { reason: "supabase_unreachable" };
   }
 }
 
@@ -268,8 +270,9 @@ export async function onRequestPost({ request, env }) {
   }
 
   // Asking the AI for something new needs a signed-in person, with a daily cap.
-  const userId = await signedInUser(request, env);
-  if (!userId) return json({ error: "signin" }, 401);
+  const who = await signedInUser(request, env);
+  if (!who.id) return json({ error: "signin", reason: who.reason }, 401);
+  const userId = who.id;
   const day = new Date().toISOString().slice(0, 10);
   const usageKey = `use:${userId}:${day}`;
   const used = Number(await env.DICTATION_KV.get(usageKey)) || 0;
