@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { loadTimerPrefs, saveTimerPrefs } from "@/lib/timerPrefs";
 import { loadLetterCasePref, saveLetterCasePref } from "@/lib/letterCasePrefs";
-import { buildDirections, buildGrid } from "@/lib/wordSearchGrid";
+import { buildDirections, buildGrid, listedWords } from "@/lib/wordSearchGrid";
 import { escapeHtml, openPrintWindow, printFooter, printHeader, wrapDocument } from "@/lib/printSheets";
 import { useLearners } from "@/context/LearnerContext";
 import { checkStatus, recordCompletion } from "@/lib/badges";
@@ -209,7 +209,7 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
     if (selCells.length < 2 || !game) return;
     const fwd = selCells.map(p => game.grid[p.row][p.col].letter).join("");
     const rev = [...fwd].reverse().join("");
-    for (const { up, wi } of game.placed) {
+    for (const { up, wi } of listedWords(game.placed)) {
       if (!foundRef.current.has(wi) && (up === fwd || up === rev)) {
         foundRef.current = new Set([...foundRef.current, wi]);
         setFound(prev => new Set([...prev, wi]));
@@ -279,7 +279,7 @@ export const WordSearch = ({ words: wordEntries, gridSize = DEFAULT_SIZE, gridDi
       wordEntries.map(w => [w.word.toLowerCase(), w])
     );
 
-    const meaningRows = game.placed
+    const meaningRows = listedWords(game.placed)
       .filter(({ word }) => wordObjMap[word.toLowerCase()]?.definition)
       .map(({ word }) => {
         const obj = wordObjMap[word.toLowerCase()];
@@ -305,7 +305,7 @@ tr{break-inside:avoid}
     const body = `${printHeader({ eyebrow: "Word search", title, topic: focus })}
 <div class="grid">${letters.flat().map(l => `<div class="cell">${l}</div>`).join("")}</div>
 <p class="label">Find these words</p>
-<div class="words">${game.placed.map(({ word }) => `<div class="word">${escapeHtml(word)}</div>`).join("")}</div>
+<div class="words">${listedWords(game.placed).map(({ word }) => `<div class="word">${escapeHtml(word)}</div>`).join("")}</div>
 ${meaningRows ? `<p class="label">What they mean</p><table>${meaningRows}</table>` : ""}
 ${printFooter("Find all the words hidden in the grid above.")}`;
     openPrintWindow(wrapDocument(`Word search – ${title}`, style, body));
@@ -403,7 +403,7 @@ ${printFooter("Find all the words hidden in the grid above.")}`;
 
           {game && (
             <div className="mt-5 flex flex-wrap gap-2">
-              {game.placed.map(({ word, wi }) => (
+              {listedWords(game.placed).map(({ word, wi }) => (
                 <span
                   key={word}
                   className={`rounded-full border px-3 py-1 font-mono tracking-[0.15em] transition-all duration-300 ${chipTextSizeClass(size)} ${

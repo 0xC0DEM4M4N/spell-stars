@@ -37,34 +37,54 @@ function buildGridOnce(words, size, dirs, letterCase) {
     Array.from({ length: size }, () => ({ letter: "", wis: [] }))
   );
   const placed = [];
-  for (let wi = 0; wi < clean.length; wi++) {
-    const up = clean[wi];
-    let ok = false;
-    for (let t = 0; t < 400 && !ok; t++) {
-      const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
-      const rMin = dr > 0 ? 0 : dr < 0 ? up.length - 1 : 0;
-      const rMax = dr > 0 ? size - up.length : dr < 0 ? size - 1 : size - 1;
-      const cMin = dc > 0 ? 0 : dc < 0 ? up.length - 1 : 0;
-      const cMax = dc > 0 ? size - up.length : dc < 0 ? size - 1 : size - 1;
-      if (rMin > rMax || cMin > cMax) continue;
-      const r0 = rMin + Math.floor(Math.random() * (rMax - rMin + 1));
-      const c0 = cMin + Math.floor(Math.random() * (cMax - cMin + 1));
-      let valid = true;
-      for (let i = 0; i < up.length && valid; i++) {
-        const ex = grid[r0 + i * dr][c0 + i * dc].letter;
-        if (ex && ex !== up[i]) valid = false;
-      }
-      if (valid) {
-        for (let i = 0; i < up.length; i++) {
-          grid[r0 + i * dr][c0 + i * dc].letter = up[i];
-          grid[r0 + i * dr][c0 + i * dc].wis.push(wi);
-        }
-        placed.push({ word: words[wi], up, wi });
-        ok = true;
-      }
+  const fits = (up, r0, c0, dr, dc) => {
+    for (let i = 0; i < up.length; i++) {
+      const ex = grid[r0 + i * dr][c0 + i * dc].letter;
+      if (ex && ex !== up[i]) return false;
     }
-    if (!ok) placed.push({ word: words[wi], up, wi, failed: true });
+    return true;
+  };
+  const inBounds = (up, r0, c0, dr, dc) => {
+    const er = r0 + (up.length - 1) * dr;
+    const ec = c0 + (up.length - 1) * dc;
+    return up.length > 0 && r0 >= 0 && c0 >= 0 && er >= 0 && ec >= 0 && er < size && ec < size;
+  };
+  // Longest words go in first, while there is still room; they are the ones
+  // that fail to fit once the grid fills up. `wi` stays the word's position in
+  // the list so everything else can keep using it.
+  const order = clean.map((_, wi) => wi).sort((a, b) => clean[b].length - clean[a].length);
+  for (const wi of order) {
+    const up = clean[wi];
+    let spot = null;
+    for (let t = 0; t < 400 && !spot; t++) {
+      const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
+      const r0 = Math.floor(Math.random() * size);
+      const c0 = Math.floor(Math.random() * size);
+      if (inBounds(up, r0, c0, dr, dc) && fits(up, r0, c0, dr, dc)) spot = { r0, c0, dr, dc };
+    }
+    if (!spot) {
+      // Random tries ran out: look at every possible place, so a word is only
+      // left out when it genuinely cannot go anywhere.
+      const options = [];
+      for (const [dr, dc] of dirs)
+        for (let r0 = 0; r0 < size; r0++)
+          for (let c0 = 0; c0 < size; c0++)
+            if (inBounds(up, r0, c0, dr, dc) && fits(up, r0, c0, dr, dc)) options.push({ r0, c0, dr, dc });
+      if (options.length) spot = options[Math.floor(Math.random() * options.length)];
+    }
+    if (spot) {
+      for (let i = 0; i < up.length; i++) {
+        const cell = grid[spot.r0 + i * spot.dr][spot.c0 + i * spot.dc];
+        cell.letter = up[i];
+        cell.wis.push(wi);
+      }
+      placed.push({ word: words[wi], up, wi });
+    } else {
+      placed.push({ word: words[wi], up, wi, failed: true });
+    }
   }
+  // Back into list order.
+  placed.sort((a, b) => a.wi - b.wi);
   for (let r = 0; r < size; r++)
     for (let c = 0; c < size; c++)
       if (!grid[r][c].letter)
@@ -110,12 +130,31 @@ export function countDuplicateWords(grid, placed) {
   return extras;
 }
 
+// Is every word that was placed really in the grid, along the cells recorded
+// for it? A last check that nothing listed is missing.
+export function placedWordsAreInGrid(grid, placed) {
+  return placed
+    .filter((p) => !p.failed)
+    .every((p) => {
+      const cells = [];
+      grid.forEach((row, r) => row.forEach((cell, c) => cell.wis.includes(p.wi) && cells.push([r, c])));
+      return cells.length === p.up.length && p.up.length > 0;
+    });
+}
+
+// The words that are actually in the grid, which is what to list for the child.
+// A word that couldn't be placed is never listed.
+export const listedWords = (placed) => placed.filter((p) => !p.failed);
+
 export function buildGrid(words, size, dirs, letterCase) {
   let best = null;
   let bestScore = Infinity;
-  for (let attempt = 0; attempt < 60; attempt++) {
+  // Plenty of tries while a word is still left out; fewer once all are in.
+  for (let attempt = 0; attempt < (bestScore >= 1000 ? 400 : 60); attempt++) {
     const g = buildGridOnce(words, size, dirs, letterCase);
-    const score = countDuplicateWords(g.grid, g.placed);
+    // A word left out of the grid matters far more than one found twice.
+    const missing = g.placed.filter((p) => p.failed).length;
+    const score = missing * 1000 + countDuplicateWords(g.grid, g.placed);
     if (score < bestScore) { best = g; bestScore = score; }
     if (score === 0) break;
   }
